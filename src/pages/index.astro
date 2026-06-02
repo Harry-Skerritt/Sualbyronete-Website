@@ -1,8 +1,39 @@
 ---
+// src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
-import Header from "../components/Header.astro";
+import PhotoCarousel from "../components/PhotoCarousel.astro";
+
+const petGallery = [
+    {
+        src: '/images/carousel/puppy1.jpeg',
+        alt: 'Yorkshire Terrier puppy sitting outside',
+        title: 'Alfie',
+        subtitle: 'Yorkshire Terrier | 2 Months'
+    },
+    {
+        src: '/images/carousel/puppy2.jpg',
+        alt: 'Older Yorkshire Terrier sitting outside with a ball',
+        title: 'Sid',
+        subtitle: 'Yorkshire Terrier | 2 Years'
+    },
+    {
+        src: '/images/carousel/puppy3.jpg',
+        alt: 'Yorkshire Terrier puppy sitting on a sofa',
+        title: 'Peanut',
+        subtitle: 'Yorkshire Terrier | 4 Months'
+    }
+];
 ---
 
 <Layout>
-<Header/>
+    <PhotoCarousel images={petGallery}/>
+
 </Layout>
+
+
+<style>
+    .content-wrapper {
+        display: block;
+        width: 100%;
+    }
+</style>

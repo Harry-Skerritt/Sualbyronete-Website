@@ -11,3 +11,7 @@
 
     --font-primary: "Playfair Display", serif;
 }
+
+html {
+    background: var(--colour-primary);
+}

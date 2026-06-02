@@ -1,0 +1,56 @@
+---
+// src/components/Footer.astro
+
+const currentYear = new Date().getFullYear()
+---
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; {currentYear} <span class="accent">Sualbyronete</span>. All rights reserved.</p>
+        <p>Website Designed and Built by <a href="https://harryskerritt.co.uk">harryskerritt.co.uk</a></p>
+    </div>
+</footer>
+
+<style>
+    footer {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 1rem 2rem;
+        margin-top: auto;
+        border-top: 5px solid var(--colour-dark);
+        font-family: var(--font-primary);
+        background-color: var(--colour-primary);
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--colour-white);
+        opacity: 0.8;
+    }
+
+    .accent {
+        color: var(--colour-dark);
+        font-weight: bold;
+    }
+
+    p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    a {
+        text-decoration: underline;
+        color: var(--colour-white);
+        transition: color 0.2s;
+    }
+
+    a:hover {
+        color: var(--colour-dark);
+    }
+
+</style>

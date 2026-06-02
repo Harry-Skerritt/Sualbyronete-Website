@@ -1,0 +1,238 @@
+---
+// src/components/Carousel.astro
+interface ImageItem {
+    src: string;
+    alt: string;
+    title: string;
+    subtitle: string;
+}
+
+interface Props {
+    images: ImageItem[];
+}
+
+const { images } = Astro.props;
+---
+
+<div class="carousel-container">
+
+    <button class="carousel-btn prev" aria-label="Previous slide">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </button>
+
+    <div class="carousel-track-wrapper">
+        <div class="carousel-track">
+            {images.map((img, index) => (
+                    <div class="carousel-slide" data-index={index}>
+                        <div class="slide-bg" style={`background-image: url(${img.src});`}></div>
+
+                        <div class="slide-content">
+                            <img src={img.src} alt={img.alt} loading={index === 0 ? "eager" : "lazy"} />
+                            <div class="slide-overlay">
+                                <h2>{img.title}</h2>
+                                <p>{img.subtitle}</p>
+                            </div>
+                        </div>
+                    </div>
+            ))}
+        </div>
+    </div>
+
+    <button class="carousel-btn next" aria-label="Next slide">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+    </button>
+</div>
+
+<style>
+    .carousel-container {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .carousel-track-wrapper {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.4s ease-in-out;
+        width: 100%;
+    }
+
+    .carousel-slide {
+        position: relative;
+        min-width: 100%;
+        aspect-ratio: 16 / 7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Blurred Backdrop */
+    .slide-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        filter: blur(15px) brightness(0.8);
+        transform: scale(1.1);
+        z-index: 1;
+    }
+
+    /* Main Image Box */
+    .slide-content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        max-width: 70%;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+    }
+
+    .slide-content img {
+        height: 100%;
+        width: auto;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Text Overlay Styling */
+    .slide-overlay {
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
+        color: var(--colour-white);
+        text-align: right;
+        font-family: sans-serif;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .slide-overlay h2 {
+        font-size: 2rem;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 800;
+    }
+
+    .slide-overlay p {
+        font-size: 0.85rem;
+        margin: 2px 0 0 0;
+        opacity: 0.9;
+    }
+
+    /* Navigation Buttons */
+    .carousel-btn {
+        position: absolute;
+        z-index: 10;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(5px);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .carousel-btn:hover {
+        background: rgba(255, 255, 255, 0.4);
+        scale: 1.05;
+    }
+
+    .carousel-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .prev { left: 5%; }
+    .next { right: 5%; }
+</style>
+
+<script>
+    // Client-side execution script runs automatically in the browser
+    function initCarousel() {
+        const track = document.querySelector('.carousel-track') as HTMLElement;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const prevBtn = document.querySelector('.carousel-btn.prev');
+        const nextBtn = document.querySelector('.carousel-btn.next');
+        const container = document.querySelector('.carousel-container');
+
+        if (!track || slides.length === 0) return;
+
+        let currentIndex = 0;
+        let autoPlayTimer: any = null;
+        const intervalTime = 5000;
+
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex === slides.length -1) ? 0 : currentIndex + 1;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex === 0) ? slides.length - 1 : currentIndex - 1;
+            updateCarousel();
+        }
+
+        function startAutoPlay() {
+            if (!autoPlayTimer) {
+                autoPlayTimer = setInterval(nextSlide, intervalTime);
+            }
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayTimer) {
+                clearInterval(autoPlayTimer);
+                autoPlayTimer = null;
+            }
+        }
+
+        prevBtn?.addEventListener('click', () => {
+            prevSlide();
+            stopAutoPlay();
+            startAutoPlay();
+        });
+
+        nextBtn?.addEventListener('click', () => {
+            nextSlide();
+            stopAutoPlay();
+            startAutoPlay();
+        });
+
+        // Stop Autoplay on hover
+        container?.addEventListener('mouseenter', stopAutoPlay);
+        container?.addEventListener('mouseleave', startAutoPlay);
+
+        // Initialize
+        startAutoPlay();
+    }
+
+    // Runs on initial load
+    initCarousel();
+
+    document.addEventListener('astro:page-load', initCarousel);
+</script>
