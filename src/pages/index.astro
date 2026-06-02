@@ -131,7 +131,7 @@ const petGallery = [
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-between;
-        padding: 2rem;
+        padding: 4rem 2rem 2rem 2rem;
         gap: 2rem;
     }
     .susan-image {
@@ -274,6 +274,80 @@ const petGallery = [
 
     .nav-image-wrapper:hover .nav-image-subtext {
         color: var(--colour-dark);
+    }
+
+    /* Mobile Styling */
+    @media (max-width: 1024px) {
+        :root {
+            --border-px: 8px;
+        }
+
+        /* Disable Snap Scrolling */
+        .snap-scroll-container {
+            height: auto;
+            scroll-snap-type: none;
+            overflow-y: visible;
+        }
+
+        .snap-section {
+            height: auto;
+            min-height: auto;
+            scroll-snap-align: none;
+            padding: 0;
+        }
+
+        .carousel-section :global(.carousel-slide) {
+            height: 55vh;
+        }
+
+        /* Arrange Vertically */
+        .about-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2.5rem;
+            padding: 4rem 1.5rem;
+        }
+
+        .text-container {
+            align-self: center;
+            order: 0;
+        }
+
+        .about-header {
+            font-size: 3.5rem;
+        }
+
+        .about-body {
+            font-size: 1.4rem;
+            line-height: 1.5;
+        }
+
+        .susan-image {
+            height: auto;
+            width: 100%;
+            max-width: 350px;
+            order: 1;
+        }
+
+        .secondary-image {
+            display: none;
+        }
+
+        /* Arrange Vertically */
+        .nav-images-container {
+            flex-direction: column;
+            height: 65vh;
+        }
+
+        .nav-image-wrapper {
+            width: 100%;
+            height: 50%;
+        }
+
+        .nav-image-header {
+            font-size: 3.2rem;
+        }
     }
 
 
