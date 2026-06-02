@@ -28,16 +28,25 @@ const isActive = (href: string) => {
             <h1 class="header-text">Sualbyronete</h1>
         </div>
 
+        <!-- Mobile Hamburger Menu -->
+        <button id="menu-toggle" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+
         <!-- Navigation -->
-        <nav class="nav-links">
-            {links.map((link, index) => (
-                <li class="nav-item">
-                    <a href={link.href} class={isActive(link.href) ? "active" : ""}>
-                        {link.name}
-                    </a>
-                    {index < links.length - 1 && <Icon name="paw-print" class="nav-divider"/>}
-                </li>
-            ))}
+        <nav class="nav-menu" id="nav-menu">
+            <ul class="nav-links">
+                {links.map((link, index) => (
+                        <li class="nav-item">
+                            <a href={link.href} class={isActive(link.href) ? "active" : ""}>
+                                {link.name}
+                            </a>
+                            {index < links.length - 1 && <Icon name="paw-print" class="nav-divider"/>}
+                        </li>
+                ))}
+            </ul>
         </nav>
 
     </div>
@@ -70,9 +79,15 @@ const isActive = (href: string) => {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
         height: 100%;
-        width: 95%;
-        padding: 0 2rem;
+        //width: 95%;
+        //padding: 0 2rem;
+
+        /* Mobile */
+        width: 100%;
+        padding: 0 1rem;
+        box-sizing: border-box;
     }
 
     .left-group
@@ -88,12 +103,13 @@ const isActive = (href: string) => {
 
     .vert-separator
     {
-        height: 80%;
+        height: calc(var(--header-height) - var(--header-height) * 0.2);
         background-color: var(--colour-dark);
         width: 2px;
-        border-radius: 999px 999px 999px 999px;
+        border-radius: 999px;
         margin-left: 1rem;
         margin-right: 1.2rem;
+        flex-shrink: 0;
     }
 
     .header-text {
@@ -105,6 +121,7 @@ const isActive = (href: string) => {
         margin: 0;
         height: 100%;
         align-content: center;
+        white-space: nowrap;
     }
 
     .nav-links {
@@ -146,39 +163,152 @@ const isActive = (href: string) => {
         color: var(--colour-white);
     }
 
+    /* Mobile Styling */
+    .hamburger-btn {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        width: 30px;
+        height: 21px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 110;
+
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-right: 0.5rem;
+    }
+
+    .hamburger-line {
+        width: 100%;
+        height: 3px;
+        background-color: var(--colour-light);
+        border-radius: 999px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Morph lines into an 'X' icon when active */
+    .hamburger-btn.is-active .hamburger-line:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+        background-color: var(--colour-dark);
+    }
+    .hamburger-btn.is-active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger-btn.is-active .hamburger-line:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+        background-color: var(--colour-dark);
+    }
+
+    @media(max-width: 1024px) {
+        .hamburger-btn {
+            display: flex;
+        }
+
+        .header-container {
+            padding: 0 0.75rem;
+        }
+
+        .nav-divider {
+            display: none;
+        }
+
+        .logo {
+            height: calc(var(--header-height) * 0.8);
+        }
+
+        .vert-separator {
+            margin-left: 0.6rem;
+            margin-right: 0.6rem;
+        }
+
+        .header-text{
+            font-size: 1.8rem;
+        }
+
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: var(--colour-primary);
+            padding-top: calc(var(--header-height) + 2rem);
+            box-sizing: border-box;
+
+            /* Center elements column style */
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+
+            /* Start hidden */
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+            z-index: 105;
+        }
+
+        .nav-menu.is-open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .nav-links {
+            flex-direction: column;
+            gap: 3rem;
+            width: 100%;
+        }
+
+        .nav-item a {
+            font-size: 3rem;
+        }
+    }
+
 </style>
 
 <script>
-    function initHeaderScroll() {
+    function initHeader() {
         const header = document.getElementById('main-header');
-        if (!header) return;
-
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
         const snapContainer = document.querySelector('.snap-scroll-container');
 
-        const checkScroll = (scrollTarget: Window | Element) => {
-            // Adds class if window is scrolled down past 0 pixels
-            const scrollTop = scrollTarget instanceof Window
-                ? window.scrollY
-                : scrollTarget.scrollTop;
+        if (!header || !menuToggle || !navMenu) return;
 
+        // Hamburger Toggle Action
+        menuToggle.addEventListener('click', () => {
+            const isOpen = navMenu.classList.toggle('is-open');
+            menuToggle.classList.toggle('is-active');
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        // Scroll Verification Action
+        const checkScroll = (scrollTarget: Window | Element) => {
+            const scrollTop = scrollTarget instanceof Window ? window.scrollY : scrollTarget.scrollTop;
             if (scrollTop > 0) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
-
-            if (snapContainer) {
-                // INDEX PAGE: Listen to the internal container scrolling
-                checkScroll(snapContainer);
-                snapContainer.addEventListener('scroll', () => checkScroll(snapContainer), { passive: true });
-            } else {
-                // OTHER PAGES: Fall back to default window scrolling
-                checkScroll(window);
-                window.addEventListener('scroll', () => checkScroll(window), { passive: true });
-            }
         };
+
+        // Initialize and bind correctly outside nested functions
+        if (snapContainer) {
+            checkScroll(snapContainer);
+            snapContainer.addEventListener('scroll', () => checkScroll(snapContainer), { passive: true });
+        } else {
+            checkScroll(window);
+            window.addEventListener('scroll', () => checkScroll(window), { passive: true });
+        }
     }
 
-    initHeaderScroll();
-    document.addEventListener('astro:page-load', initHeaderScroll);
+    // Load hooks execution layout
+    initHeader();
+    document.addEventListener('astro:page-load', initHeader);
 </script>

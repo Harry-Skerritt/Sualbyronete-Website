@@ -16,7 +16,17 @@
     --header-height: 80px;
 }
 
-html {
+
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+
+    overflow-x: hidden;
+    box-sizing: border-box;
+
     background: var(--colour-primary);
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -24,6 +34,10 @@ html {
 
 html::-webkit-scrollbar {
     display: none;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 
