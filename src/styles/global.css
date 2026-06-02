@@ -1,0 +1,13 @@
+/* src/styles/global.css */
+
+/* Google Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+:root {
+    --colour-primary: #95B6BB;
+    --colour-dark: #407078;
+    --colour-light: #D9F4F8;
+    --colour-white: #F0F9FF;
+
+    --font-primary: "Playfair Display", serif;
+}

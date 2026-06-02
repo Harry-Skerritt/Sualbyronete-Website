@@ -1,0 +1,137 @@
+---
+// src/components/Header.astro
+
+import '../styles/global.css'
+import { Icon } from 'astro-icon/components'
+
+const { pathname } = Astro.url;
+
+const links = [
+    { name: 'Home', href: '/' },
+    { name: 'Puppies', href: '/puppies' },
+    { name: 'Adults', href: '/adults' },
+    { name: 'Contact', href: '/contact'}
+];
+
+const isActive = (href: string) => {
+    const normalise = (path: string) => path.replace(/\/$/, "");
+    return normalise(pathname) === normalise(href);
+}
+---
+
+<header id="main-header" class="header-initial">
+    <div class="header-container">
+
+        <!-- Logo and Name -->
+        <div class="left-group">
+            <img src="/logo-basic/Logo-Basic.png" alt="basic-logo" class="logo"/>
+            <div class="vert-separator"></div>
+            <h1 class="header-text">Sualbyronete</h1>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav-links">
+            {links.map((link, index) => (
+                <li class="nav-item">
+                    <a href={link.href} class={isActive(link.href) ? "active" : ""}>
+                        {link.name}
+                    </a>
+                    {index < links.length - 1 && <Icon name="paw-print" class="nav-divider"/>}
+                </li>
+            ))}
+        </nav>
+
+    </div>
+</header>
+
+<style>
+    .header-initial {
+        height: 10vh;
+        background-color: var(--colour-primary);
+        border-radius: 0 0 2vh 2vh;
+        box-shadow: 0px 7px 7px 0px rgba(0,0,0,0.25);
+        display: flex;
+        justify-content: center;
+    }
+
+    .header-container
+    {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        height: 100%;
+        width: 95%;
+    }
+
+    .left-group
+    {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .logo {
+        height: 10vh;
+    }
+
+    .vert-separator
+    {
+        height: 80%;
+        background-color: var(--colour-dark);
+        width: 0.1vw;
+        border-radius: 999px 999px 999px 999px;
+        margin-left: 0.8vw;
+        margin-right: 1vw;
+    }
+
+    .header-text {
+        font-family: var(--font-primary);
+        font-weight: 700;
+        font-size: 4.4vh;
+        color: var(--colour-dark);
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        align-content: center;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-item a {
+        font-family: var(--font-primary);
+        text-decoration: none;
+        color: var(--colour-white);
+        font-weight: bold;
+        font-size: 3.7vh;
+        padding-left: 1vw;
+        padding-right: 1vw;
+        transition: color 0.2s;
+    }
+
+    .nav-item a:hover {
+        color: var(--colour-dark);
+    }
+
+    .nav-item a.active {
+        color: var(--colour-dark);
+    }
+
+    .nav-divider {
+        height: 4vh;
+        width: auto;
+        color: var(--colour-white);
+    }
+
+</style>
