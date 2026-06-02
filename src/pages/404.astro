@@ -1,11 +1,14 @@
 ---
 // src/pages/404.astro
-import Layout from "../layouts/Layout.astro";---
+import Layout from "../layouts/Layout.astro";
+
+const baseURL = import.meta.env.BASE_URL;
+---
 
 <Layout title="Page Not Found!" showHeader={false}>
     <main class="not-found-container">
         <div class="content">
-            <img src="/logo/Logo.png" alt="Logo" class="logo"/>
+            <img src=`${baseURL}logo/Logo.png` alt="Logo" class="logo"/>
             <h1 class="error-code">404: Page Not Found!</h1>
             <p>Hmm... this one seems to be missing</p>
 
@@ -131,9 +134,11 @@ import Layout from "../layouts/Layout.astro";---
         const homeBtn = document.getElementById('home-button');
         const backBtn = document.getElementById('back-button');
 
+        const baseURL = import.meta.env.BASE_URL;
+
         // Handle Go Home Click
         homeBtn?.addEventListener('click', () => {
-            window.location.href = '/'; // Redirects user to home page
+            window.location.href = baseURL; // Redirects user to home page
         });
 
         // Handle Go Back Click
@@ -142,7 +147,7 @@ import Layout from "../layouts/Layout.astro";---
             if (document.referrer && window.history.length > 1) {
                 window.history.back();
             } else {
-                window.location.href = '/';
+                window.location.href = baseURL;
             }
         });
     }

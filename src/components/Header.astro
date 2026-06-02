@@ -5,12 +5,14 @@ import '../styles/global.css'
 import { Icon } from 'astro-icon/components'
 
 const { pathname } = Astro.url;
+const baseURL = import.meta.env.BASE_URL;
+const cleanPath = (path: string) => path.replace(/\/$/, "");
 
 const links = [
-    { name: 'Home', href: '/' },
-    { name: 'Puppies', href: '/puppies' },
-    { name: 'Adults', href: '/adults' },
-    { name: 'Contact', href: '/contact'}
+    { name: 'Home', href: baseURL },
+    { name: 'Puppies', href: `${cleanPath(baseURL)}/puppies` },
+    { name: 'Adults', href: `${cleanPath(baseURL)}/adults` },
+    { name: 'Contact', href: `${cleanPath(baseURL)}/contact`}
 ];
 
 const isActive = (href: string) => {
@@ -22,8 +24,8 @@ const isActive = (href: string) => {
 <header id="main-header" class="header-initial">
     <div class="header-container">
         <!-- Logo and Name -->
-        <a href="/" class="left-group">
-            <img src="/logo-basic/Logo-Basic.png" alt="basic-logo" class="logo"/>
+        <a href=`${baseURL}` class="left-group">
+            <img src=`${baseURL}logo-basic/Logo-Basic.png` alt="basic-logo" class="logo"/>
             <div class="vert-separator"></div>
             <h1 class="header-text">Sualbyronete</h1>
         </a>

@@ -12,7 +12,6 @@ export default defineConfig({
     ],
 
     // GitHub Stuff - Remove before final build
-
-    site: "https://harry-skerritt.github.io",
-    base: isProduction ? '/Sualbyronete-Website' : "/"
+    site: 'https://harry-skerritt.github.io',
+    base: isProduction ? '/Sualbyronete-Website' : '/'
 });
