@@ -8,7 +8,7 @@ const petGallery = [
         src: '/images/carousel/puppy1.jpeg',
         alt: 'Yorkshire Terrier puppy sitting outside',
         title: 'Alfie',
-        subtitle: 'Yorkshire Terrier | 2 Months'
+        subtitle: 'Yorkshire Terrier | 4 Months'
     },
     {
         src: '/images/carousel/puppy2.jpg',
@@ -20,20 +20,261 @@ const petGallery = [
         src: '/images/carousel/puppy3.jpg',
         alt: 'Yorkshire Terrier puppy sitting on a sofa',
         title: 'Peanut',
-        subtitle: 'Yorkshire Terrier | 4 Months'
+        subtitle: 'Yorkshire Terrier | 2 Months'
     }
 ];
 ---
 
 <Layout>
-    <PhotoCarousel images={petGallery}/>
+    <!-- Snap Scroll Containers -->
+    <div class="snap-scroll-container">
 
+        <!-- Section 1: Photo Carousel -->
+        <section class="snap-section carousel-section">
+            <PhotoCarousel images={petGallery}/>
+        </section>
+
+        <!-- Section 2: About Section -->
+        <section class="snap-section about-section">
+            <img src="/images/susan.jpg" alt="An Image of Susan" class="susan-image"/>
+
+            <div class="text-container">
+                <h1 class="about-header">Hi, I'm Susan</h1>
+                <p class="about-body">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu massa  posuere, porttitor elit quis, eleifend odio. Fusce non iaculis eros.
+                    Maecenas tincidunt arcu eget cursus tincidunt. Duis mattis rhoncus  aliquam. Integer malesuada arcu vel leo vestibulum gravida.
+                    Nunc eros  dui, dapibus vitae sapien vitae, consectetur laoreet augue.
+                    Pellentesque vel faucibus turpis, consectetur euismod tortor.
+                    Suspendisse sit amet  tincidunt augue.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu massa  posuere, porttitor elit quis, eleifend odio. Fusce non iaculis eros.
+                    Maecenas tincidunt arcu eget cursus tincidunt. Duis mattis rhoncus  aliquam. Integer malesuada arcu vel leo vestibulum gravida.
+                </p>
+            </div>
+
+            <div class="secondary-image">
+                <img src="images/grace.png" alt="A dog running on some grass">
+            </div>
+        </section>
+
+
+        <!-- Section 3: Nav Section -->
+        <section class="snap-section nav-section">
+            <div class="nav-images-container">
+                <a href="/adults" class="nav-image-wrapper">
+                    <img src="/images/nav/adultDog.jpg" alt="An adult Yorkshire Terrier"/>
+                    <h1 class="nav-image-header">Adults</h1>
+                    <p class="nav-image-subtext">See More</p>
+                </a>
+
+                <a href="/puppies" class="nav-image-wrapper">
+                    <img src="/images/nav/puppyDog.jpg" alt="A Yorkshire Terrier puppy"/>
+                    <h1 class="nav-image-header">Puppies</h1>
+                    <p class="nav-image-subtext">See More</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
 </Layout>
 
 
 <style>
-    .content-wrapper {
-        display: block;
-        width: 100%;
+    :root {
+        --border-px: 17px;
     }
+
+    /* Scroll Framework */
+    .snap-scroll-container {
+        width: 100%;
+        height: calc(100vh - var(--header-height));
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .snap-scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .snap-section {
+        width: 100%;
+        height: 100%;
+        min-height: calc(100vh - var(--header-height));
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        box-sizing: border-box;
+    }
+
+    /* Section 1: Carousel */
+    .carousel-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .carousel-section :global(.carousel-container) {
+        max-width: 100% !important;
+        width: 100%;
+        height: 100%;
+    }
+
+    .carousel-section :global(.carousel-slide) {
+        aspect-ratio: auto !important;
+        height: calc(100vh - var(--header-height));
+    }
+
+    /* Section 2: About Section */
+    .about-section {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 2rem;
+        gap: 2rem;
+    }
+    .susan-image {
+        height: 80vh;
+        width: auto;
+        object-fit: cover;
+        border: var(--border-px) solid var(--colour-white);
+        margin: 0;
+    }
+
+    .text-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        align-self: flex-start;
+    }
+
+    .about-header{
+        color: var(--colour-dark);
+        font-family: var(--font-primary);
+        font-size: 80px;
+        margin: 0 0 1rem 0;
+    }
+
+    .about-body {
+        color: var(--colour-white);
+        font-family: var(--font-secondary);
+        font-size: 30px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .secondary-image {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .secondary-image img{
+        width: 24rem;
+        height: 24rem;
+        object-fit: cover;
+        border-radius: 50%;
+        border: var(--border-px) solid var(--colour-white);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        margin: 0;
+    }
+
+    /* --- SECTION 3: NAVIGATION CONFIG --- */
+    .nav-section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .nav-images-container {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        height: 100%;
+    }
+
+    .nav-image-wrapper {
+        position: relative;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        text-decoration: none;
+    }
+
+    .nav-image-wrapper img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        z-index: 1;
+    }
+
+    .nav-image-wrapper::after{
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        backdrop-filter: blur(8px);
+        background-color: rgba(0, 0, 0, 0.2);
+        z-index: 2;
+
+        cursor: pointer;
+        transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+    }
+
+    .nav-image-header {
+        position: relative;
+        z-index: 3;
+        color: var(--colour-white);
+        font-family: var(--font-primary);
+        font-size: 5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 0;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        transition: 0.3s ease;
+        text-decoration: none;
+    }
+
+    .nav-image-subtext {
+        position: relative;
+        z-index: 3;
+        color: var(--colour-white);
+        font-family: var(--font-secondary);
+        font-size: 1.8rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+        opacity: 0.85;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        transition: 0.3s ease;
+        text-decoration: none;
+    }
+
+    .nav-image-wrapper:hover::after {
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .nav-image-wrapper:hover .nav-image-header {
+        color: var(--colour-dark);
+    }
+
+    .nav-image-wrapper:hover .nav-image-subtext {
+        color: var(--colour-dark);
+    }
+
+
 </style>

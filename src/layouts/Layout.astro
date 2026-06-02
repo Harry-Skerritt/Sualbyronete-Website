@@ -2,6 +2,13 @@
 // src/layouts/Layout.astro
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+
+interface Props {
+	title?: string;
+	showHeader?: boolean;
+}
+
+const { title = "Sualbyronette - Dog Breeder", showHeader = true } = Astro.props;
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -11,10 +18,10 @@ import Footer from "../components/Footer.astro";
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Sualbyronete Dog Breeder</title>
+		<title>{title}</title>
 	</head>
 	<body>
-		<Header />
+		{ showHeader && <Header />}
 		<slot />
 		<Footer />
 	</body>

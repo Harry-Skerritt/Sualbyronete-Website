@@ -1,0 +1,118 @@
+---
+// src/pages/404.astro
+import Layout from "../layouts/Layout.astro";---
+
+<Layout title="Page Not Found!" showHeader={false}>
+    <main class="not-found-container">
+        <div class="content">
+            <img src="/logo/Logo.png" alt="Logo" class="logo"/>
+            <h1 class="error-code">404: Page Not Found!</h1>
+            <p>Hmm... this one seems to be missing</p>
+
+            <div class="actions">
+                <button id="home-button" class="button">Go Home</button>
+                <button id="back-button" class="button">Go Back</button>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .not-found-container {
+        width: 100vw;
+        height: 93vh;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo {
+        margin: 1rem 0 0;
+        width: 30rem;
+        height: 30rem;
+
+    }
+
+    .error-code {
+        color: var(--colour-dark);
+        font-family: var(--font-primary);
+        font-size: 5.2rem;
+        margin: 0;
+    }
+
+    p {
+        font-family: var(--font-secondary);
+        font-size: 2rem;
+        color: var(--colour-white);
+        margin: 0.5rem 0;
+    }
+
+    .actions {
+        width: 100%;
+        margin: 4rem 0 0;
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 4rem;
+    }
+
+    .home-button {
+        color: var(--colour-white);
+        text-decoration: none;
+        font-family: var(--font-secondary);
+        font-size: 2rem;
+    }
+
+    .accent {
+        color: var(--colour-dark);
+        text-decoration: underline;
+    }
+
+    .button {
+        padding: 0.5rem 2rem;
+        border-radius: 1rem;
+        background: var(--colour-primary);
+        border: 2px solid var(--colour-dark);
+        color: var(--colour-white);
+        font-family: var(--font-secondary);
+        font-size: 2rem;
+        transition: all 0.2s ease;
+    }
+
+    .button:hover {
+        background: var(--colour-dark);
+        color: var(--colour-white);
+    }
+</style>
+
+<script>
+    function setupButtons() {
+        const homeBtn = document.getElementById('home-button');
+        const backBtn = document.getElementById('back-button');
+
+        // Handle Go Home Click
+        homeBtn?.addEventListener('click', () => {
+            window.location.href = '/'; // Redirects user to home page
+        });
+
+        // Handle Go Back Click
+        backBtn?.addEventListener('click', () => {
+            // Check if there is an actual previous page in the history stack
+            if (document.referrer && window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        });
+    }
+
+
+    setupButtons();
+    document.addEventListener('astro:page-load', setupButtons);
+</script>
