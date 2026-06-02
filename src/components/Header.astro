@@ -22,11 +22,11 @@ const isActive = (href: string) => {
 <header id="main-header" class="header-initial">
     <div class="header-container">
         <!-- Logo and Name -->
-        <div class="left-group">
+        <a href="/" class="left-group">
             <img src="/logo-basic/Logo-Basic.png" alt="basic-logo" class="logo"/>
             <div class="vert-separator"></div>
             <h1 class="header-text">Sualbyronete</h1>
-        </div>
+        </a>
 
         <!-- Mobile Hamburger Menu -->
         <button id="menu-toggle" class="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">
@@ -40,9 +40,14 @@ const isActive = (href: string) => {
             <ul class="nav-links">
                 {links.map((link, index) => (
                         <li class="nav-item">
+                            <!-- Mobile Bullet -->
+                            <Icon name="paw-print" class="nav-bullet" />
+
                             <a href={link.href} class={isActive(link.href) ? "active" : ""}>
                                 {link.name}
                             </a>
+
+                            <!-- Desktop Divider -->
                             {index < links.length - 1 && <Icon name="paw-print" class="nav-divider"/>}
                         </li>
                 ))}
@@ -81,10 +86,6 @@ const isActive = (href: string) => {
         justify-content: space-between;
         align-items: center;
         height: 100%;
-        //width: 95%;
-        //padding: 0 2rem;
-
-        /* Mobile */
         width: 100%;
         padding: 0 1rem;
         box-sizing: border-box;
@@ -95,6 +96,8 @@ const isActive = (href: string) => {
         display: flex;
         flex-direction: row;
         align-items: center;
+        text-decoration: none;
+        cursor: pointer;
     }
 
     .logo {
@@ -157,6 +160,10 @@ const isActive = (href: string) => {
         color: var(--colour-dark);
     }
 
+    .nav-bullet {
+        display: none;
+    }
+
     .nav-divider {
         height: 2rem;
         width: auto;
@@ -217,6 +224,23 @@ const isActive = (href: string) => {
             display: none;
         }
 
+        .nav-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: fit-content;
+        }
+
+        .nav-bullet {
+            display: block;
+            width: 2rem;
+            height: 2rem;
+            color: var(--colour-white);
+            transition: color 0.2s;
+        }
+
         .logo {
             height: calc(var(--header-height) * 0.8);
         }
@@ -263,10 +287,13 @@ const isActive = (href: string) => {
             flex-direction: column;
             gap: 3rem;
             width: 100%;
+            align-items: center;
         }
 
         .nav-item a {
             font-size: 3rem;
+            padding-left: 0;
+            padding-right: 0;
         }
     }
 
