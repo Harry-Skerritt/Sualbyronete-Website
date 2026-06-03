@@ -80,7 +80,7 @@ const petGallery = [
 </Layout>
 
 
-<style>
+<style lang="scss">
     :root {
         --border-px: 17px;
     }
@@ -279,7 +279,7 @@ const petGallery = [
     }
 
     /* Mobile Styling */
-    @media (max-width: 768px) {
+    @media (#{$mobile}) {
         :root {
             --border-px: 8px;
         }

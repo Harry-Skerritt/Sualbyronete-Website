@@ -40,7 +40,7 @@ const statusKey = puppyStatus.toLowerCase();
 </div>
 
 
-<style>
+<style lang="scss">
     .puppy-card {
         width: 20.6rem;
         height: 30rem;
@@ -162,6 +162,44 @@ const statusKey = puppyStatus.toLowerCase();
 
     .puppy-header[data-status="sold"] {
         background-color: var(--puppy-sold-colour);
+    }
+
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .puppy-card {
+        width: 100%;
+        max-width: 22rem;
+        height: 28rem;
+        border-width: 4px;
+      }
+
+      .puppy-header {
+        height: 2.6rem;
+      }
+
+      .puppy-status {
+        font-size: 1.6rem;
+      }
+
+      .puppy-info {
+        height: 7.5rem;
+        padding: 0.4rem 0;
+      }
+
+      .puppy-name {
+        font-size: 1.8rem;
+      }
+
+      .puppy-gender {
+        font-size: 1.05rem;
+      }
+
+      .puppy-more-button {
+        width: 9.5rem;
+        height: 2.4rem;
+        font-size: 0.95rem;
+      }
+
     }
 
 </style>

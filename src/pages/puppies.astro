@@ -127,7 +127,7 @@ const dbPuppies = await db.select().from(puppies);
 
 </Layout>
 
-<style>
+<style lang="scss">
 
     .filter-parent {
         max-width: 1750px;
@@ -326,7 +326,7 @@ const dbPuppies = await db.select().from(puppies);
     }
 
     /* Mobile Styling */
-    @media (max-width: 768px) {
+    @media (#{$mobile}) {
         .filter-parent,
         .puppy-grid {
             width: calc(100% - 2rem) !important;

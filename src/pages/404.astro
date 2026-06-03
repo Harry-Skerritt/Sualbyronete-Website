@@ -20,7 +20,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     </main>
 </Layout>
 
-<style>
+<style lang="scss">
     .not-found-container {
         width: 100%;
         height: 95dvh;
@@ -99,7 +99,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
 
     /* Mobile Styling */
-    @media (max-width: 768px) {
+    @media (#{$mobile}) {
         .logo {
             max-width: 16rem;
             max-height: 16rem;

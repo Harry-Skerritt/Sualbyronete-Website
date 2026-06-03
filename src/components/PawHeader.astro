@@ -36,7 +36,7 @@ const { text } = Astro.props;
     </div>
 </div>
 
-<style>
+<style lang="scss">
     .page-header {
         display: flex;
         flex-direction: row;
@@ -67,7 +67,7 @@ const { text } = Astro.props;
     }
 
     /* Mobile Styling */
-    @media (max-width: 768px) {
+    @media (#{$mobile}) {
         .header-text {
             font-size: 1.8rem;
             padding: 1rem 1rem;

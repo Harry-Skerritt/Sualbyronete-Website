@@ -58,7 +58,7 @@ const isActive = (href: string) => {
     </div>
 </header>
 
-<style>
+<style lang="scss">
 
     .header-initial {
         position: sticky;
@@ -212,7 +212,7 @@ const isActive = (href: string) => {
         background-color: var(--colour-dark);
     }
 
-    @media(max-width: 768px) {
+    @media(#{$mobile}) {
         .hamburger-btn {
             display: flex;
         }

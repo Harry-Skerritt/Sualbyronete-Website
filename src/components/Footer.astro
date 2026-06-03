@@ -11,7 +11,7 @@ const currentYear = new Date().getFullYear()
     </div>
 </footer>
 
-<style>
+<style lang="scss">
     footer {
         width: 100%;
         max-width: 100%;
@@ -55,7 +55,7 @@ const currentYear = new Date().getFullYear()
     }
 
     /* Mobile Styling */
-    @media(max-width: 768px)
+    @media(#{$mobile})
     {
         footer {
             padding: 1.5rem 1rem;
