@@ -3,10 +3,9 @@
 import Layout from "../layouts/Layout.astro";
 import PawHeader from "../components/PawHeader.astro";
 import TabbedFilter from "../components/TabbedFilter.astro";
+import PuppyCard from "../components/PuppyCard.astro";
 
 import {Icon} from "astro-icon/components";
-
-// Database Connection
 import { db } from "../db/index";
 import { puppies } from "../db/schema";
 
@@ -98,7 +97,28 @@ const dbPuppies = await db.select().from(puppies);
 
     <!-- Content Grid -->
     <div id="puppy-grid" class="puppy-grid">
-        <!-- Filled by DB -->
+        {dbPuppies.map(pup => (
+                <div class="puppy-card-wrapper"
+                     data-breed={pup.breed}
+                     data-gender={pup.gender.toLowerCase()}
+                     data-colour={pup.colour.toLowerCase().replace(/[^a-z]/g, '')}
+                     data-status={pup.status.toLowerCase()}
+                >
+                    <PuppyCard
+                            puppyName={pup.name}
+                            puppyGender={pup.gender}
+                            puppyImage={pup.image}
+                            puppyStatus={pup.status}
+                            puppyBreed={pup.breed}
+                            puppyColour={pup.colour}
+                            puppyID={pup.id || ''}
+                    />
+                </div>
+        ))}
+
+        <div id="no-results-message" class="no-results" style="display: none;">
+            No puppies match your selected filter criteria.
+        </div>
     </div>
 
 
@@ -279,6 +299,10 @@ const dbPuppies = await db.select().from(puppies);
         max-width: 1750px;
         margin: 0 auto 2rem;
         border-radius: 0.6rem;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20.6rem, 1fr));
+        gap: 2rem;
     }
 
     :global(.no-results) {
@@ -296,6 +320,6 @@ const dbPuppies = await db.select().from(puppies);
 
 <script is:inline set:html={`window.PUPPY_DATA = ${JSON.stringify(dbPuppies)};`} />
 
-<script src="../scripts/puppyFilter.js"></script>
+<script src="../scripts/puppyFilter.ts"></script>
 
 

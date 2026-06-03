@@ -10,6 +10,11 @@
     --colour-light: #D9F4F8;
     --colour-white: #F0F9FF;
 
+    --puppy-new-colour: #8041be;
+    --puppy-reserved-colour: #7fbe41;
+    --puppy-sold-colour: #be4141;
+    --puppy-available-colour: #41bebe;
+
     --font-primary: "Playfair Display", serif;
     --font-secondary: "Poppins", sans-serif;
 

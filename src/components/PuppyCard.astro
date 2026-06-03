@@ -1,0 +1,167 @@
+---
+// src/components/PuppyCard.astro
+
+import {Icon} from "astro-icon/components";
+
+interface Props {
+    puppyName: string;
+    puppyGender: string;
+    puppyImage: string;
+    puppyStatus: string;
+    puppyBreed: string;
+    puppyColour: string;
+    puppyID: string;
+}
+
+const { puppyName, puppyGender, puppyImage, puppyStatus, puppyBreed, puppyColour, puppyID } = Astro.props;
+const statusKey = puppyStatus.toLowerCase();
+---
+
+<div class="puppy-card">
+    <div class="puppy-header" data-status={statusKey}>
+        <h1 class="puppy-status">{puppyStatus}</h1>
+    </div>
+
+    <div class="puppy-image">
+        <img
+                src={`/images/puppies/${puppyBreed === 'state-one' ? 'yorkies' : 'biewers'}/${puppyImage}`}
+                alt={`${puppyBreed === 'state-one' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
+        />
+    </div>
+
+    <div class="puppy-info">
+        <p class="puppy-name">{puppyName}</p>
+        <p class="puppy-gender">{puppyGender} | {puppyColour}</p>
+        <button class="puppy-more-button">
+            <Icon name="paw-print" class="button-icon"/>
+            See More
+        </button>
+    </div>
+</div>
+
+
+<style>
+    .puppy-card {
+        width: 20.6rem;
+        height: 30rem;
+        background-color: transparent;
+        border: 5px solid var(--colour-dark);
+        border-radius: 0.9rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .puppy-header{
+        width: 100%;
+        background-color: var(--colour-dark);
+        height: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0.6rem 0.6rem 0 0;
+    }
+
+    .puppy-status {
+        color: var(--colour-white);
+        font-family: var(--font-secondary);
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .puppy-image {
+        width: 100%;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 0% 20%;
+        display: block;
+    }
+
+    .puppy-info {
+        background-color: var(--colour-dark);
+        width: 100%;
+        height: 8rem;
+        align-self: flex-end;
+        flex: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        gap: 0.3rem;
+        padding: 0.5rem 0;
+    }
+
+    .puppy-name {
+        color: var(--colour-white);
+        font-family: var(--font-primary);
+        font-size: 2.2rem;
+        font-weight: bold;
+        text-align: center;
+
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .puppy-gender {
+        color: var(--colour-white);
+        font-family: var(--font-secondary);
+        font-size: 1.2rem;
+        text-align: center;
+        margin: 0;
+    }
+
+    .puppy-more-button {
+        width: 10rem;
+        height: 2.2rem;
+        background-color: var(--colour-primary);
+        color: var(--colour-white);
+        border-radius: 999px;
+        border: none;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        font-family: var(--font-secondary);
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-top: 0.2rem;
+        transition: all 0.25s ease;
+    }
+
+    .puppy-more-button:hover {
+        background-color: var(--colour-light);
+        color: var(--colour-dark);
+    }
+
+    .puppy-more-button:active {
+        background-color: var(--colour-light);
+        color: var(--colour-dark);
+    }
+
+    /* Status Styling */
+    .puppy-header[data-status="new"] {
+        background-color: var(--puppy-new-colour);
+    }
+
+    .puppy-header[data-status="available"] {
+        background-color: var(--puppy-available-colour);
+    }
+
+    .puppy-header[data-status="reserved"] {
+        background-color: var(--puppy-reserved-colour);
+    }
+
+    .puppy-header[data-status="sold"] {
+        background-color: var(--puppy-sold-colour);
+    }
+
+</style>
