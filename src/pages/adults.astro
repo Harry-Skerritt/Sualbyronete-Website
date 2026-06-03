@@ -9,10 +9,10 @@ import TabbedFilter from "../components/TabbedFilter.astro";
 <Layout title="Sualbyronete | Adults">
     <PawHeader text="Parent Dogs"/>
 
-    <div class="filter-container">
+    <div class="filter-parent">
 
         <!-- Breed Filter -->
-        <div class="breed-filter">
+        <div class="tab-filter">
             <TabbedFilter
                     option_one="Yorkshire Terriers"
                     option_one_icon="paw-print"
@@ -24,16 +24,44 @@ import TabbedFilter from "../components/TabbedFilter.astro";
         </div>
 
         <!-- Parent Selector -->
-        <div class="breed-filter">
+        <div class="tab-filter">
             <TabbedFilter
-                    option_one="Dam"
-                    option_one_icon="paw-print"
-                    option_two="Sire"
-                    option_two_icon="paw-print"
+                    option_one="Dams"
+                    option_one_icon="female"
+                    option_two="Sires"
+                    option_two_icon="male"
                     default_selected={1}
-                    class="breed-filter"
+                    class="parent-selector"
             />
         </div>
     </div>
 
 </Layout>
+
+
+<style lang="scss">
+
+  .filter-parent {
+    max-width: 1750px;
+    margin: 0 auto;
+  }
+
+  /* Tab Filters */
+  .tab-filter {
+    border: 2px solid var(--colour-dark);
+    border-radius: 0.9rem;
+    padding: 0.3rem;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .filter-parent {
+      width: calc(100% - 2rem) !important;
+      margin-left: 1rem !important;
+      margin-right: 1rem !important;
+      box-sizing: border-box;
+    }
+  }
+</style>

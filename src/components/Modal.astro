@@ -1,0 +1,162 @@
+---
+// src/components/Modal.astro
+
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+    id: string;
+    header?: string;
+}
+
+const { id, header = "Notification" } = Astro.props;
+---
+
+<!-- Fullscreen Overlay --->
+<div id={id} class="modal-overlay" aria-hidden="true">
+
+    <div class="modal-container" role="dialog" aria-labelledby={`${id}-title`}>
+
+        <!-- Header -->
+        <div class="modal-header">
+            <h2 id={`${id}-title`} class="header-text">{header}</h2>
+            <button type="button" class="close-button" aria-label="Close modal" data-modal-close>
+                <Icon name="close" class="close-icon"/>
+            </button>
+        </div>
+
+        <!-- Body Content -->
+        <div class="modal-body">
+            <slot />
+        </div>
+
+    </div>
+</div>
+
+<style lang="scss">
+  /* Fullscreen Overlay */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-sizing: border-box;
+    padding: 1.5rem;
+
+    pointer-events: none;
+
+    // Triggers
+    opacity: 0;
+    visibility: visible;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+
+    &.is-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
+    }
+  }
+
+  /* Card Layout */
+  .modal-container {
+    background-color: var(--colour-primary);
+    border: 1.5px solid var(--colour-dark);
+    border-radius: 0.6rem;
+    width: 100%;
+    max-width: 32rem;
+    box-sizing: border-box;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+
+    // Open Effect
+    transform: scale(0.96);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .modal-overlay.is-active & {
+      transform: scale(1);
+    }
+  }
+
+  /* Header */
+  .modal-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 1.5rem;
+    padding: 0.2rem 0.7rem;
+  }
+
+  .header-text {
+    font-family: var(--font-secondary);
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--colour-light);
+    margin: 0;
+  }
+
+  /* Interactivity */
+  .close-button {
+    height: 2.2rem;
+    width: 2.2rem;
+    background-color: var(--colour-dark);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.12s ease-in-out;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+
+  .close-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--colour-white);
+    pointer-events: none;
+  }
+
+  /* Content */
+  .modal-body {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 0.7rem;
+  }
+</style>
+
+<script>
+    // Universal auto-closing hook for any instance of our custom modal component
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        const closeBtn = modal.querySelector('[data-modal-close]');
+
+        closeBtn?.addEventListener('click', () => {
+            modal.classList.remove('is-active');
+            modal.setAttribute('aria-hidden', 'true');
+        });
+
+        // Close when clicking directly on the background backdrop shroud overlay
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('is-active');
+                modal.setAttribute('aria-hidden', 'true');
+            }
+        });
+    });
+</script>

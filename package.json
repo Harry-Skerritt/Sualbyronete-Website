@@ -14,6 +14,7 @@
   "dependencies": {
     "@fontsource/playfair-display": "^5.2.8",
     "@libsql/client": "^0.17.3",
+    "accessible-astro-components": "^5.3.1",
     "astro": "^6.4.2",
     "astro-icon": "^1.1.5",
     "drizzle-orm": "^0.45.2",

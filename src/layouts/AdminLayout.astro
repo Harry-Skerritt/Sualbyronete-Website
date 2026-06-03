@@ -1,0 +1,28 @@
+---
+// src/layouts/AdminLayout.astro
+import "../styles/global.css";
+
+const baseURL = import.meta.env.BASE_URL;
+
+interface Props {
+    title?: string;
+}
+
+const { title = "Sualbyronette | Admin Panel"} = Astro.props;
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href=`${baseURL}favicon.svg` />
+    <link rel="icon" href=`${baseURL}favicon.ico` />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+</head>
+<body>
+
+<slot />
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+---
+// src/pages/admin/index.astro
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import Modal from "../../components/Modal.astro"
+---
+
+<AdminLayout title="Sualbyronete | Admin Login">
+    <main class="admin-login-view">
+
+        <!-- Form Wrapper -->
+        <div class="login-card">
+
+            <!-- Header -->
+            <header class="login-header">
+                <div class="logo">
+                    <img src="/logo/Logo.png" alt="Sualbyronete Logo"/>
+                </div>
+                <h1 class="admin-title">Admin Login</h1>
+            </header>
+
+            <!-- Main Form -->
+            <div class="form-wrapper">
+                <div id="error-banner" class="error-banner" style="display: none;">
+                    <p id="error-text"></p>
+                </div>
+
+                <form method="POST" class="login-form" id="login-form">
+                    <div class="field-group">
+                        <label for="uname">Username:</label>
+                        <input
+                                type="text"
+                                id="uname"
+                                placeholder="Username..."
+                                name="uname"
+                                required
+                                autocomplete="username"
+                        />
+                    </div>
+
+                    <div class="field-group">
+                        <label for="psw">Password:</label>
+                        <input
+                                type="password"
+                                id="psw"
+                                placeholder="Password..."
+                                name="psw"
+                                required
+                                autocomplete="current-password"
+                        />
+                    </div>
+
+                    <!-- Action Row -->
+                    <div class="action-utilities">
+                        <label class="remember-check">
+                            <input type="checkbox" name="remember">
+                            <span class="checkbox-box"></span>
+                            <span class="label-text">Remember Me</span>
+                        </label>
+                        <a id="forgot-link" class="forgot-trigger">Forgot Password?</a>
+                    </div>
+
+                    <div class="button-wrapper">
+                        <button type="submit" class="login-btn">Log In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <Modal id="forgot-modal" header="Forgot Password">
+            <div class="forgot-modal-content">
+                <p class="modal-desc">Enter your admin email to be sent the reset link</p>
+
+                <form id="forgot-form" class="modal-form">
+                    <div class="field-group">
+                        <label for="email-entry">Email:</label>
+                        <input
+                                type="email"
+                                id="email-entry"
+                                name="email-entry"
+                                placeholder="Email address..."
+                                required
+                        />
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" id="modal-cancel" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="send-btn">Send Link</button>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+    </main>
+</AdminLayout>
+
+<style lang="scss">
+  /* Main Containers */
+  .admin-login-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 1.5rem;
+    background-color: var(--colour-primary);
+  }
+
+  .login-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 32rem;
+  }
+
+  /* Header */
+  .login-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1.2rem;
+    width: 100%;
+  }
+
+  .logo {
+    margin-bottom: 0.5rem;
+    img {
+      max-width: 18rem;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  .admin-title {
+    font-family: var(--font-primary);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--colour-dark);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* Form */
+  .form-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Text Fields */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+
+    label {
+      font-family: var(--font-primary);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--colour-dark);
+      margin-bottom: 0.3rem;
+    }
+
+    input {
+      font-family: var(--font-secondary);
+      background-color: rgba(0, 0, 0, 0.07);
+      color: var(--colour-dark);
+      font-size: 1.2rem;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--colour-dark);
+      border-radius: 0.6rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: background-color 0.2s ease;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.55);
+        font-style: italic;
+      }
+
+      &:focus {
+        background-color: rgba(0, 0, 0, 0.11);
+      }
+    }
+  }
+
+  /* Action Row */
+  .action-utilities {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .remember-check {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+
+      &:checked ~ .checkbox-box {
+        background-color: var(--colour-dark);
+      }
+    }
+
+    .checkbox-box {
+      height: 1.3rem;
+      width: 1.3rem;
+      background-color: rgba(255, 255, 255, 0.4);
+      border-radius: 0.35rem;
+      display: inline-block;
+      transition: background-color 0.2s ease;
+    }
+
+    .label-text {
+      font-family: var(--font-secondary);
+      font-size: 1.1rem;
+      color: var(--colour-white);
+      margin-left: 0.5rem;
+      font-weight: 500;
+    }
+  }
+
+  .forgot-trigger {
+    font-family: var(--font-secondary);
+    font-size: 1.1rem;
+    color: var(--colour-white);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  /* Login Button */
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .login-btn {
+    width: 55%;
+    max-width: 18rem;
+    background-color: var(--colour-dark);
+    color: var(--colour-white);
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    font-weight: 800;
+    padding: 0.65rem;
+    border: none;
+    border-radius: 0.7rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.04);
+    transition: transform 0.1s ease, filter 0.2s ease;
+
+    &:hover {
+      filter: brightness(1.06);
+    }
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  /* Error Notification */
+  .error-banner {
+    background-color: rgba(239, 68, 68, 0.2);
+    border: 1.5px solid rgb(239, 68, 68);
+    border-radius: 0.6rem;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    p {
+      color: var(--colour-white);
+      font-family: var(--font-secondary);
+      font-size: 1.1rem;
+      margin: 0;
+      text-align: center;
+    }
+  }
+
+  /* Forgot Password Modal */
+  /* Modal Overrides */
+  .modal-desc {
+    font-family: var(--font-secondary);
+    font-size: 1.1rem;
+    color: var(--colour-white);
+    margin: 0 0 1.5rem 0;
+    line-height: 1.4;
+  }
+
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Matching Input Style */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
+    width: 100%;
+
+    label {
+      font-family: var(--font-secondary);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--colour-dark);
+      margin-bottom: 0.3rem;
+    }
+
+    input {
+      font-family: var(--font-secondary);
+      background-color: rgba(0, 0, 0, 0.07);
+      color: var(--colour-dark);
+      font-size: 1.2rem;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--colour-dark);
+      border-radius: 0.6rem;
+      outline: none;
+      box-sizing: border-box;
+      width: 100%;
+      transition: background-color 0.2s ease;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.55);
+        font-style: italic;
+      }
+
+      &:focus {
+        background-color: rgba(0, 0, 0, 0.11);
+      }
+    }
+  }
+
+  /* Capsule buttons */
+  .modal-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    padding-bottom: 1rem;
+  }
+
+  .cancel-btn, .send-btn {
+    font-family: var(--font-secondary);
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 0.55rem 1.2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: transform 0.1s ease, filter 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .cancel-btn {
+    background-color: transparent;
+    border: 1.5px solid var(--colour-dark);
+    color: var(--colour-dark);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .send-btn {
+    background-color: var(--colour-dark);
+    border: none;
+    color: var(--colour-white);
+
+    &:hover {
+      filter: brightness(1.06);
+    }
+  }
+
+
+
+</style>
+
+
+<script>
+    import "../../scripts/admin/login.ts"
+
+    /* Modal */
+    const forgotLink = document.getElementById('forgot-link');
+    const modalCancel = document.getElementById('modal-cancel');
+    const targetModal = document.getElementById('forgot-modal');
+    const forgotForm = document.getElementById('forgot-form');
+
+    forgotLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (targetModal) {
+            targetModal.classList.add('is-active');
+            targetModal.setAttribute('aria-hidden', 'false');
+            targetModal.querySelector('input')?.focus();
+        }
+    });
+
+    modalCancel?.addEventListener('click', () => {
+        if (targetModal)
+        {
+            targetModal.classList.remove('is-active');
+            targetModal.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    forgotForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailVal = (document.getElementById('email-entry') as HTMLInputElement).value;
+
+        alert(`Reset email sent to: ${emailVal}`);
+
+        if (targetModal) {
+            targetModal.classList.remove('is-active');
+            targetModal.setAttribute('aria-hidden', 'true');
+        }
+    });
+</script>

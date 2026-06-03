@@ -1,43 +1,50 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
+export const adults = sqliteTable('adults', {
+    seqId: integer('seq_id').primaryKey({ autoIncrement: true}),
+    breed: text('breed', { enum: ["state-one", "state-two"] }).notNull(),
+    gender: text('gender').notNull(),
+    id: text('id').generatedAlwaysAs(
+        () => sql`
+            (CASE WHEN LOWER(breed) = 'state-one' THEN 'YT' ELSE 'BT' END) ||
+            PRINTF('%03d', seq_id) ||
+            (CASE WHEN LOWER(gender) = 'female' THEN '-D' ELSE '-S' END)
+        `
+    ).unique().notNull(),
+
+    name: text('name').notNull(),
+    colour: text('colour').notNull(),
+    image: text('image').notNull().default("default.png"),
+    dob: text('dob').notNull(),
+    regID: text('regID').notNull().default("#0000"),
+    forSale: integer('forSale', { mode: 'boolean' }).notNull().default(false),
+    puppies: text('puppies', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+});
+
 export const puppies = sqliteTable('puppies', {
     seqID: integer('seq_id').primaryKey({ autoIncrement: true }),
     breed: text('breed', { enum: ["state-one", "state-two"] }).notNull(),
     id: text('id').generatedAlwaysAs(
-        () => sql`CASE
-              WHEN breed = 'state-one' THEN 'YT' || PRINTF('%03d', seq_id)
+        () => sql`
+            CASE
+              WHEN LOWER(breed) = 'state-one' THEN 'YT' || PRINTF('%03d', seq_id)
               ELSE 'BT' || PRINTF('%03d', seq_id)
-            END`
-    ),
-    name: text('name').notNull(),
-    gender: text('gender', { enum: ["Male", "Female"] }).notNull(),
-    colour: text('colour', { enum: ["Black & Tan", "Steel & Tan", "Blue & Tan", "Black & Gold", "Black", "Black & White", "Blue & White", "White", "Blue"]}).notNull(),
-    status: text('status', { enum: ["New", "Available", "Reserved", "Sold"]}).notNull(),
-    image: text('image').notNull(),
+            END
+        `
+    ).unique().notNull(),
 
-    dob: text('dob').notNull(),
-    age: text('age').notNull(),
-    mother: text('mother').notNull(),
-    father: text('father').notNull(),
-    availableFrom: text('availableFrom').notNull(),
-    regID: text('regID').notNull(),
-})
 
-/* Deployment?
-export const puppies = sqliteTable('puppies', {
-    seqID: integer('seq_id').primaryKey({ autoIncrement: true }),
-    breed: text('breed').notNull(),
-    id: text('id').generatedAlwaysAs(
-        () => sql`CASE
-              WHEN breed = 'state-one' THEN 'YT' || PRINTF('%03d', seq_id)
-              ELSE 'BT' || PRINTF('%03d', seq_id)
-            END`
-    ),
     name: text('name').notNull(),
     gender: text('gender').notNull(),
     colour: text('colour').notNull(),
     status: text('status').notNull(),
     image: text('image').notNull(),
+    dob: text('dob').notNull(),
+
+    mother: text('mother').notNull().references(() => adults.id),
+    father: text('father').notNull().references(() => adults.id),
+
+    availableFrom: text('availableFrom').notNull(),
+    regID: text('regID').notNull().default("#0000"),
 })
- */
