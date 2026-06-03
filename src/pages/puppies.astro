@@ -44,10 +44,10 @@ const dbPuppies = await db.select().from(puppies);
                     <button class="filter-toggle" aria-label="Toggle Filters">
                         <Icon name="filter-bars" class="filter-icon"/>
                     </button>
-                    <button class="reset-button">Reset Filters</button>
                 </div>
 
                 <div class="other-filters">
+
                     <div class="dropdown-filter">
                         <label for="gender-select" class="dropdown-label">Gender:</label>
                         <div class="select-wrapper">
@@ -89,6 +89,9 @@ const dbPuppies = await db.select().from(puppies);
                             </select>
                         </div>
                     </div>
+
+                    <button class="reset-button">Reset Filters</button>
+
                 </div>
             </div>
 
@@ -267,11 +270,15 @@ const dbPuppies = await db.select().from(puppies);
         border-radius: 0.4rem;
         padding: 0.5rem 1rem;
         transition: all 0.25s ease;
+        font-family: var(--font-secondary);
+        font-size: 0.9rem;
+        cursor: pointer;
     }
 
     .reset-button:hover {
         background-color: var(--colour-primary);
         border: 2px solid var(--colour-dark);
+        color: var(--colour-dark);
     }
 
 
@@ -303,6 +310,9 @@ const dbPuppies = await db.select().from(puppies);
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(20.6rem, 1fr));
         gap: 2rem;
+
+        justify-items: center;
+        justify-content: center;
     }
 
     :global(.no-results) {
@@ -313,6 +323,108 @@ const dbPuppies = await db.select().from(puppies);
         font-family: var(--font-secondary);
         color: var(--colour-dark);
         font-size: 1.2rem;
+    }
+
+    /* Mobile Styling */
+    @media (max-width: 768px) {
+        .filter-parent,
+        .puppy-grid {
+            width: calc(100% - 2rem) !important;
+            margin-left: 1rem !important;
+            margin-right: 1rem !important;
+            box-sizing: border-box;
+        }
+
+        .filter-controls-row {
+            flex-direction: column-reverse;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .result-count {
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .filter-container {
+            width: 100%;
+            flex-direction: column;
+            height: auto;
+            min-height: 3.5rem;
+            padding: 0.8rem;
+            gap: 1rem;
+            box-sizing: border-box;
+        }
+
+        .filter-header {
+            width: 100%;
+            justify-content: space-between;
+            flex-direction: row;
+            order: 1;
+        }
+
+        .filter-header .reset-button {
+            position: relative;
+            width: 100%;
+            height: 2.8rem;
+            margin-top: 0.4rem;
+
+            order: 3;
+            align-items: center;
+            justify-content: center;
+        }
+
+        [data-expanded="true"] .filter-container .reset-button {
+            display: flex !important;
+            width: 100%;
+            height: 2.8rem;
+            align-items: center;
+            justify-content: center;
+            order: 3;
+            margin-top: 0.2rem;
+        }
+
+        .other-filters {
+            width: 100%;
+            flex-direction: column-reverse;
+            gap: 0.8rem;
+            order: 2;
+        }
+
+        [data-expanded="true"] .filter-toggle {
+            margin-left: 0;
+        }
+
+        .dropdown-filter {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0;
+            gap: 0.2rem;
+        }
+
+        .dropdown-label {
+            font-size: 1rem;
+            padding-left: 0.2rem;
+        }
+
+        .select-wrapper {
+            width: 100%;
+        }
+
+        select {
+            width: 100%;
+            height: 2.8rem;
+            font-size: 1.05rem;
+            background-color: var(--colour-white);
+            color: var(--colour-dark);
+        }
+
+        .puppy-grid {
+            padding: 1rem;
+            gap: 1.5rem;
+        }
+
     }
 
 </style>

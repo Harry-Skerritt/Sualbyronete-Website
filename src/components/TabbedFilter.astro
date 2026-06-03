@@ -64,6 +64,7 @@ const {
         cursor: pointer;
         z-index: 2;
         transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        padding: 0 0.5rem;
     }
 
     .filter-option h1 {
@@ -74,6 +75,7 @@ const {
     .option-icon {
         width: 2.5rem;
         height: 2.5rem;
+        flex-shrink: 0;
     }
 
     /* --- SLIDING INDICATOR PILL --- */
@@ -91,7 +93,6 @@ const {
     }
 
 
-
     /* State 1 */
     [data-active-tab="one"] .sliding-indicator {
         transform: translateX(0);
@@ -105,6 +106,35 @@ const {
     [data-active-tab="one"] [data-tab-index="one"],
     [data-active-tab="two"] [data-tab-index="two"] {
         color: var(--colour-light);
+    }
+
+    /* Mobile Styling */
+    @media (max-width: 768px) {
+        .filter-body {
+            height: 3rem;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            gap: 0.5rem;
+        }
+
+        .filter-option h1 {
+            font-size: 1.05rem;
+        }
+
+        .option-icon {
+            width: 1.6rem;
+            height: 1.6rem;
+        }
+
+        .sliding-indicator {
+            width: calc(50% - 0.25rem);
+        }
+
+        [data-active-tab="two"] .sliding-indicator {
+            transform: translateX(calc(100% + 0.5rem));
+        }
     }
 </style>
 

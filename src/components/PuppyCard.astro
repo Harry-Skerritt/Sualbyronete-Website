@@ -32,10 +32,10 @@ const statusKey = puppyStatus.toLowerCase();
     <div class="puppy-info">
         <p class="puppy-name">{puppyName}</p>
         <p class="puppy-gender">{puppyGender} | {puppyColour}</p>
-        <button class="puppy-more-button">
+        <a href={`/puppies/${puppyID}`} class="puppy-more-button">
             <Icon name="paw-print" class="button-icon"/>
             See More
-        </button>
+        </a>
     </div>
 </div>
 
@@ -125,7 +125,7 @@ const statusKey = puppyStatus.toLowerCase();
         color: var(--colour-white);
         border-radius: 999px;
         border: none;
-
+        text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;

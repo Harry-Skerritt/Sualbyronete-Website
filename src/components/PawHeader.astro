@@ -65,4 +65,21 @@ const { text } = Astro.props;
         height: 2.5rem;
         color: var(--colour-dark);
     }
+
+    /* Mobile Styling */
+    @media (max-width: 768px) {
+        .header-text {
+            font-size: 1.8rem;
+            padding: 1rem 1rem;
+            white-space: normal;
+        }
+
+        .paw-line {
+            gap: 1rem;
+        }
+
+        .paw-icon:nth-child(n+2) {
+            display: none;
+        }
+    }
 </style>

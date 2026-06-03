@@ -1,0 +1,46 @@
+---
+// src/pages/puppies/[id].astro
+import Layout from "../../layouts/Layout.astro"
+import { db } from "../../db/index";
+import { puppies } from "../../db/schema";
+import { eq } from "drizzle-orm";
+
+// Generate Static Pages
+export async function getStaticPaths() {
+    const allPuppies = await db.select().from(puppies);
+
+    return allPuppies.map((pup) => {
+        return {
+            params: { id: pup.id || '' },
+        };
+    });
+}
+
+// Get ID Passed in
+const { id } = Astro.params;
+if (!id) {
+    return Astro.redirect('/404');
+}
+
+// Query DB
+const [puppy] = await db.select().from(puppies).where(eq(puppies.id, id));
+if (!puppy) {
+    return Astro.redirect('/404');
+}
+---
+
+<Layout title={`Meet ${puppy.name}`}>
+    <main style="padding: 4rem; text-align: center; color: var(--colour-dark); font-family: var(--font-secondary);">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">This is the profile page for {puppy.name}!</h1>
+
+        <div style="background: #f5f5f5; padding: 2rem; border-radius: 8px; display: inline-block; text-align: left; border: 2px solid var(--colour-dark);">
+            <p><strong>ID Code:</strong> {id}</p>
+            <p><strong>Breed:</strong> {puppy.breed === 'state-one' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</p>
+            <p><strong>Status:</strong> {puppy.status}</p>
+            <p><strong>Gender/Color:</strong> {puppy.gender} - {puppy.colour}</p>
+        </div>
+
+        <br /><br />
+        <a href="/puppies" style="color: var(--colour-primary); font-weight: bold;">← Back to Grid Layout</a>
+    </main>
+</Layout>
