@@ -15,6 +15,13 @@ export const puppies = sqliteTable('puppies', {
     colour: text('colour', { enum: ["Black & Tan", "Steel & Tan", "Blue & Tan", "Black & Gold", "Black", "Black & White", "Blue & White", "White", "Blue"]}).notNull(),
     status: text('status', { enum: ["New", "Available", "Reserved", "Sold"]}).notNull(),
     image: text('image').notNull(),
+
+    dob: text('dob').notNull(),
+    age: text('age').notNull(),
+    mother: text('mother').notNull(),
+    father: text('father').notNull(),
+    availableFrom: text('availableFrom').notNull(),
+    regID: text('regID').notNull(),
 })
 
 /* Deployment?

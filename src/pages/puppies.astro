@@ -13,118 +13,120 @@ const dbPuppies = await db.select().from(puppies);
 ---
 
 <Layout title="Sualbyronete | Puppies">
-    <PawHeader text="Available Puppies"/>
+    <main>
 
-    <!-- Filters -->
-    <div class="filter-parent">
+        <PawHeader text="Available Puppies"/>
 
-        <!-- Breed Filter -->
-        <div class="breed-filter">
-            <TabbedFilter
-                    option_one="Yorkshire Terriers"
-                    option_one_icon="paw-print"
-                    option_two="Biewer Terriers"
-                    option_two_icon="paw-print"
-                    default_selected={1}
-                    class="breed-filter"
-            />
-        </div>
+        <!-- Filters -->
+        <div class="filter-parent">
 
-
-
-        <!-- Control Row -->
-        <div class="filter-controls-row">
-            <!-- Result Count (Left) -->
-            <h1 class="result-count">Puppies Available: 0</h1>
-
-            <!-- Filter Toggle (Right) -->
-            <div class="filter-container" data-expanded="false">
-                <div class="filter-header">
-                    <h1 class="header-text">Filters</h1>
-                    <button class="filter-toggle" aria-label="Toggle Filters">
-                        <Icon name="filter-bars" class="filter-icon"/>
-                    </button>
-                </div>
-
-                <div class="other-filters">
-
-                    <div class="dropdown-filter">
-                        <label for="gender-select" class="dropdown-label">Gender:</label>
-                        <div class="select-wrapper">
-                            <select id="gender-select" data-filter-select>
-                                <option value="all" selected>All</option>
-                                <option value="female">Female</option>
-                                <option value="male">Male</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="dropdown-filter">
-                        <label for="colour-select" class="dropdown-label">Colour:</label>
-                        <div class="select-wrapper">
-                            <select id="colour-select" data-filter-select>
-                                <option value="all" selected>All</option>
-                                <option value="black-tan">Black & Tan</option>
-                                <option value="steel-tan">Steel & Tan</option>
-                                <option value="blue-tan">Blue & Tan</option>
-                                <option value="black-gold">Black & Gold</option>
-                                <option value="black">Black</option>
-                                <option value="black-white">Black & White</option>
-                                <option value="blue-white">Blue & White</option>
-                                <option value="white">White</option>
-                                <option value="blue">Blue</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="dropdown-filter">
-                        <label for="availability-select" class="dropdown-label">Availability:</label>
-                        <div class="select-wrapper">
-                            <select id="availability-select" data-filter-select>
-                                <option value="all" selected>All</option>
-                                <option value="new">New</option>
-                                <option value="available">Available</option>
-                                <option value="reserved">Reserved</option>
-                                <option value="sold">Sold</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button class="reset-button">Reset Filters</button>
-
-                </div>
+            <!-- Breed Filter -->
+            <div class="breed-filter">
+                <TabbedFilter
+                        option_one="Yorkshire Terriers"
+                        option_one_icon="paw-print"
+                        option_two="Biewer Terriers"
+                        option_two_icon="paw-print"
+                        default_selected={1}
+                        class="breed-filter"
+                />
             </div>
 
-        </div>
-    </div>
 
-    <!-- Content Grid -->
-    <div id="puppy-grid" class="puppy-grid">
-        {dbPuppies.map(pup => (
-                <div class="puppy-card-wrapper"
-                     data-breed={pup.breed}
-                     data-gender={pup.gender.toLowerCase()}
-                     data-colour={pup.colour.toLowerCase().replace(/[^a-z]/g, '')}
-                     data-status={pup.status.toLowerCase()}
-                >
-                    <PuppyCard
-                            puppyName={pup.name}
-                            puppyGender={pup.gender}
-                            puppyImage={pup.image}
-                            puppyStatus={pup.status}
-                            puppyBreed={pup.breed}
-                            puppyColour={pup.colour}
-                            puppyID={pup.id || ''}
-                    />
+
+            <!-- Control Row -->
+            <div class="filter-controls-row">
+                <!-- Result Count (Left) -->
+                <h1 class="result-count">Puppies Available: 0</h1>
+
+                <!-- Filter Toggle (Right) -->
+                <div class="filter-container" data-expanded="false">
+                    <div class="filter-header">
+                        <h1 class="header-text">Filters</h1>
+                        <button class="filter-toggle" aria-label="Toggle Filters">
+                            <Icon name="filter-bars" class="filter-icon"/>
+                        </button>
+                    </div>
+
+                    <div class="other-filters">
+
+                        <div class="dropdown-filter">
+                            <label for="gender-select" class="dropdown-label">Gender:</label>
+                            <div class="select-wrapper">
+                                <select id="gender-select" data-filter-select>
+                                    <option value="all" selected>All</option>
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-filter">
+                            <label for="colour-select" class="dropdown-label">Colour:</label>
+                            <div class="select-wrapper">
+                                <select id="colour-select" data-filter-select>
+                                    <option value="all" selected>All</option>
+                                    <option value="black-tan">Black & Tan</option>
+                                    <option value="steel-tan">Steel & Tan</option>
+                                    <option value="blue-tan">Blue & Tan</option>
+                                    <option value="black-gold">Black & Gold</option>
+                                    <option value="black">Black</option>
+                                    <option value="black-white">Black & White</option>
+                                    <option value="blue-white">Blue & White</option>
+                                    <option value="white">White</option>
+                                    <option value="blue">Blue</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="dropdown-filter">
+                            <label for="availability-select" class="dropdown-label">Availability:</label>
+                            <div class="select-wrapper">
+                                <select id="availability-select" data-filter-select>
+                                    <option value="all" selected>All</option>
+                                    <option value="new">New</option>
+                                    <option value="available">Available</option>
+                                    <option value="reserved">Reserved</option>
+                                    <option value="sold">Sold</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="reset-button">Reset Filters</button>
+
+                    </div>
                 </div>
-        ))}
 
-        <div id="no-results-message" class="no-results" style="display: none;">
-            No puppies match your selected filter criteria.
+            </div>
         </div>
-    </div>
 
+        <!-- Content Grid -->
+        <div id="puppy-grid" class="puppy-grid">
+            {dbPuppies.map(pup => (
+                    <div class="puppy-card-wrapper"
+                         data-breed={pup.breed}
+                         data-gender={pup.gender.toLowerCase()}
+                         data-colour={pup.colour.toLowerCase().replace(/[^a-z]/g, '')}
+                         data-status={pup.status.toLowerCase()}
+                    >
+                        <PuppyCard
+                                puppyName={pup.name}
+                                puppyGender={pup.gender}
+                                puppyImage={pup.image}
+                                puppyStatus={pup.status}
+                                puppyBreed={pup.breed}
+                                puppyColour={pup.colour}
+                                puppyID={pup.id || ''}
+                        />
+                    </div>
+            ))}
 
+            <div id="no-results-message" class="no-results" style="display: none;">
+                No puppies match your selected filter criteria.
+            </div>
+        </div>
+
+    </main>
 </Layout>
 
 <style lang="scss">

@@ -82,6 +82,7 @@ const statusKey = puppyStatus.toLowerCase();
         object-fit: cover;
         object-position: 0% 20%;
         display: block;
+        aspect-ratio: 1 / 1;
     }
 
     .puppy-info {
@@ -164,6 +165,10 @@ const statusKey = puppyStatus.toLowerCase();
         background-color: var(--puppy-sold-colour);
     }
 
+    .puppy-header[data-status="not available"] {
+      background-color: var(--puppy-not-available-colour);
+    }
+
     /* Mobile Styling */
     @media (#{$mobile}) {
       .puppy-card {
@@ -179,6 +184,12 @@ const statusKey = puppyStatus.toLowerCase();
 
       .puppy-status {
         font-size: 1.6rem;
+      }
+
+      .puppy-image {
+        height: 17.9rem;
+        flex-shrink: 0;
+        aspect-ratio: 1 / 1;
       }
 
       .puppy-info {
