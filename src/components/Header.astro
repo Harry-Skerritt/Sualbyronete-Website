@@ -15,8 +15,15 @@ const links = [
 ];
 
 const isActive = (href: string) => {
-    const normalise = (path: string) => path.replace(/\/$/, "");
-    return normalise(pathname) === normalise(href);
+    const normalise = (path: string) => path.replace(/\/$/, "").toLowerCase();
+    const currentPath = normalise(pathname);
+    const linkPath = normalise(href);
+
+    if (linkPath == normalise(baseURL) || linkPath === "") {
+        return currentPath === linkPath || currentPath === "";
+    }
+
+    return currentPath === linkPath || currentPath.startsWith(linkPath + '/');
 }
 ---
 
