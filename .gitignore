@@ -22,3 +22,13 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Database and internal states
+local.db
+local.db-journal
+.wrangler/
+migrations/
+
+# Secrets and Creds
+.env
+.env.local

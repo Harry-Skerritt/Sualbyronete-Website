@@ -1,0 +1,39 @@
+---
+// src/pages/adults.astro
+import Layout from "../layouts/Layout.astro";
+import { Icon } from 'astro-icon/components'
+import PawHeader from "../components/PawHeader.astro";
+import TabbedFilter from "../components/TabbedFilter.astro";
+---
+
+<Layout title="Sualbyronete | Adults">
+    <PawHeader text="Parent Dogs"/>
+
+    <div class="filter-container">
+
+        <!-- Breed Filter -->
+        <div class="breed-filter">
+            <TabbedFilter
+                    option_one="Yorkshire Terriers"
+                    option_one_icon="paw-print"
+                    option_two="Biewer Terriers"
+                    option_two_icon="paw-print"
+                    default_selected={1}
+                    class="breed-filter"
+            />
+        </div>
+
+        <!-- Parent Selector -->
+        <div class="breed-filter">
+            <TabbedFilter
+                    option_one="Dam"
+                    option_one_icon="paw-print"
+                    option_two="Sire"
+                    option_two_icon="paw-print"
+                    default_selected={1}
+                    class="breed-filter"
+            />
+        </div>
+    </div>
+
+</Layout>

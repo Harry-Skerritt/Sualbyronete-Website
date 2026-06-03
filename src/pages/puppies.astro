@@ -1,7 +1,301 @@
 ---
 // src/pages/puppies.astro
-import Layout from "../layouts/Layout.astro";---
+import Layout from "../layouts/Layout.astro";
+import PawHeader from "../components/PawHeader.astro";
+import TabbedFilter from "../components/TabbedFilter.astro";
+
+import {Icon} from "astro-icon/components";
+
+// Database Connection
+import { db } from "../db/index";
+import { puppies } from "../db/schema";
+
+const dbPuppies = await db.select().from(puppies);
+---
 
 <Layout title="Sualbyronete | Puppies">
+    <PawHeader text="Available Puppies"/>
+
+    <!-- Filters -->
+    <div class="filter-parent">
+
+        <!-- Breed Filter -->
+        <div class="breed-filter">
+            <TabbedFilter
+                    option_one="Yorkshire Terriers"
+                    option_one_icon="paw-print"
+                    option_two="Biewer Terriers"
+                    option_two_icon="paw-print"
+                    default_selected={1}
+                    class="breed-filter"
+            />
+        </div>
+
+
+
+        <!-- Control Row -->
+        <div class="filter-controls-row">
+            <!-- Result Count (Left) -->
+            <h1 class="result-count">Puppies Available: 0</h1>
+
+            <!-- Filter Toggle (Right) -->
+            <div class="filter-container" data-expanded="false">
+                <div class="filter-header">
+                    <h1 class="header-text">Filters</h1>
+                    <button class="filter-toggle" aria-label="Toggle Filters">
+                        <Icon name="filter-bars" class="filter-icon"/>
+                    </button>
+                    <button class="reset-button">Reset Filters</button>
+                </div>
+
+                <div class="other-filters">
+                    <div class="dropdown-filter">
+                        <label for="gender-select" class="dropdown-label">Gender:</label>
+                        <div class="select-wrapper">
+                            <select id="gender-select" data-filter-select>
+                                <option value="all" selected>All</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-filter">
+                        <label for="colour-select" class="dropdown-label">Colour:</label>
+                        <div class="select-wrapper">
+                            <select id="colour-select" data-filter-select>
+                                <option value="all" selected>All</option>
+                                <option value="black-tan">Black & Tan</option>
+                                <option value="steel-tan">Steel & Tan</option>
+                                <option value="blue-tan">Blue & Tan</option>
+                                <option value="black-gold">Black & Gold</option>
+                                <option value="black">Black</option>
+                                <option value="black-white">Black & White</option>
+                                <option value="blue-white">Blue & White</option>
+                                <option value="white">White</option>
+                                <option value="blue">Blue</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-filter">
+                        <label for="availability-select" class="dropdown-label">Availability:</label>
+                        <div class="select-wrapper">
+                            <select id="availability-select" data-filter-select>
+                                <option value="all" selected>All</option>
+                                <option value="new">New</option>
+                                <option value="available">Available</option>
+                                <option value="reserved">Reserved</option>
+                                <option value="sold">Sold</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div id="puppy-grid" class="puppy-grid">
+        <!-- Filled by DB -->
+    </div>
+
 
 </Layout>
+
+<style>
+
+    .filter-parent {
+        max-width: 1750px;
+        margin: 0 auto;
+    }
+
+    /* Breed Filters */
+    .breed-filter {
+        border: 2px solid var(--colour-dark);
+        border-radius: 0.9rem;
+        padding: 0.3rem;
+        width: 100%;
+    }
+
+    /* Row Panel */
+    .filter-controls-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin: 0.75rem 0 1rem 0;
+    }
+
+    /* Results */
+    .result-count {
+        font-family: var(--font-secondary);
+        font-size: 1.4rem;
+        color: var(--colour-dark);
+        margin: 0;
+        font-weight: 700;
+    }
+
+    /* Root Panel */
+    .filter-container {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 1.2rem;
+        background-color: var(--colour-primary);
+        border: 2px solid var(--colour-dark);
+
+        width: max-content;
+        margin-left: auto;
+        height: 4rem;
+    }
+
+    /* Filter Buttons */
+    .filter-header{
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .header-text {
+        font-family: var(--font-secondary);
+        font-size: 1.1rem;
+        color: var(--colour-dark);
+        margin: 0;
+        font-weight: 700;
+    }
+
+    /* Header Dropdown */
+    .other-filters {
+        display: none;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Dropdowns */
+    .dropdown-filter {
+        display: flex;
+        flex-direction: row;
+        gap: 0.4rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.6rem;
+    }
+
+    .dropdown-label {
+        font-family: var(--font-secondary);
+        font-size: 1.1rem;
+        color: var(--colour-dark);
+        font-weight: 700;
+    }
+
+    select {
+        width: 8rem;
+        height: 1.8rem;
+        border: 2px solid var(--colour-dark);
+        border-radius: 0.4rem;
+        background-color: var(--colour-primary);
+        color: var(--colour-light);
+        font-size: 0.9rem;
+        font-weight: 400;
+        font-family: var(--font-secondary);
+        padding-left: 0.4rem;
+        cursor: pointer;
+    }
+
+
+    /* Toggle Filters Button */
+    .filter-toggle {
+        border-radius: 100%;
+        width: 2.2rem;
+        height: 2.2rem;
+        background-color: var(--colour-primary);
+        border: 2px solid var(--colour-dark);
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .filter-icon {
+        width: 60%;
+        height: 60%;
+        color: var(--colour-light);
+        transition: all 0.25s ease;
+    }
+
+    .filter-toggle:hover {
+        background-color: var(--colour-dark);
+    }
+
+    /* Reset Button */
+    .reset-button {
+        display: none;
+        background-color: var(--colour-dark);
+        border: 2px solid transparent;
+        color: var(--colour-light);
+        border-radius: 0.4rem;
+        padding: 0.5rem 1rem;
+        transition: all 0.25s ease;
+    }
+
+    .reset-button:hover {
+        background-color: var(--colour-primary);
+        border: 2px solid var(--colour-dark);
+    }
+
+
+    /* Expanded Filters */
+    [data-expanded="true"] .other-filters {
+        display: flex;
+    }
+
+    [data-expanded="true"] .reset-button {
+        display: flex;
+    }
+
+    [data-expanded="true"] .filter-toggle {
+        background-color: var(--colour-dark);
+        margin-left: 1rem;
+    }
+    [data-expanded="true"] .filter-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Puppy Grid */
+    .puppy-grid {
+        border: 2px solid var(--colour-dark);
+        padding: 2rem;
+        max-width: 1750px;
+        margin: 0 auto 2rem;
+        border-radius: 0.6rem;
+    }
+
+    :global(.no-results) {
+        grid-column: 1/-1;
+        padding: 2rem;
+        text-align: center;
+        font-weight: bold;
+        font-family: var(--font-secondary);
+        color: var(--colour-dark);
+        font-size: 1.2rem;
+    }
+
+</style>
+
+
+<script is:inline set:html={`window.PUPPY_DATA = ${JSON.stringify(dbPuppies)};`} />
+
+<script src="../scripts/puppyFilter.js"></script>
+
+

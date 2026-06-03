@@ -1,0 +1,68 @@
+---
+// src/components/PawHeader.astro
+
+import {Icon} from "astro-icon/components";
+
+interface Props {
+    text?: string;
+}
+
+const { text } = Astro.props;
+---
+
+<div class="page-header">
+    <div class="paw-line">
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+    </div>
+    <h1 class="header-text">{text}</h1>
+    <div class="paw-line">
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+        <Icon name="paw-print" class="paw-icon" />
+    </div>
+</div>
+
+<style>
+    .page-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .paw-line {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        align-self: center;
+        gap: 2.5rem;
+    }
+
+    .header-text {
+        padding: 1rem 2rem;
+        font-family: var(--font-primary);
+        font-size: 2.5rem;
+        color: var(--colour-white);
+        text-align: center;
+    }
+
+    .paw-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        color: var(--colour-dark);
+    }
+</style>

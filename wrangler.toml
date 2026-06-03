@@ -1,0 +1,7 @@
+name = "sualbyronete-puppies"
+compatibility_date = "2026-06-02"
+
+[[d1_databases]]
+binding = "DB" # This is how you will call it in your Astro code
+database_name = "puppies_db"
+database_id = "local-dev-id" # Wrangler replaces this when you deploy live
