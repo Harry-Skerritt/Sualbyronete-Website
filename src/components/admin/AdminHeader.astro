@@ -2,15 +2,16 @@
 // src/components/admin/AdminHeader.astro
 import {Icon} from "astro-icon/components";
 
-const baseURL = import.meta.env.BASE_URL;
+const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 
 <header id="main-header" class="header-initial">
     <div class="header-container">
         <!-- Title -->
-        <h1 class="header-text">Sualbyronete Admin Dashboard</h1>
-
+        <a href={`${baseURL}/dashboard`}>
+            <h1 class="header-text">Sualbyronete Admin Dashboard</h1>
+        </a>
         <div class="buttons">
             <button id="help-button" class="button help" aria-label="Help Button">Help</button>
             <button id="logout-button" class="button logout" aria-label="Log out Button">Log Out</button>

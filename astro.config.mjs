@@ -4,7 +4,7 @@ import icon from 'astro-icon';
 import path from 'path';
 
 // GitHub stuff
-const isProduction = import.meta.env.PROD;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +14,7 @@ export default defineConfig({
 
     // GitHub Stuff - Remove before final build
     site: 'https://harry-skerritt.github.io',
-    base: isProduction ? '/Sualbyronete-Website' : '/',
+    base: isProduction ? '/Sualbyronete-Website' : '',
 
     vite: {
         css: {

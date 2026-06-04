@@ -17,9 +17,19 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
         <div class="workspace-grid">
 
             <section class="left-panel">
-                <div class="image-uploader">
+                <div class="image-uploader" id="upload-dropzone">
                     <Icon name="camera" class="camera-icon"/>
+                    <img id="image-preview" src="" alt="Uploaded Preview" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 0.8rem;" />
                     <a class="upload-button">Upload a Photo</a>
+
+                    <input
+                            type="file"
+                            id="pup-image-file"
+                            name="pup-image-file"
+                            accept="image/png, image/jpeg, image/webp"
+                            style="display: none;"
+                            required
+                    />
                 </div>
 
                 <div class="required-helper">
@@ -485,34 +495,3 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
       }
     }
 </style>
-
-
-<script define:vars={{PUPPY_COLOURS}}>
-    const breedSelect = document.getElementById("breed-select");
-    const colourSelect = document.getElementById("colour-select");
-
-    breedSelect?.addEventListener('change', (e) => {
-        const selectedBreed = e.target.value;
-
-        colourSelect.innerHTML = '<option value="">Choose Colour</option>';
-
-        if (!selectedBreed) {
-            colourSelect.disabled = true;
-            colourSelect.firstChild.textContent = 'Choose a breed first...';
-            return;
-        }
-
-        colourSelect.disabled = false;
-
-        const filteredColours = PUPPY_COLOURS.filter(
-            colour => colour.breed.toLowerCase() === selectedBreed.toLowerCase()
-        );
-
-        filteredColours.forEach(colour => {
-            const option = document.createElement('option');
-            option.value = colour.value;
-            option.textContent = colour.label;
-            colourSelect.appendChild(option);
-        });
-    });
-</script>
