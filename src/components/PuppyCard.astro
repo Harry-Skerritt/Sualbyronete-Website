@@ -24,8 +24,8 @@ const statusKey = puppyStatus.toLowerCase();
 
     <div class="puppy-image">
         <img
-                src={`/images/puppies/${puppyBreed === 'state-one' ? 'yorkies' : 'biewers'}/${puppyImage}`}
-                alt={`${puppyBreed === 'state-one' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
+                src={`/images/puppies/${puppyBreed.toLowerCase()}s/${puppyImage}`}
+                alt={`${puppyBreed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
         />
     </div>
 

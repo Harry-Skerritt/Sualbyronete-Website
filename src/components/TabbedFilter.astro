@@ -6,8 +6,10 @@ import { Icon } from 'astro-icon/components'
 interface Props {
     option_one: string;
     option_one_icon: string;
+    option_one_value: string;
     option_two: string;
     option_two_icon: string;
+    option_two_value: string;
     default_selected: number;
     class?: string;
 }
@@ -15,8 +17,10 @@ interface Props {
 const {
     option_one,
     option_one_icon,
+    option_one_value,
     option_two,
     option_two_icon,
+    option_two_value,
     default_selected,
     class: className
 } = Astro.props;
@@ -26,12 +30,12 @@ const {
 
     <div class="sliding-indicator"></div>
 
-    <div class="filter-option" data-target="state-one" data-tab-index="one">
+    <div class="filter-option" data-target={option_one_value} data-tab-index="one">
         <Icon class="option-icon" name={option_one_icon}/>
         <h1>{option_one}</h1>
     </div>
 
-    <div class="filter-option" data-target="state-two" data-tab-index="two">
+    <div class="filter-option" data-target={option_two_value} data-tab-index="two">
         <Icon class="option-icon" name={option_two_icon}/>
         <h1>{option_two}</h1>
     </div>

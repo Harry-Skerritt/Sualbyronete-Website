@@ -5,9 +5,10 @@ export const adults = sqliteTable('adults', {
     seqId: integer('seq_id').primaryKey({ autoIncrement: true}),
     breed: text('breed', { enum: ["state-one", "state-two"] }).notNull(),
     gender: text('gender').notNull(),
+
     id: text('id').generatedAlwaysAs(
         () => sql`
-            (CASE WHEN LOWER(breed) = 'state-one' THEN 'YT' ELSE 'BT' END) ||
+            (CASE WHEN LOWER(breed) = 'yorkie' THEN 'YT' ELSE 'BT' END) ||
             PRINTF('%03d', seq_id) ||
             (CASE WHEN LOWER(gender) = 'female' THEN '-D' ELSE '-S' END)
         `
@@ -20,6 +21,7 @@ export const adults = sqliteTable('adults', {
     regID: text('regID').notNull().default("#0000"),
     forSale: integer('forSale', { mode: 'boolean' }).notNull().default(false),
     puppies: text('puppies', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+    dateAdded: text('date_added').notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const puppies = sqliteTable('puppies', {
@@ -28,7 +30,7 @@ export const puppies = sqliteTable('puppies', {
     id: text('id').generatedAlwaysAs(
         () => sql`
             CASE
-              WHEN LOWER(breed) = 'state-one' THEN 'YT' || PRINTF('%03d', seq_id)
+              WHEN LOWER(breed) = 'yorkie' THEN 'YT' || PRINTF('%03d', seq_id)
               ELSE 'BT' || PRINTF('%03d', seq_id)
             END
         `
@@ -47,4 +49,5 @@ export const puppies = sqliteTable('puppies', {
 
     availableFrom: text('availableFrom').notNull(),
     regID: text('regID').notNull().default("#0000"),
+    dateAdded: text('date_added').notNull().default(sql`CURRENT_TIMESTAMP`),
 })

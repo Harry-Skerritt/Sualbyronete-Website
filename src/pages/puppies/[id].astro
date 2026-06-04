@@ -12,7 +12,9 @@ export async function getStaticPaths() {
 
     const adultMap = new Map(allAdults.map(adult => [adult.id, adult.name]));
 
+
     return allPuppies.map((pup) => {
+        console.log(pup.breed);
         return {
             params: { id: pup.id || '' },
             props: {
@@ -50,8 +52,8 @@ const dynamicAge = calculateAge(puppy.dob);
                 </div>
 
                 <img
-                        src={`/images/puppies/${puppy.breed === 'state-one' ? 'yorkies' : 'biewers'}/${puppy.image}`}
-                        alt={`${puppy.breed === 'state-one' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
+                        src={`/images/puppies/${puppy.breed.toLowerCase()}s/${puppy.image}`}
+                        alt={`${puppy.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
                 />
             </div>
 
@@ -85,7 +87,7 @@ const dynamicAge = calculateAge(puppy.dob);
             <div class="info-lists">
                 <dl class="puppy-specs-list">
                     <dt>Breed:</dt>
-                    <dd>{puppy.breed === 'state-one' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</dd>
+                    <dd>{puppy.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</dd>
 
                     <dt>DoB:</dt>
                     <dd>{puppy.dob}</dd>

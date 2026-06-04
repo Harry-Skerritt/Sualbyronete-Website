@@ -8,6 +8,7 @@ import PuppyCard from "../components/PuppyCard.astro";
 import {Icon} from "astro-icon/components";
 import { db } from "../db/index";
 import { puppies } from "../db/schema";
+import { PUPPY_COLOURS } from "../config/puppyConstants";
 
 const dbPuppies = await db.select().from(puppies);
 ---
@@ -25,8 +26,10 @@ const dbPuppies = await db.select().from(puppies);
                 <TabbedFilter
                         option_one="Yorkshire Terriers"
                         option_one_icon="paw-print"
+                        option_one_value="yorkies"
                         option_two="Biewer Terriers"
                         option_two_icon="paw-print"
+                        option_two_value="biewers"
                         default_selected={1}
                         class="breed-filter"
                 />
@@ -66,15 +69,9 @@ const dbPuppies = await db.select().from(puppies);
                             <div class="select-wrapper">
                                 <select id="colour-select" data-filter-select>
                                     <option value="all" selected>All</option>
-                                    <option value="black-tan">Black & Tan</option>
-                                    <option value="steel-tan">Steel & Tan</option>
-                                    <option value="blue-tan">Blue & Tan</option>
-                                    <option value="black-gold">Black & Gold</option>
-                                    <option value="black">Black</option>
-                                    <option value="black-white">Black & White</option>
-                                    <option value="blue-white">Blue & White</option>
-                                    <option value="white">White</option>
-                                    <option value="blue">Blue</option>
+                                    {PUPPY_COLOURS.map((colour) => (
+                                        <option value={colour.value} data-breed-type={colour.breed}>{colour.label}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -432,8 +429,10 @@ const dbPuppies = await db.select().from(puppies);
 </style>
 
 
-<script is:inline set:html={`window.PUPPY_DATA = ${JSON.stringify(dbPuppies)};`} />
+<script is:inline set:html={`
+    window.PUPPY_DATA = ${JSON.stringify(dbPuppies)};
+    window.PUPPY_COLOURS = ${JSON.stringify(PUPPY_COLOURS)};
+`} />
 
 <script src="../scripts/puppyFilter.ts"></script>
-
 
