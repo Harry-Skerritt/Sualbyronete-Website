@@ -1,0 +1,120 @@
+---
+// src/admin/edit.astro
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import DogEditCard from "../../components/admin/DogEditCard.astro";
+
+import { getDB } from "../../db";
+import { puppies, adults } from "../../db/schema";
+import { getColourLabel, formatGender } from "../../config/puppyConstants";
+import {count, desc} from "drizzle-orm";
+
+export const prerender = false;
+
+// Get URL Param
+const { searchParams } = Astro.url;
+const typeParam = searchParams.get("type")?.toLowerCase().trim() || "puppies";
+const isPuppyMode = typeParam === "puppies";
+
+const viewTitle = isPuppyMode ? "Edit Puppies" : "Edit Parents";
+const countLabel = isPuppyMode ? "Total Puppies" : "Total Parents";
+
+// DB
+const db = await getDB();
+let itemsList = [];
+
+if (isPuppyMode) {
+    const rawPuppies = await db.select().from(puppies).orderBy(desc(puppies.seqID));
+    itemsList = rawPuppies.map(p => ({
+        id: p.id,
+        name: p.name,
+        image: `/images/puppies/${p.breed.toLowerCase() === 'yorkie' ? 'yorkies' : 'biewers'}/${p.image}`,
+        breed: p.breed.toLowerCase(),
+        gender: formatGender(p.gender),
+        date: p.dateAdded
+    }));
+} else {
+    const rawAdults = await db.select().from(adults).orderBy(desc(adults.seqId));
+    itemsList = rawAdults.map(a => ({
+        id: a.id,
+        name: a.name,
+        image: `/images/adults/${a.image}`,
+        breed: a.breed.toLowerCase(),
+        gender: formatGender(a.gender),
+        date: a.dateAdded
+    }));
+}
+
+const totalCount = itemsList.length;
+---
+
+<AdminLayout title={`${viewTitle} | Admin Dashboard`}>
+    <main class="edit-container">
+        <span class="edit-header">{viewTitle}</span>
+        <span class="edit-count">{countLabel}: {totalCount}</span>
+        <div class="edit-separator" aria-hidden="true"/>
+
+        <div class="dog-cards">
+            {itemsList.map((dog) => (
+                    <DogEditCard
+                            name={dog.name}
+                            image={dog.image}
+                            breed={dog.breed}
+                            gender={dog.gender}
+                            addDate={dog.date}
+                            dataId={dog.id}
+                    />
+            ))}
+
+            {totalCount === 0 && (
+                    <p class="empty-state-text">No data records found in system database storage profiles.</p>
+            )}
+        </div>
+    </main>
+
+
+</AdminLayout>
+
+
+<style lang="scss">
+  .edit-container {
+    min-height: calc(100vh - var(--header-height));
+    max-width: 100rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .edit-header {
+    margin-top: 2rem;
+    font-size: 4rem;
+    font-family: var(--font-primary);
+    font-weight: bolder;
+    color: var(--colour-dark);
+  }
+
+  .edit-count {
+    margin: 1rem 0;
+    font-family: var(--font-secondary);
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--colour-dark);
+  }
+
+  .edit-separator {
+    width: 90%;
+    height: 0.3rem;
+    background-color: var(--colour-dark);
+    display: block;
+    border-radius: 999px;
+  }
+
+  .dog-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    margin-top: 2rem;
+    gap: 1.5rem;
+    width: 100%;
+  }
+</style>

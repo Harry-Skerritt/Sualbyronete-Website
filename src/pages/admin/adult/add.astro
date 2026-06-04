@@ -1,32 +1,20 @@
 ---
-// src/pages/admin/puppy/add.astro
+// src/pages/admin/adult/add.astro
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { Icon } from 'astro-icon/components'
 
 import {PUPPY_COLOURS} from "../../../config/puppyConstants";
-import { getDB } from "../../../db/index";
-import { adults } from "../../../db/schema";
-import { eq } from "drizzle-orm";
 import Modal from "../../../components/Modal.astro";
-
-export const prerender = false;
-
-const db = await getDB();
-const parents = await db.select().from(adults);
-
-const mothers = parents.filter((p) => p.gender.toLowerCase() === 'female');
-const fathers = parents.filter((p) => p.gender.toLowerCase() === 'male');
-const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier';
 ---
 
-<AdminLayout title="Add Puppy | Admin Dashboard">
-    <main class="add-puppy-view">
+<AdminLayout title="Add Parent | Admin Dashboard">
+    <main class="add-parent-view">
 
         <header class="page-header">
-            <p class="title-text">Add Puppy</p>
+            <p class="title-text">Add Parent</p>
         </header>
 
-        <div class="workspace-grid" id="puppy-form-context" data-colours={JSON.stringify(PUPPY_COLOURS)}>
+        <div class="workspace-grid" id="parent-form-context" data-colours={JSON.stringify(PUPPY_COLOURS)}>
 
             <section class="left-panel">
                 <div class="image-uploader" id="upload-dropzone">
@@ -36,8 +24,8 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 
                     <input
                             type="file"
-                            id="pup-image-file"
-                            name="pup-image-file"
+                            id="parent-image-file"
+                            name="parent-image-file"
                             accept="image/png, image/jpeg, image/webp"
                             style="display: none;"
                             required
@@ -55,18 +43,16 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
             <div class="vertical-separator" aria-hidden="true"/>
 
             <section class="right-panel">
-                <form class="puppy-info-form" id="puppy-add-form">
+                <form class="parent-info-form" id="parent-add-form">
 
-                    <div id="form-alert-banner" style="display:none; padding: 1rem; margin-bottom: 1rem; border-radius: 0.6rem; font-weight: 600; font-family: var(--font-secondary);"></div>
-                    
                     <div class="form-row-full">
                         <div class="field-group">
-                            <label for="pup-name">Puppy Name: <span class="required-accent">*</span></label>
+                            <label for="parent-name">Parent Name: <span class="required-accent">*</span></label>
                             <input
                                     type="text"
-                                    id="pup-name"
-                                    placeholder="Puppy Name..."
-                                    name="pup-name"
+                                    id="parent-name"
+                                    placeholder="Parent Name..."
+                                    name="parent-name"
                                     required
                             />
                         </div>
@@ -74,11 +60,11 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 
                     <div class="form-row-full">
                         <div class="field-group">
-                            <label for="pup-bio">Bio: <span class="input-subtext">(If no bio specified, the generic one will be used)</span></label>
+                            <label for="parent-bio">Bio: <span class="input-subtext">(If no bio specified, the generic one will be used)</span></label>
                             <textarea
-                                    id="pup-bio"
+                                    id="parent-bio"
                                     placeholder="Bio..."
-                                    name="pup-bio"
+                                    name="parent-bio"
                                     rows="3"
                                     maxlength="256"
                             />
@@ -86,18 +72,6 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
                     </div>
 
                     <div class="form-row-split">
-                        <div class="field-group">
-                            <label for="pup-status" class="dropdown-label">Availability: <span class="required-accent">*</span></label>
-                            <div class="select-wrapper">
-                                <select id="pup-status" required>
-                                    <option value="new" selected>New</option>
-                                    <option value="available">Available</option>
-                                    <option value="reserved">Reserved</option>
-                                    <option value="sold">Sold</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="field-group">
                             <label for="breed-select" class="dropdown-label">Breed: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
@@ -112,25 +86,22 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 
                     <div class="form-row-split">
                         <div class="field-group">
-                            <label for="pup-dob">Date of Birth: <span class="required-accent">*</span></label>
+                            <label for="parent-dob">Date of Birth: <span class="required-accent">*</span></label>
                             <input
                                     type="date"
-                                    id="pup-dob"
+                                    id="parent-dob"
                                     value="2026-06-03"
-                                    name="pup-dob"
+                                    name="parent-dob"
                                     required
                             />
                         </div>
 
                         <div class="field-group">
-                            <label for="pup-available">Available Date: <span class="required-accent">*</span></label>
-                            <input
-                                    type="date"
-                                    id="pup-available"
-                                    value="2026-06-03"
-                                    name="pup-available"
-                                    required
-                            />
+                            <label for="parent-for-sale">For Sale: <span class="required-accent">*</span></label>
+                            <select id="parent-for-sale" required>
+                                <option value="for-sale">Yes</option>
+                                <option value="not-for-sale" selected>No</option>
+                            </select>
                         </div>
                     </div>
 
@@ -156,51 +127,26 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
                         </div>
                     </div>
 
-                    <div class="form-row-split">
-                        <div class="field-group">
-                            <label for="mother-select" class="dropdown-label">Mother: <span class="required-accent">*</span></label>
-                            <div class="select-wrapper">
-                                <select id="mother-select" required>
-                                    <option value="">Choose Mother</option>
-                                    {mothers.map(mum => (
-                                            <option value={mum.id}>{mum.name} - {formatBreedName(mum.breed)} ({mum.id})</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="field-group">
-                            <label for="father-select" class="dropdown-label">Father: <span class="required-accent">*</span></label>
-                            <div class="select-wrapper">
-                                <select id="father-select" required>
-                                    <option value="">Choose Father</option>
-                                    {fathers.map(dad => (
-                                            <option value={dad.id}>{dad.name} - {formatBreedName(dad.breed)} ({dad.id})</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="form-row-split">
                         <div class="field-group">
-                            <label for="pup-ref">Reference No: <span class="input-subtext">(Kennel Club Number)</span></label>
+                            <label for="parent-ref">Reference No: <span class="input-subtext">(Kennel Club Number)</span></label>
                             <input
                                     type="text"
-                                    id="pup-ref"
-                                    placeholder="Puppy Reference..."
-                                    name="pup-ref"
+                                    id="parent-ref"
+                                    placeholder="Parent Reference..."
+                                    name="parent-ref"
                                     maxlength="16"
                             />
                         </div>
 
                         <div class="field-group id-field-group">
-                            <label for="pup-id">System ID: <span class="input-subtext">(Autogenerated)</span></label>
+                            <label for="parent-id">System ID: <span class="input-subtext">(Autogenerated)</span></label>
                             <input
                                     type="text"
-                                    id="pup-id"
+                                    id="parent-id"
                                     value="..."
-                                    name="pup-id"
+                                    name="parent-id"
                                     disabled
                                     readonly
                             />
@@ -209,7 +155,7 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 
                     <div class="action-buttons">
                         <button type="button" class="discard-btn" id="discard-trigger-btn">Discard Changes</button>
-                        <button type="submit" class="submit-btn">Add Puppy</button>
+                        <button type="submit" class="submit-btn">Add Parent</button>
                     </div>
 
                 </form>
@@ -220,7 +166,7 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 
     <Modal id="discard-confirm-modal" header="Are you sure?">
         <div class="modal-form-wrapper">
-            <p class="modal-sub-text">Any unsaved changes made to this puppy profile configuration will be lost permanently.</p>
+            <p class="modal-sub-text">Any unsaved changes made to this parent profile configuration will be lost permanently.</p>
             <div class="modal-actions">
                 <button type="button" class="modal-btn cancel" data-modal-close>No, Stay</button>
                 <button type="button" class="modal-btn save" id="confirm-discard-btn">Yes, Discard</button>
@@ -232,7 +178,7 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 
 <style lang="scss">
     /* GLobal Layout */
-    .add-puppy-view {
+    .add-parent-view {
       max-width: 110rem;
       margin: 0 auto;
       padding: 2.5rem;
@@ -334,14 +280,14 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
       min-height: 48rem;
     }
 
-    /* Puppy Form */
+    /* parent Form */
     .right-panel {
       flex: 1;
       display: flex;
       flex-direction: column;
     }
 
-    .puppy-info-form {
+    .parent-info-form {
       display: flex;
       flex-direction: column;
       width: 100%;
@@ -565,5 +511,5 @@ const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire
 </style>
 
 <script>
-    import "../../../scripts/admin/puppyFormController.ts";
+    import "../../../scripts/admin/adultFormController.ts";
 </script>

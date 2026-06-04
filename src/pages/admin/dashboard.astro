@@ -5,8 +5,23 @@ import AdminEditButton from "../../components/admin/AdminEditButton.astro";
 import DataCounter from "../../components/admin/DataCounter.astro";
 import Modal from "../../components/Modal.astro";
 
+// Name from Cookie
 const nameCookie = Astro.cookies.get('admin_user_name');
 const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
+
+// DB
+import { getDB } from "../../db/index";
+import { puppies, adults } from "../../db/schema";
+import { count } from "drizzle-orm";
+
+export const prerender = false;
+const db = getDB();
+
+const puppyCountResult = await db.select({ value: count() }).from(puppies);
+const totalPuppies = puppyCountResult[0]?.value ?? 0;
+
+const adultCountResult = await db.select({ value: count() }).from(adults);
+const totalParents = adultCountResult[0]?.value ?? 0;
 ---
 
 <AdminLayout title="Admin Dashboard | Sualbyronete">
@@ -32,7 +47,7 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
 
             <section class="left-data">
                 <!--- Puppy Counter -->
-                <DataCounter id="puppy-counter" title="Current Puppy Count" data={99}/>
+                <DataCounter id="puppy-counter" title="Current Puppy Count" data={totalPuppies}/>
 
                 <div class="button-row">
                     <AdminEditButton id="puppy-add-btn" icon="add" text="Add Puppy"/>
@@ -43,7 +58,7 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
 
             <section class="right-data">
                 <!-- Adult Counter -->
-                <DataCounter id="adult-counter" title="Current Parent Count" data={99}/>
+                <DataCounter id="adult-counter" title="Current Parent Count" data={totalParents}/>
 
 
                 <div class="button-row">
@@ -311,7 +326,7 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
         const puppyEditBtn = document.getElementById("puppy-edit-btn");
         if (puppyEditBtn) {
             puppyEditBtn.addEventListener("click", () => {
-                window.location.href = "/puppy/edit";
+                window.location.href = "/edit?type=puppies";
             })
         }
 
@@ -326,7 +341,7 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
         const adultEditBtn = document.getElementById("adult-edit-btn");
         if (adultEditBtn) {
             adultEditBtn.addEventListener("click", () => {
-                window.location.href = "/adult/edit"
+                window.location.href = "edit?type=adults"
             })
         }
 
@@ -337,7 +352,6 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
         const errBanner = document.getElementById("modal-error-banner");
         const successBanner = document.getElementById("modal-success-banner");
 
-        // Open view by applying your built-in utility classes
         openModalBtn?.addEventListener("click", () => {
             if (modalEl) {
                 modalEl.classList.add("is-active");
@@ -345,7 +359,6 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
             }
         });
 
-        // Function helper to clear parameters on dismiss execution
         const hideModalAndReset = () => {
             if (modalEl) {
                 modalEl.classList.remove("is-active");
@@ -356,12 +369,10 @@ const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
             if (successBanner) successBanner.style.display = "none";
         };
 
-        // Listen for all components containing data-modal-close within this context block
         modalEl?.querySelectorAll('[data-modal-close]').forEach(btn => {
             btn.addEventListener('click', hideModalAndReset);
         });
 
-        // Submit Pipeline Triggering
         form?.addEventListener("submit", async (e) => {
             e.preventDefault();
             if (errBanner) errBanner.style.display = "none";

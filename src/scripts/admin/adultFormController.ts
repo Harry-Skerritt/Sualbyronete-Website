@@ -1,46 +1,59 @@
-// src/scripts/admin/puppyFormController.ts
+// src/scripts/admin/adultFormController.ts
 
 document.addEventListener("DOMContentLoaded", () => {
-    const contextEl = document.getElementById("puppy-form-context");
-    const formEl = document.getElementById("puppy-add-form") as unknown as HTMLFormElement | null;
+    const contextEl = document.getElementById("parent-form-context");
+    const formEl = document.getElementById("parent-add-form") as unknown as HTMLFormElement | null;
     const dropzone = document.getElementById("upload-dropzone");
-    const fileInput = document.getElementById("pup-image-file") as unknown as HTMLInputElement;
+    const fileInput = document.getElementById("parent-image-file") as unknown as HTMLInputElement;
     const imgPreview = document.getElementById("image-preview") as unknown as HTMLImageElement;
     const alertBanner = document.getElementById("form-alert-banner");
-    const discardBtn = document.getElementById("discard-form-btn");
 
-    const pupNameInput = document.getElementById("pup-name") as unknown as HTMLInputElement;
-    const pupBioInput = document.getElementById("pup-bio") as unknown as HTMLTextAreaElement;
-    const pupStatusSelect = document.getElementById("pup-status") as unknown as HTMLSelectElement;
+    const parentNameInput = document.getElementById("parent-name") as unknown as HTMLInputElement;
+    const parentBioInput = document.getElementById("parent-bio") as unknown as HTMLTextAreaElement;
     const breedSelect = document.getElementById("breed-select") as unknown as HTMLSelectElement;
-    const pupDobInput = document.getElementById("pup-dob") as unknown as HTMLInputElement;
-    const pupAvailableInput = document.getElementById("pup-available") as unknown as HTMLInputElement;
+    const parentDobInput = document.getElementById("parent-dob") as unknown as HTMLInputElement;
+    const parentForSaleSelect = document.getElementById("parent-for-sale") as unknown as HTMLSelectElement;
     const colourSelect = document.getElementById("colour-select") as unknown as HTMLSelectElement;
     const genderSelect = document.getElementById("gender-select") as unknown as HTMLSelectElement;
-    const motherSelect = document.getElementById("mother-select") as unknown as HTMLSelectElement;
-    const fatherSelect = document.getElementById("father-select") as unknown as HTMLSelectElement;
-    const pupRefInput = document.getElementById("pup-ref") as unknown as HTMLInputElement;
+    const parentRefInput = document.getElementById("parent-ref") as unknown as HTMLInputElement;
+    const parentIdInput = document.getElementById("parent-id") as unknown as HTMLInputElement;
 
-    // validation barrier
     if (
         !contextEl || !fileInput || !imgPreview || !breedSelect || !colourSelect || !formEl ||
-        !pupNameInput || !pupBioInput || !pupStatusSelect || !pupDobInput || !pupAvailableInput ||
-        !genderSelect || !motherSelect || !fatherSelect || !pupRefInput
+        !parentNameInput || !parentBioInput || !parentDobInput || !parentForSaleSelect ||
+        !genderSelect || !parentRefInput || !parentIdInput
     ) {
-        console.error("Failed to initialize form controller: Missing DOM elements.");
+        console.error("Failed to initialize parent form controller: Missing elements.");
         return;
     }
 
     const cameraIcon = dropzone?.querySelector(".camera-icon") as HTMLElement | null;
     const uploadBtn = dropzone?.querySelector(".upload-button") as HTMLElement | null;
 
-    // --- Dynamic Colour Selection Logic ---
     const rawColours = contextEl.getAttribute("data-colours");
     const puppyColours = rawColours ? JSON.parse(rawColours) as Array<{ value: string; label: string; breed: string }> : [];
+
+    const updateMockIdPreview = () => {
+        const breed = breedSelect.value.toLowerCase().trim();
+        const gender = genderSelect.value.toLowerCase().trim();
+
+        if (!breed) {
+            parentIdInput.value = "...";
+            return;
+        }
+
+        const breedCode = breed === 'yorkie' ? 'YT' : 'BT';
+        let genderCode = "???";
+        if (gender === 'female') genderCode = "???-D";
+        if (gender === 'male') genderCode = "???-S";
+
+        parentIdInput.value = `${breedCode}${genderCode}`;
+    };
 
     breedSelect.addEventListener("change", () => {
         const selectedBreed = breedSelect.value.toLowerCase().trim();
         colourSelect.innerHTML = '<option value="">Choose Colour</option>';
+        updateMockIdPreview();
 
         if (!selectedBreed) {
             colourSelect.disabled = true;
@@ -49,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const matchingColours = puppyColours.filter(
-            item => item.breed.toLowerCase() === selectedBreed.toLowerCase()
-        )
+            item => item.breed.toLowerCase() === selectedBreed
+        );
 
         if (matchingColours.length === 0) {
             colourSelect.disabled = true;
@@ -67,7 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- Photo Preview Processing ---
+    genderSelect.addEventListener("change", updateMockIdPreview);
+
     const handleFilePreview = (file: File) => {
         if (!file.type.startsWith("image/")) {
             showAlert("Please select a valid image file.", "red");
@@ -100,18 +114,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- Form Transmission ---
     formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
         hideAlert();
 
         if (!fileInput.files || fileInput.files.length === 0) {
-            showAlert("A puppy photo is required!", "red");
+            showAlert("A parent photo is required!", "red");
             return;
         }
 
         const submitBtn = formEl.querySelector('.submit-btn') as HTMLButtonElement | null;
-        const originalBtnText = submitBtn ? submitBtn.textContent : "Add Puppy";
+        const originalBtnText = submitBtn ? submitBtn.textContent : "Add Parent";
 
         if (submitBtn) {
             submitBtn.disabled = true;
@@ -121,23 +134,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const formData = new FormData();
-        formData.append("name", pupNameInput.value);
+        formData.append("name", parentNameInput.value);
         formData.append("breed", breedSelect.value);
-        formData.append("bio", pupBioInput.value);
-        formData.append("status", pupStatusSelect.value);
-        formData.append("gender", genderSelect.value);
-        formData.append("mother", motherSelect.value);
-        formData.append("father", fatherSelect.value);
-        formData.append("dob", pupDobInput.value);
-        formData.append("availableFrom", pupAvailableInput.value);
+        formData.append("bio", parentBioInput.value);
+        formData.append("dob", parentDobInput.value);
+        formData.append("forSale", parentForSaleSelect.value);
         formData.append("colour", colourSelect.value);
+        formData.append("gender", genderSelect.value);
 
-        const regIdVal = pupRefInput.value;
+        const regIdVal = parentRefInput.value;
         formData.append("regID", regIdVal.trim() ? regIdVal : "#0000");
-        formData.append("puppyImage", fileInput.files[0]);
+        formData.append("parentImage", fileInput.files[0]);
 
         try {
-            const response = await fetch("/admin/puppy/add-submit", {
+            const response = await fetch("/admin/adult/add-submit", {
                 method: "POST",
                 body: formData
             });
@@ -145,12 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json() as { success: boolean; generatedId?: string; message?: string };
 
             if (response.ok && result.success) {
-                showAlert(`✔ Success! Puppy registered as System ID: ${result.generatedId}`, "green");
+                showAlert(`Success! Parent registered as System ID: ${result.generatedId}`, "green");
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
                 }, 2000);
             } else {
-                throw new Error(result.message || "Failed to save data record mapping entries");
+                throw new Error(result.message || "Failed to save parent entry records");
             }
         } catch (err: any) {
             showAlert(`Submission Error: ${err.message}`, "red");
@@ -164,30 +174,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    discardBtn?.addEventListener("click", () => {
-        formEl.reset();
-        imgPreview.style.display = "none";
-        imgPreview.src = "";
-        if (cameraIcon) cameraIcon.style.display = "block";
-        if (uploadBtn) uploadBtn.style.display = "block";
-        colourSelect.disabled = true;
-        colourSelect.innerHTML = '<option value="">Choose a breed first...</option>';
-        hideAlert();
-    });
-
-    /* Discard Modal */
     const modalEl = document.getElementById("discard-confirm-modal");
     const discardTriggerBtn = document.getElementById("discard-trigger-btn");
     const confirmDiscardBtn = document.getElementById("confirm-discard-btn");
 
     if (modalEl && discardTriggerBtn && confirmDiscardBtn) {
-        // Open the safety modal on initial discard click
         discardTriggerBtn.addEventListener("click", () => {
             modalEl.classList.add("is-active");
             modalEl.removeAttribute("aria-hidden");
         });
 
-        // Close the modal cleanly if clicking "No, Stay" or the backdrop close data bindings
         modalEl.querySelectorAll('[data-modal-close]').forEach(btn => {
             btn.addEventListener('click', () => {
                 modalEl.classList.remove("is-active");
@@ -195,13 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Redirect directly to the administrator dashboard if "Yes, Discard" is verified
         confirmDiscardBtn.addEventListener("click", () => {
             window.location.href = "/admin/dashboard";
         });
     }
 
-    /* Alert Utilities */
     function showAlert(msg: string, color: "red" | "green") {
         if (!alertBanner) return;
         alertBanner.textContent = msg;
