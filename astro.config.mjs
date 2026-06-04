@@ -3,19 +3,20 @@ import { defineConfig } from 'astro/config';
 import icon from 'astro-icon';
 import path from 'path';
 
-// GitHub stuff
-const isProduction = process.env.NODE_ENV === 'production';
+import cloudflare from '@astrojs/cloudflare';
+import node from '@astrojs/node';
+
+const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('dev');
 
 // https://astro.build/config
 export default defineConfig({
+    trailingSlash: 'never',
+    output: 'server',
+    adapter: isDev ? node({ mode: 'standalone' }) : cloudflare(),
     integrations: [
         icon()
     ],
-
-    // GitHub Stuff - Remove before final build
-    site: 'https://harry-skerritt.github.io',
-    base: isProduction ? '/Sualbyronete-Website' : '',
-
+    base: '',
     vite: {
         css: {
             preprocessorOptions: {
@@ -23,6 +24,9 @@ export default defineConfig({
                     additionalData: `@use "${path.resolve('./src/styles/variables')}" as *;`
                 }
             }
+        },
+        ssr: {
+            noExternal: isDev ? ['astro-icon'] : []
         }
     }
 });

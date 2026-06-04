@@ -1,0 +1,24 @@
+{
+	"name": "sualbyronete-puppies",
+	"compatibility_date": "2026-06-04",
+	"compatibility_flags": [
+		"global_fetch_strictly_public",
+		"nodejs_compat"
+	],
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true
+	},
+	// Your database connection block successfully moved over:
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "puppies_db",
+			"database_id": "local-dev-id"
+		}
+	]
+}

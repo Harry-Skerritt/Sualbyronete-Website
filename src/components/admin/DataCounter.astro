@@ -1,0 +1,66 @@
+---
+// src/components/admin/DataCounter.astro
+
+interface Props {
+    id?: string;
+    title?: string;
+    data?: string | number;
+}
+
+const { id, title, data = 0 } = Astro.props;
+---
+
+<div class="counter-container" id={id}>
+    <span class="container-title">{title}</span>
+    <span class="container-data">{data}</span>
+</div>
+
+<style lang="scss">
+  .counter-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    width: 32rem;
+    height: 8rem;
+    background-color: var(--colour-primary);
+    filter: brightness(1.1);
+    border-radius: 0.6rem;
+    box-shadow: 0 7px 15px 7px rgba(0, 0, 0, 0.25);
+    padding: 1rem 1.2rem;
+    box-sizing: border-box;
+  }
+
+  .container-title {
+    grid-column: 1 / 3;
+    color: var(--colour-dark);
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 1.1rem;
+
+    justify-self: start;
+    align-self: start;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+  }
+
+  .container-data {
+    grid-column: 1 / 3;
+    color: var(--colour-dark);
+    font-family: var(--font-primary);
+    font-weight: 900;
+    font-size: 6.2rem;
+    line-height: 8rem;
+
+    justify-self: end;
+    align-self: end;
+
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    min-width: 0;
+  }
+</style>

@@ -1,5 +1,222 @@
 ---
+// src/pages/admin/dashboard.astro
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import AdminEditButton from "../../components/admin/AdminEditButton.astro";
+import DataCounter from "../../components/admin/DataCounter.astro";
 
+// DB
+import { getDB } from "../../db/index.ts";
+import { adminUsers } from "../../db/schema";
+import { eq } from "drizzle-orm";
+
+export const prerender = false;
+
+const db = await getDB();
+const sessionCookie = Astro.cookies.get('admin_session');
+
+const users = await db.select().from(adminUsers).limit(1);
+const currentAdminName = users[0]?.name || "Admin User";
 ---
 
-<h1>Dashboard</h1>
+<AdminLayout title="Admin Dashboard | Sualbyronete">
+
+    <main class="dashboard-container">
+
+        <header class="welcome-header">
+            <p class="welcome-message">Hello {currentAdminName}</p>
+            <div class="horizontal-separator"/>
+        </header>
+
+        <section class="latest-puppies-section">
+            <p class="section-title">Latest Puppies:</p>
+            <div class="latest-puppy-row">
+                <!-- Show the 3 latest puppies here -->
+                <div class="placeholder-card">Puppy Slot 1</div>
+                <div class="placeholder-card">Puppy Slot 2</div>
+                <div class="placeholder-card">Puppy Slot 3</div>
+            </div>
+        </section>
+
+        <section class="data-viewer">
+
+            <section class="left-data">
+                <!--- Puppy Counter -->
+                <DataCounter id="puppy-counter" title="Current Puppy Count" data={99}/>
+
+                <div class="button-row">
+                    <AdminEditButton id="puppy-add-btn" icon="add" text="Add Puppy"/>
+                    <AdminEditButton id="puppy-edit-btn" icon="edit" text="Edit Puppies"/>
+                </div>
+
+            </section>
+
+            <section class="right-data">
+                <!-- Adult Counter -->
+                <DataCounter id="adult-counter" title="Current Parent Count" data={99}/>
+
+
+                <div class="button-row">
+                    <AdminEditButton id="adult-add-btn" icon="add" text="Add Parent"/>
+                    <AdminEditButton id="adult-edit-btn" icon="edit" text="Edit Parents"/>
+                </div>
+
+            </section>
+
+        </section>
+
+        <section class="generic-edit-section">
+            <!-- Edit Buttons -->
+            <AdminEditButton id="photo-edit-btn" icon="edit" text="Edit Home Page Photos"/>
+            <AdminEditButton id="bio-edit-btn" icon="edit" text="Edit Default Puppy Bios"/>
+            <AdminEditButton id="puppy-pack-edit-btn" icon="edit" text="Edit Puppy Pack Info"/>
+        </section>
+
+    </main>
+</AdminLayout>
+
+<style lang="scss">
+  .dashboard-container {
+    max-width: 110rem;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  .welcome-header {
+    .welcome-message {
+      font-family: var(--font-primary);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--colour-dark);
+      margin: 0 0 0.5rem 0;
+    }
+    .horizontal-separator {
+      width: 100%;
+      height: 4px;
+      background-color: var(--colour-dark);
+      border-radius: 2px;
+    }
+  }
+
+  /* Latest Puppies */
+  .latest-puppies-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .section-title {
+      font-family: var(--font-secondary);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--colour-dark);
+      margin: 0;
+    }
+
+    .latest-puppy-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1.5rem;
+      width: 100%;
+
+      // Temporary placeholder card
+      .placeholder-card {
+        flex: 1;
+        height: 7rem;
+        background: #e2e8f0;
+        border: 3px dashed #cbd5e1;
+        border-radius: 0.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-family: var(--font-secondary);
+      }
+    }
+  }
+
+  /* Metrics */
+  .data-viewer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    width: 100%;
+
+    .data-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .button-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+
+      :global(.button-container) {
+        flex: 1;
+        width: 100%;
+      }
+    }
+
+    :global(.counter-container) {
+      flex: 1;
+      width: 100%;
+      height: 10rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+
+  /* Edit Buttons */
+  .generic-edit-section {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+
+    :global(.button-container) {
+      width: calc(33.333% - 0.666rem);
+      min-width: 18rem;
+    }
+  }
+</style>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        /* Puppy Buttons */
+        const puppyAddBtn = document.getElementById("puppy-add-btn");
+        if (puppyAddBtn) {
+            puppyAddBtn.addEventListener("click", () => {
+                window.location.href = "/puppy/add";
+            })
+        }
+
+        const puppyEditBtn = document.getElementById("puppy-edit-btn");
+        if (puppyEditBtn) {
+            puppyEditBtn.addEventListener("click", () => {
+                window.location.href = "/puppy/edit";
+            })
+        }
+
+        /* Adult Buttons */
+        const adultAddBtn = document.getElementById("adult-add-btn");
+        if (adultAddBtn) {
+            adultAddBtn.addEventListener("click", () => {
+                window.location.href = "/adult/add";
+            })
+        }
+
+        const adultEditBtn = document.getElementById("adult-edit-btn");
+        if (adultEditBtn) {
+            adultEditBtn.addEventListener("click", () => {
+                window.location.href = "/adult/edit"
+            })
+        }
+    })
+</script>

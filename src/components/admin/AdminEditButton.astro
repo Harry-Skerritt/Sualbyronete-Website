@@ -1,0 +1,72 @@
+---
+// src/components/admin/AdminEditButton.astro
+
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+    id?: string;
+    text?: string;
+    icon?: string;
+}
+
+const { id, text, icon } = Astro.props;
+---
+
+<button type="button" id={id} class="button-container">
+    <Icon name={icon} class="button-icon"/>
+    <span class="button-text">{text}</span>
+</button>
+
+<style lang="scss">
+    .button-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      width: 15rem;
+      height: 4rem;
+      background-color: var(--colour-primary);
+      filter: brightness(1.2);
+      border: 3px solid var(--colour-dark);
+      border-radius: 0.6rem;
+      padding: 0.5rem 0.8rem;
+      gap: 0.5rem;
+      margin: 0.2rem;
+      cursor: pointer;
+      box-sizing: border-box;
+      container-type: inline-size;
+      transition: all 0.1s ease-in-out;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+
+    .button-icon {
+      width: 1.8rem;
+      height: 1.8rem;
+      color: var(--colour-dark);
+      flex-shrink: 0;
+    }
+
+    .button-text {
+      color: var(--colour-dark);
+      font-family: var(--font-secondary);
+      font-weight: 800;
+
+      flex-grow: 1;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      font-size: clamp(0.8rem, 15cqw, 1.4rem);
+    }
+
+
+</style>
+
+

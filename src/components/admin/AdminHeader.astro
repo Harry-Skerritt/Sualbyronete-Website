@@ -9,11 +9,11 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 <header id="main-header" class="header-initial">
     <div class="header-container">
         <!-- Title -->
-        <a href={`${baseURL}/dashboard`}>
+        <a href={`${baseURL}/dashboard`} style="text-decoration: none">
             <h1 class="header-text">Sualbyronete Admin Dashboard</h1>
         </a>
         <div class="buttons">
-            <button id="help-button" class="button help" aria-label="Help Button">Help</button>
+            <button id="help-button" class="button help" aria-label="Home Button">Home</button>
             <button id="logout-button" class="button logout" aria-label="Log out Button">Log Out</button>
         </div>
 
@@ -92,3 +92,38 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const homeBtn = document.getElementById("help-button");
+        if (homeBtn) {
+            homeBtn.addEventListener("click", () => {
+                const currentHost = window.location.hostname;
+                const mainHost = currentHost.replace(/^admin\./, '');
+                window.location.href = `${window.location.protocol}//${mainHost}${window.location.port ? ':' + window.location.port : ''}/`;
+            })
+        }
+
+        const logoutBtn = document.getElementById("logout-button");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async () => {
+                try {
+                    const response = await fetch('/admin/logout-submit', {
+                        method: 'POST'
+                    });
+
+                    const data = await response.json() as { success: boolean; redirect: string };
+
+                    if (response.ok && data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        console.error("Server rejected logout transaction request");
+                    }
+                } catch (err) {
+                    console.error("Logout runtime failure execution:", err);
+                }
+            });
+        }
+    })
+</script>

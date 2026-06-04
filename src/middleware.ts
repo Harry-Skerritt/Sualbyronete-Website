@@ -20,6 +20,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
         return context.redirect("/404");
     }
 
+    const isAdminRoute = url.pathname.startsWith("/admin");
+    const isLoginEndpoint = url.pathname === "/admin" || url.pathname === "/admin/login-submit";
+
+    if (isAdminRoute && !isLoginEndpoint) {
+        const sessionCookie = context.cookies.get('admin_session');
+
+        // No cookie - kick back to the main login screen
+        if (!sessionCookie || sessionCookie.value !== 'true') {
+            return context.redirect("/admin");
+        }
+    }
+
     // Proceed as normal for all other main site routes
     return next();
 });

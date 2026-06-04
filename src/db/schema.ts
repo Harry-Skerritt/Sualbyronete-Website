@@ -50,4 +50,16 @@ export const puppies = sqliteTable('puppies', {
     availableFrom: text('availableFrom').notNull(),
     regID: text('regID').notNull().default("#0000"),
     dateAdded: text('date_added').notNull().default(sql`CURRENT_TIMESTAMP`),
-})
+});
+
+export const adminUsers = sqliteTable('admin_users',{
+    id: text('id').primaryKey().default(sql`(uuid4())`),
+    email: text('email').unique().notNull(),
+    name: text('name').notNull(),
+    username: text('username').unique().notNull(),
+    passwordHash: text('password_hash').notNull(),
+    role: text('role', { enum: ["admin", "editor"] }).notNull().default("editor"),
+    lastLogin: text('last_login'),
+    isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+    dateCreated: text('date_created').notNull().default(sql`CURRENT_TIMESTAMP`),
+});

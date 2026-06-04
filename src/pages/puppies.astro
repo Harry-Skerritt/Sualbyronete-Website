@@ -6,10 +6,11 @@ import TabbedFilter from "../components/TabbedFilter.astro";
 import PuppyCard from "../components/PuppyCard.astro";
 
 import {Icon} from "astro-icon/components";
-import { db } from "../db/index";
+import { getDB } from "../db";
 import { puppies } from "../db/schema";
 import { PUPPY_COLOURS } from "../config/puppyConstants";
 
+const db = getDB(Astro);
 const dbPuppies = await db.select().from(puppies);
 ---
 

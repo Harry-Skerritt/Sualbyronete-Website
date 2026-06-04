@@ -1,43 +1,30 @@
 ---
 // src/pages/puppies/[id].astro
 import Layout from "../../layouts/Layout.astro"
-import { db } from "../../db/index";
+import { getDB } from "../../db/index";
 import { puppies, adults } from "../../db/schema";
 import { calculateAge } from "../../scripts/ageCalculator";
+import { eq } from "drizzle-orm";
 
-// Generate Static Pages
-export async function getStaticPaths() {
-    const allPuppies = await db.select().from(puppies);
-    const allAdults = await db.select().from(adults);
-
-    const adultMap = new Map(allAdults.map(adult => [adult.id, adult.name]));
-
-
-    return allPuppies.map((pup) => {
-        console.log(pup.breed);
-        return {
-            params: { id: pup.id || '' },
-            props: {
-                puppy: pup,
-                motherName: adultMap.get(pup.mother) || pup.mother,
-                fatherName: adultMap.get(pup.father) || pup.father
-            }
-        };
-    });
-}
-
-// Get ID Passed in
 const { id } = Astro.params;
 if (!id) {
     return Astro.redirect('/404');
 }
 
-// Query DB
-const { puppy, motherName, fatherName } = Astro.props;
+const db = getDB(Astro);
+
+const puppyArray = await db.select().from(puppies).where(eq(puppies.id, id));
+const puppy = puppyArray[0];
+
 if (!puppy) {
     return Astro.redirect('/404');
 }
 
+const allAdults = await db.select().from(adults);
+const adultMap = new Map(allAdults.map(adult => [adult.id, adult.name]));
+
+const motherName = adultMap.get(puppy.mother) || puppy.mother;
+const fatherName = adultMap.get(puppy.father) || puppy.father;
 const dynamicAge = calculateAge(puppy.dob);
 ---
 
