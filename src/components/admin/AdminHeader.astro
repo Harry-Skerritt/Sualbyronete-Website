@@ -10,15 +10,16 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     <div class="header-container">
         <!-- Title -->
         <a href={`${baseURL}/dashboard`} style="text-decoration: none">
-            <h1 class="header-text">Sualbyronete Admin Dashboard</h1>
+            <h1 class="header-text full-title">Sualbyronete Admin Dashboard</h1>
+            <h1 class="header-text short-title">Admin Dashboard</h1>
         </a>
+
         <div class="buttons">
             <button id="help-button" class="button help" aria-label="Home Button">Home</button>
+            <button id="help-button-mobile" class="button-mobile help" aria-label="Home Button"><Icon name="home" class="icon"/></button>
             <button id="logout-button" class="button logout" aria-label="Log out Button">Log Out</button>
+            <button id="logout-button-mobile" class="button-mobile logout" aria-label="Log out Button"><Icon name="logout" class="icon"/></button>
         </div>
-
-
-
     </div>
 </header>
 
@@ -37,6 +38,10 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
       box-shadow: 0px 7px 7px 0px rgba(0,0,0,0.25);
       display: flex;
       justify-content: center;
+    }
+
+    .short-title {
+      display: none;
     }
 
     .header-initial.scrolled {
@@ -61,7 +66,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
       font-weight: 900;
     }
 
-    .button {
+    .button, .button-mobile {
       width: 8rem;
       height: 3rem;
       border-radius: 0.7rem;
@@ -72,6 +77,10 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
       margin-right: 1rem;
       transition: all 0.15s ease;
       color: var(--colour-white);
+    }
+
+    .button-mobile {
+      display: none;
     }
 
     .button:hover {
@@ -91,39 +100,94 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
       background-color: var(--colour-dark);
 
     }
+
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .header-container {
+        padding: 0 1rem;
+      }
+
+      .header-text {
+        font-size: 1.6rem;
+      }
+
+      .header-initial {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .full-title {
+        display: none;
+      }
+
+      .short-title {
+        display: inline;
+      }
+
+      .header-text {
+        font-size: 1.5rem;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 30%;
+      }
+
+      .button {
+        display: none;
+      }
+
+      .button-mobile {
+        display: flex;
+        width: 3rem;
+        height: 3rem;
+        color: var(--colour-white);
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        .icon {
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+
+    }
 </style>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        /* Home */
+        const handleHomeRedirect = () => {
+            const currentHost = window.location.hostname;
+            const mainHost = currentHost.replace(/^admin\./, '');
+            window.location.href = `${window.location.protocol}//${mainHost}${window.location.port ? ':' + window.location.port : ''}/`;
+        };
 
-        const homeBtn = document.getElementById("help-button");
-        if (homeBtn) {
-            homeBtn.addEventListener("click", () => {
-                const currentHost = window.location.hostname;
-                const mainHost = currentHost.replace(/^admin\./, '');
-                window.location.href = `${window.location.protocol}//${mainHost}${window.location.port ? ':' + window.location.port : ''}/`;
-            })
-        }
+        document.getElementById("help-button")?.addEventListener("click", handleHomeRedirect);
+        document.getElementById("help-button-mobile")?.addEventListener("click", handleHomeRedirect);
 
-        const logoutBtn = document.getElementById("logout-button");
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", async () => {
-                try {
-                    const response = await fetch('/admin/auth/logout-submit', {
-                        method: 'POST'
-                    });
+        /* Logout */
+        const handleLogoutSubmit = async () => {
+            try {
+                const response = await fetch('/admin/auth/logout-submit', {
+                    method: 'POST'
+                });
 
-                    const data = await response.json() as { success: boolean; redirect: string };
+                const data = await response.json() as { success: boolean; redirect: string };
 
-                    if (response.ok && data.success) {
-                        window.location.href = data.redirect;
-                    } else {
-                        console.error("Server rejected logout transaction request");
-                    }
-                } catch (err) {
-                    console.error("Logout runtime failure execution:", err);
+                if (response.ok && data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    console.error("Server rejected logout transaction request");
                 }
-            });
-        }
+            } catch (err) {
+                console.error("Logout runtime failure execution:", err);
+            }
+        };
+
+        document.getElementById("logout-button")?.addEventListener("click", handleLogoutSubmit);
+        document.getElementById("logout-button-mobile")?.addEventListener("click", handleLogoutSubmit);
     })
 </script>

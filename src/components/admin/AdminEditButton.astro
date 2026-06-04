@@ -66,6 +66,26 @@ const { id, text, icon } = Astro.props;
       font-size: clamp(0.8rem, 15cqw, 1.4rem);
     }
 
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .button-container {
+        width: 100% !important;
+        height: 4.6rem;
+        justify-content: center;
+        padding: 0.6rem 1.2rem;
+        margin: 0;
+      }
+
+      .button-icon {
+        width: 2rem;
+        height: 2rem;
+      }
+
+      .button-text {
+        flex-grow: 0;
+        font-size: 0.75rem;
+      }
+    }
 
 </style>
 

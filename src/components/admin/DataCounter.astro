@@ -20,7 +20,7 @@ const { id, title, data = 0 } = Astro.props;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto 1fr;
-    width: 32rem;
+    width: 100%;
     height: 8rem;
     background-color: var(--colour-primary);
     filter: brightness(1.1);
@@ -62,5 +62,21 @@ const { id, title, data = 0 } = Astro.props;
     text-overflow: ellipsis;
 
     min-width: 0;
+  }
+
+  @media (#{$mobile}) {
+    .counter-container {
+      height: 10rem;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .container-title {
+      font-size: 1rem;
+    }
+
+    .container-data {
+      font-size: 4.8rem;
+    }
   }
 </style>

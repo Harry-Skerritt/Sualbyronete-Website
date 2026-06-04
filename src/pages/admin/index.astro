@@ -100,7 +100,7 @@ import Modal from "../../components/Modal.astro"
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
     overflow: hidden;
     box-sizing: border-box;
@@ -403,7 +403,51 @@ import Modal from "../../components/Modal.astro"
     }
   }
 
+  /* Mobile Styling */
+  @media ($mobile) {
+    .admin-login-view {
+      padding: 1.5rem;
+      justify-content: flex-start;
+      padding-top: 4rem;
+    }
 
+    .logo img {
+      max-width: 15rem;
+    }
+
+    .admin-title {
+      font-size: 2rem;
+    }
+
+    .action-utilities {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .forgot-trigger {
+      padding: 0;
+      margin-left: 0.2rem;
+    }
+
+    .login-btn {
+      width: 100%;
+      max-width: none;
+      padding: 0.9rem;
+    }
+
+    .modal-actions {
+      flex-direction: column-reverse;
+      gap: 0.8rem;
+
+      .cancel-btn, .send-btn {
+        width: 100%;
+        padding: 0.8rem;
+        text-align: center;
+      }
+    }
+  }
 
 </style>
 

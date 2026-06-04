@@ -310,6 +310,52 @@ const totalParents = adultCountResult[0]?.value ?? 0;
     color: white;
     &:hover { filter: brightness(1.1); }
   }
+
+  /* Mobile Styling */
+  @media ($mobile) {
+    .dashboard-container {
+      padding: 0 1.5rem;
+      gap: 2.5rem;
+      margin: 1rem auto
+    }
+
+    .welcome-header .welcome-message {
+      font-size: 2rem;
+    }
+
+    .latest-puppies-section .latest-puppy-row {
+      flex-direction: column;
+      gap: 1rem;
+
+      .placeholder-card {
+        height: 5.5rem;
+      }
+    }
+
+    .data-viewer {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .generic-edit-section {
+      flex-direction: column;
+
+      :global(.button-container) {
+        width: 100% !important;
+      }
+    }
+
+    .modal-actions {
+      flex-direction: column-reverse;
+      width: 100%;
+
+      .modal-btn {
+        width: 100%;
+        text-align: center;
+        padding: 1.2rem;
+      }
+    }
+  }
 </style>
 
 

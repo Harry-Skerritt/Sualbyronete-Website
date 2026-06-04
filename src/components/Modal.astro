@@ -45,7 +45,7 @@ const { id, header = "Notification" } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: 200;
     box-sizing: border-box;
     padding: 1.5rem;
 
@@ -53,7 +53,7 @@ const { id, header = "Notification" } = Astro.props;
 
     // Triggers
     opacity: 0;
-    visibility: visible;
+    visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
 
     &.is-active {
@@ -74,6 +74,10 @@ const { id, header = "Notification" } = Astro.props;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
+
+    max-height: 85dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 
     // Open Effect
     transform: scale(0.96);
@@ -138,6 +142,34 @@ const { id, header = "Notification" } = Astro.props;
     width: 100%;
     box-sizing: border-box;
     padding: 0 0.7rem;
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .modal-overlay {
+      padding: 1rem;
+      align-items: flex-start;
+      padding-top: 15dvh;
+    }
+
+    .modal-container {
+      max-height: 75dvh;
+      border-radius: 1rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      margin-bottom: 1rem;
+      padding: 0.2rem 0.4rem;
+    }
+
+    .header-text {
+      font-size: 1.6rem;
+    }
+
+    .modal-body {
+      padding: 0 0.4rem 1rem 0.4rem;
+    }
   }
 </style>
 

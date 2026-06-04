@@ -61,7 +61,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         cookies.set('admin_session', 'true', {
             path: '/',
             maxAge: 86400, // 24 hours
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             httpOnly: true, // Safeguards cookie data from window.document hacks
             sameSite: 'strict'
         });
@@ -69,7 +69,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         cookies.set('admin_user_name', user.name, {
             path: '/',
             maxAge: 86400, // 24 hours
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             httpOnly: false,
             sameSite: 'strict'
         });

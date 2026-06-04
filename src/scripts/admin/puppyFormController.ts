@@ -73,9 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
             showAlert("Please select a valid image file.", "red");
             return;
         }
+
         const objectURL = URL.createObjectURL(file);
-        imgPreview.src = objectURL;
-        imgPreview.style.display = "block";
+
+        if (imgPreview) {
+            imgPreview.src = objectURL;
+            imgPreview.style.display = "block";
+        }
+
         if (cameraIcon) cameraIcon.style.display = "none";
         if (uploadBtn) uploadBtn.style.display = "none";
     };

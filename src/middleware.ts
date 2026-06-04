@@ -3,10 +3,12 @@ import { defineMiddleware } from "astro/middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
     const url = new URL(context.request.url);
-    const hostname = url.hostname;
+    const hostname = url.hostname.toLowerCase();
 
-    // Handle production subdomains on Cloudflare
-    if (hostname.startsWith("admin.")) {
+    const isHandlingAdminHost =
+        hostname.startsWith("admin.");
+
+    if (isHandlingAdminHost) {
         if (url.pathname === "/") {
             return context.rewrite("/admin");
         }
@@ -15,26 +17,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
         }
     }
 
-    // Prevent regular users from manually typing domain.com/admin
-    if (!hostname.startsWith("admin.") && url.pathname.startsWith("/admin") && process.env.NODE_ENV === "production") {
-        return context.redirect("/404");
+    if (!isHandlingAdminHost && url.pathname.startsWith("/admin")) {
+        //return context.redirect("/404");
     }
 
     const isAdminRoute = url.pathname.startsWith("/admin");
     const isLoginEndpoint =
         url.pathname === "/admin" ||
+        url.pathname === "/admin/" ||
         url.pathname === "/admin/auth/login-submit" ||
-        url.pathname === "/admin/auth/change-password-submit";
+        url.pathname === "/admin/auth/change-password-submit" ||
+        url.pathname === "/admin/puppy/add-submit" ||
+        url.pathname === "/admin/adult/add-submit";
 
     if (isAdminRoute && !isLoginEndpoint) {
         const sessionCookie = context.cookies.get('admin_session');
 
-        // No cookie - kick back to the main login screen
+        // No cookie - kick them right back to the root of the admin directory
         if (!sessionCookie || sessionCookie.value !== 'true') {
             return context.redirect("/admin");
         }
     }
 
-    // Proceed as normal for all other main site routes
     return next();
 });

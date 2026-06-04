@@ -28,5 +28,5 @@ export default defineConfig({
         ssr: {
             noExternal: isDev ? ['astro-icon'] : []
         }
-    }
+    },
 });
