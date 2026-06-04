@@ -15,11 +15,13 @@ interface Props {
 
 const { puppyName, puppyGender, puppyImage, puppyStatus, puppyBreed, puppyColour, puppyID } = Astro.props;
 const statusKey = puppyStatus.toLowerCase();
+
+import { getColourLabel, formatGender } from "../config/puppyConstants";
 ---
 
 <div class="puppy-card">
     <div class="puppy-header" data-status={statusKey}>
-        <h1 class="puppy-status">{puppyStatus}</h1>
+        <h1 class="puppy-status">{puppyStatus.toUpperCase()}</h1>
     </div>
 
     <div class="puppy-image">
@@ -31,7 +33,7 @@ const statusKey = puppyStatus.toLowerCase();
 
     <div class="puppy-info">
         <p class="puppy-name">{puppyName}</p>
-        <p class="puppy-gender">{puppyGender} | {puppyColour}</p>
+        <p class="puppy-gender">{formatGender(puppyGender)} | {getColourLabel(puppyColour)}</p>
         <a href={`/puppies/${puppyID}`} class="puppy-more-button">
             <Icon name="paw-print" class="button-icon"/>
             See More

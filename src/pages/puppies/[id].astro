@@ -11,7 +11,7 @@ if (!id) {
     return Astro.redirect('/404');
 }
 
-const db = getDB(Astro);
+const db = getDB();
 
 const puppyArray = await db.select().from(puppies).where(eq(puppies.id, id));
 const puppy = puppyArray[0];
@@ -26,6 +26,8 @@ const adultMap = new Map(allAdults.map(adult => [adult.id, adult.name]));
 const motherName = adultMap.get(puppy.mother) || puppy.mother;
 const fatherName = adultMap.get(puppy.father) || puppy.father;
 const dynamicAge = calculateAge(puppy.dob);
+
+import { getColourLabel, formatGender } from "../../config/puppyConstants";
 ---
 
 <Layout title={`Sualbyronete | Meet ${puppy.name}`}>
@@ -35,7 +37,7 @@ const dynamicAge = calculateAge(puppy.dob);
         <div class="left-content">
             <div class="puppy-image">
                 <div class="puppy-status-badge" data-status={puppy.status.toLowerCase()}>
-                    <h1 class="puppy-status">{puppy.status}</h1>
+                    <h1 class="puppy-status">{puppy.status.toUpperCase()}</h1>
                 </div>
 
                 <img
@@ -61,7 +63,7 @@ const dynamicAge = calculateAge(puppy.dob);
         <!-- Right Hand Content (Puppy Info) -->
         <div class="right-content">
             <div class="puppy-main-header">
-                <p class="puppy-name">{puppy.name}</p>
+                <p class="puppy-name">{formatGender(puppy.name)}</p>
                 <span class="puppy-description">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     In eu massa  posuere, porttitor elit quis, eleifend odio.
@@ -83,10 +85,10 @@ const dynamicAge = calculateAge(puppy.dob);
                     <dd>{dynamicAge}</dd>
 
                     <dt>Gender:</dt>
-                    <dd>{puppy.gender}</dd>
+                    <dd>{formatGender(puppy.gender)}</dd>
 
                     <dt>Colour:</dt>
-                    <dd>{puppy.colour}</dd>
+                    <dd>{getColourLabel(puppy.colour)}</dd>
 
                     <dt>Available From:</dt>
                     <dd>{puppy.availableFrom}</dd>

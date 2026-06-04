@@ -8,3 +8,15 @@ export const PUPPY_COLOURS = [
 
 ]
 
+export const formatGender = (gender: string): string => {
+        if (!gender) return "";
+        const clean = gender.trim();
+        return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+};
+
+export const getColourLabel = (dbValue: string): string => {
+        if (!dbValue) return "";
+        const cleanValue = dbValue.toLowerCase().trim();
+        const match = PUPPY_COLOURS.find(item => item.value === cleanValue);
+        return match ? match.label : dbValue;
+};

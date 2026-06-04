@@ -1,7 +1,7 @@
-// src/pages/admin/login-submit.ts
+// src/pages/admin/auth/login-submit.ts
 import type { APIRoute } from 'astro';
-import { getDB } from '../../db';
-import { adminUsers } from '../../db/schema.ts';
+import { getDB } from '../../../db';
+import { adminUsers } from '../../../db/schema.ts';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -63,6 +63,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
             maxAge: 86400, // 24 hours
             secure: true,
             httpOnly: true, // Safeguards cookie data from window.document hacks
+            sameSite: 'strict'
+        });
+
+        cookies.set('admin_user_name', user.name, {
+            path: '/',
+            maxAge: 86400, // 24 hours
+            secure: true,
+            httpOnly: false,
             sameSite: 'strict'
         });
 

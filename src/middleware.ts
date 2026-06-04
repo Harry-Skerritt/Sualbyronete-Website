@@ -21,7 +21,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     const isAdminRoute = url.pathname.startsWith("/admin");
-    const isLoginEndpoint = url.pathname === "/admin" || url.pathname === "/admin/login-submit";
+    const isLoginEndpoint =
+        url.pathname === "/admin" ||
+        url.pathname === "/admin/auth/login-submit" ||
+        url.pathname === "/admin/auth/change-password-submit";
 
     if (isAdminRoute && !isLoginEndpoint) {
         const sessionCookie = context.cookies.get('admin_session');

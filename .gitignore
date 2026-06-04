@@ -32,3 +32,6 @@ migrations/
 # Secrets and Creds
 .env
 .env.local
+
+# Admin Seed
+seed-admin.js

@@ -15,7 +15,7 @@ form?.addEventListener('submit', async (e) => {
 
     try {
         // Send to DB
-        const response = await fetch ('/admin/login-submit', {
+        const response = await fetch ('/admin/auth/login-submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),

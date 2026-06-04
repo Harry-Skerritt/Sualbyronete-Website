@@ -10,7 +10,7 @@ import { getDB } from "../db";
 import { puppies } from "../db/schema";
 import { PUPPY_COLOURS } from "../config/puppyConstants";
 
-const db = getDB(Astro);
+const db = getDB();
 const dbPuppies = await db.select().from(puppies);
 ---
 

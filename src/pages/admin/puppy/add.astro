@@ -1,10 +1,21 @@
 ---
 // src/pages/admin/puppy/add.astro
 import AdminLayout from "../../../layouts/AdminLayout.astro";
-
 import { Icon } from 'astro-icon/components'
 
 import {PUPPY_COLOURS} from "../../../config/puppyConstants";
+import { getDB } from "../../../db/index";
+import { adults } from "../../../db/schema";
+import { eq } from "drizzle-orm";
+
+export const prerender = false;
+
+const db = await getDB();
+const parents = await db.select().from(adults);
+
+const mothers = parents.filter((p) => p.gender.toLowerCase() === 'female');
+const fathers = parents.filter((p) => p.gender.toLowerCase() === 'male');
+const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier';
 ---
 
 <AdminLayout title="Add Puppy | Admin Dashboard">
@@ -14,7 +25,7 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
             <p class="title-text">Add Puppy</p>
         </header>
 
-        <div class="workspace-grid">
+        <div class="workspace-grid" id="puppy-form-context" data-colours={JSON.stringify(PUPPY_COLOURS)}>
 
             <section class="left-panel">
                 <div class="image-uploader" id="upload-dropzone">
@@ -43,7 +54,7 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
             <div class="vertical-separator" aria-hidden="true"/>
 
             <section class="right-panel">
-                <form class="puppy-info-form">
+                <form class="puppy-info-form" id="puppy-add-form">
 
                     <div class="form-row-full">
                         <div class="field-group">
@@ -88,7 +99,7 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
                             <label for="breed-select" class="dropdown-label">Breed: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
                                 <select id="breed-select" required>
-                                    <option value="">Choose Breed</option>
+                                    <option value="" selected>Choose Breed</option>
                                     <option value="yorkie">Yorkshire Terrier</option>
                                     <option value="biewer">Biewer Terrier</option>
                                 </select>
@@ -148,6 +159,9 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
                             <div class="select-wrapper">
                                 <select id="mother-select" required>
                                     <option value="">Choose Mother</option>
+                                    {mothers.map(mum => (
+                                            <option value={mum.id}>{mum.name} - {formatBreedName(mum.breed)} ({mum.id})</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -157,6 +171,9 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
                             <div class="select-wrapper">
                                 <select id="father-select" required>
                                     <option value="">Choose Father</option>
+                                    {fathers.map(dad => (
+                                            <option value={dad.id}>{dad.name} - {formatBreedName(dad.breed)} ({dad.id})</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -495,3 +512,7 @@ import {PUPPY_COLOURS} from "../../../config/puppyConstants";
       }
     }
 </style>
+
+<script>
+    import "../../../scripts/admin/puppyFormController.ts";
+</script>

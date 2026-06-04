@@ -3,19 +3,10 @@
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import AdminEditButton from "../../components/admin/AdminEditButton.astro";
 import DataCounter from "../../components/admin/DataCounter.astro";
+import Modal from "../../components/Modal.astro";
 
-// DB
-import { getDB } from "../../db/index.ts";
-import { adminUsers } from "../../db/schema";
-import { eq } from "drizzle-orm";
-
-export const prerender = false;
-
-const db = await getDB();
-const sessionCookie = Astro.cookies.get('admin_session');
-
-const users = await db.select().from(adminUsers).limit(1);
-const currentAdminName = users[0]?.name || "Admin User";
+const nameCookie = Astro.cookies.get('admin_user_name');
+const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
 ---
 
 <AdminLayout title="Admin Dashboard | Sualbyronete">
@@ -69,9 +60,39 @@ const currentAdminName = users[0]?.name || "Admin User";
             <AdminEditButton id="photo-edit-btn" icon="edit" text="Edit Home Page Photos"/>
             <AdminEditButton id="bio-edit-btn" icon="edit" text="Edit Default Puppy Bios"/>
             <AdminEditButton id="puppy-pack-edit-btn" icon="edit" text="Edit Puppy Pack Info"/>
+            <AdminEditButton id="open-password-modal-btn" icon="edit" text="Change Admin Password"/>
         </section>
 
     </main>
+
+    <Modal id="password-change-modal" header="Change Password">
+        <div class="modal-form-wrapper">
+            <p class="modal-sub">Verify identity credentials to overwrite database token entries.</p>
+
+            <div id="modal-error-banner" class="modal-error"></div>
+            <div id="modal-success-banner" class="modal-success">Password changed successfully!</div>
+
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="pwd-identifier">Username or Email Address</label>
+                    <input type="text" id="pwd-identifier" required placeholder="Username" />
+                </div>
+                <div class="form-group">
+                    <label for="pwd-current">Current Password</label>
+                    <input type="password" id="pwd-current" required />
+                </div>
+                <div class="form-group">
+                    <label for="pwd-new">New Password</label>
+                    <input type="password" id="pwd-new" required />
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" data-modal-close>Cancel</button>
+                    <button type="submit" class="modal-btn save">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </Modal>
 </AdminLayout>
 
 <style lang="scss">
@@ -184,6 +205,96 @@ const currentAdminName = users[0]?.name || "Admin User";
       min-width: 18rem;
     }
   }
+
+  /* Modal */
+  .modal-form-wrapper {
+    font-family: var(--font-secondary);
+    padding-bottom: 1rem;
+
+    .modal-sub {
+      font-size: 1.2rem;
+      color: #64748b;
+      margin: 0 0 1.5rem 0;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+
+    label {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--colour-dark);
+    }
+    input {
+      padding: 1rem;
+      font-size: 1.4rem;
+      border: 2px solid var(--colour-dark);
+      border-radius: 0.6rem;
+      outline: none;
+      background-color: var(--colour-white);
+      &:focus {
+        border-color: var(--colour-dark);
+      }
+    }
+  }
+
+  .modal-error {
+    display: none;
+    background: #fef2f2;
+    border: 1.5px solid #f87171;
+    color: #991b1b;
+    padding: 1rem;
+    border-radius: 0.6rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .modal-success {
+    display: none;
+    background: #f0fdf4;
+    border: 1.5px solid #4ade80;
+    color: #166534;
+    padding: 1rem;
+    border-radius: 0.6rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .modal-btn {
+    padding: 1rem 2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    border-radius: 0.6rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    &:active { transform: scale(0.98); }
+  }
+
+  .modal-btn.cancel {
+    background: #e2e8f0;
+    color: #475569;
+    &:hover { background: #cbd5e1; }
+  }
+
+  .modal-btn.save {
+    background: var(--colour-dark);
+    color: white;
+    &:hover { filter: brightness(1.1); }
+  }
 </style>
 
 
@@ -218,5 +329,72 @@ const currentAdminName = users[0]?.name || "Admin User";
                 window.location.href = "/adult/edit"
             })
         }
-    })
+
+        /* Password */
+        const modalEl = document.getElementById("password-change-modal");
+        const openModalBtn = document.getElementById("open-password-modal-btn");
+        const form = document.getElementById("change-password-form") as HTMLFormElement;
+        const errBanner = document.getElementById("modal-error-banner");
+        const successBanner = document.getElementById("modal-success-banner");
+
+        // Open view by applying your built-in utility classes
+        openModalBtn?.addEventListener("click", () => {
+            if (modalEl) {
+                modalEl.classList.add("is-active");
+                modalEl.removeAttribute("aria-hidden");
+            }
+        });
+
+        // Function helper to clear parameters on dismiss execution
+        const hideModalAndReset = () => {
+            if (modalEl) {
+                modalEl.classList.remove("is-active");
+                modalEl.setAttribute("aria-hidden", "true");
+            }
+            if (form) form.reset();
+            if (errBanner) errBanner.style.display = "none";
+            if (successBanner) successBanner.style.display = "none";
+        };
+
+        // Listen for all components containing data-modal-close within this context block
+        modalEl?.querySelectorAll('[data-modal-close]').forEach(btn => {
+            btn.addEventListener('click', hideModalAndReset);
+        });
+
+        // Submit Pipeline Triggering
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (errBanner) errBanner.style.display = "none";
+            if (successBanner) successBanner.style.display = "none";
+
+            const identifier = (document.getElementById("pwd-identifier") as HTMLInputElement).value;
+            const currentPassword = (document.getElementById("pwd-current") as HTMLInputElement).value;
+            const newPassword = (document.getElementById("pwd-new") as HTMLInputElement).value;
+
+            try {
+                const response = await fetch('/admin/auth/change-password-submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, currentPassword, newPassword })
+                });
+
+                const data = await response.json() as { success: boolean; message?: string };
+
+                if (response.ok && data.success) {
+                    if (successBanner) successBanner.style.display = "block";
+                    form.reset();
+                    // Smooth exit sequence execution
+                    setTimeout(hideModalAndReset, 1500);
+                } else {
+                    throw new Error(data.message || "Credential matching execution verified incorrect status");
+                }
+
+            } catch (err: any) {
+                if (errBanner) {
+                    errBanner.textContent = err.message;
+                    errBanner.style.display = "block";
+                }
+            }
+        });
+    });
 </script>
