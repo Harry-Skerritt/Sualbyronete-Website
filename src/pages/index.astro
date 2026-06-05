@@ -3,28 +3,10 @@
 import Layout from '../layouts/Layout.astro';
 import PhotoCarousel from "../components/PhotoCarousel.astro";
 
-const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
+import { getCarouselGallery } from "../scripts/getFeaturedPuppies";
+const petGallery = await getCarouselGallery();
 
-const petGallery = [
-    {
-        src: `${baseURL}/images/carousel/puppy1.jpeg`,
-        alt: 'Yorkshire Terrier puppy sitting outside',
-        title: 'Alfie',
-        subtitle: 'Yorkshire Terrier | 4 Months'
-    },
-    {
-        src: `${baseURL}/images/carousel/puppy2.jpg`,
-        alt: 'Older Yorkshire Terrier sitting outside with a ball',
-        title: 'Sid',
-        subtitle: 'Yorkshire Terrier | 2 Years'
-    },
-    {
-        src: `${baseURL}/images/carousel/puppy3.jpg`,
-        alt: 'Yorkshire Terrier puppy sitting on a sofa',
-        title: 'Peanut',
-        subtitle: 'Yorkshire Terrier | 2 Months'
-    }
-];
+const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout>
@@ -33,7 +15,17 @@ const petGallery = [
 
         <!-- Section 1: Photo Carousel -->
         <section class="snap-section carousel-section">
-            <PhotoCarousel images={petGallery}/>
+            {petGallery.length > 0 ? (
+                    <PhotoCarousel images={petGallery}/>
+            ) : (
+                    <div class="carousel-placeholder">
+                        <img src={`${baseURL}/logo-basic/Logo-Basic.png`} alt="Sualbyronete Welcome Banner" class="placeholder-bg" />
+                        <div class="placeholder-overlay">
+                            <h1>Welcome to Sualbyronete</h1>
+                            <p>Breeder of Yorkshire and Biewer Terriers</p>
+                        </div>
+                    </div>
+            )}
         </section>
 
         <!-- Section 2: About Section -->
@@ -46,7 +38,7 @@ const petGallery = [
                     I have been breeding Yorkshire Terriers for a few years now.
                     It all started with my first pet Yorkie called Zoey, many years ago, and then I became interested in the Yorkshire Terrier from that date onwards.
                     When Zoey died of old age I then decided I wanted another yorkie, this led on to buying my next girl called Xena who then went on to have babies, purely for pet, keeping her daughter Zara.
-                    Her son went to live with my mum for many happy years and both Xena and Zara lived to a good age, unfortunately a few months after Xena died, her daughter followed and then I was interested in the side of showing. <br><br>
+                    Her son went to live with my mum for many happy years and both Xena and Zara lived to a good age, unfortunately a few months after Xena died, her daughter followed, and then I was interested in the side of showing. <br><br>
 
                     My very first show dog was Bella, bought from a well-known show person in the Uk, this was followed by Byron, again, from a well-established breeder and show person in the UK.
                     I did show Bella and Byron, and Byron qualified for Crufts for life in his show career, unfortunately after losing a tooth this was the end of his career, he retired and lived a lovely life with his friends here. <br><br>
@@ -54,12 +46,11 @@ const petGallery = [
                     His daughter whom I bred also was my best friend and after a very poor start in life, but after a lot of TLC and veterinary help, she lived a happy life here until she passed away two years ago.
                     She was our amazing Grace who is on my logo with our new addition to our breeding line in Biewer Terriers, and our first Biewer was Jasmine (retired and living with a friend). <br><br>
 
-                    I was very interested in the Biewer Terrier as this breed originated from Germany from a Mr & Mrs Biewer, who bred two Piebald terriers with the outcome of the Black/Tan/White Biewer Terrier.
+                    I was very interested in the Biewer Terrier as this breed originated from Germany from a Mr & Mrs Biewer, who bred two Piebald terriers with the outcome of the Black/Tan/White Biewer Terrier. 
                     This breed is shown in the Europe and United States but unfortunately the Kennel Club in the UK has not yet recognised the breed. <br><br>
 
                     I have not been showing for some time, but I have Byron’s descendants and have some nice show specimens and will now continue to breed to the best of my knowledge and standard of the Yorkshire Terrier and now the Biewer Terrier.
                     I have my new stud boy Biewer and will be keeping this breed along with my Yorkies.
-
                 </p>
             </div>
 
@@ -91,276 +82,324 @@ const petGallery = [
 
 
 <style lang="scss">
+  :root {
+    --border-px: 17px;
+  }
+
+  /* Scroll Framework */
+  .snap-scroll-container {
+    width: 100%;
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .snap-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .snap-section {
+    width: 100%;
+    height: 100%;
+    min-height: calc(100vh - var(--header-height));
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    box-sizing: border-box;
+  }
+
+  /* Section 1: Carousel */
+  .carousel-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-section :global(.carousel-container) {
+    max-width: 100% !important;
+    width: 100%;
+    height: 100%;
+  }
+
+  .carousel-section :global(.carousel-slide) {
+    aspect-ratio: auto !important;
+    height: calc(100vh - var(--header-height));
+  }
+
+  /* Carousel Fallback */
+  .carousel-placeholder {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - var(--header-height));
+    overflow: hidden;
+
+    .placeholder-bg {
+      width: 100%;
+      height: 50%;
+      object-fit: contain;
+    }
+
+    .placeholder-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 10rem;
+      align-items: center;
+      color: var(--colour-white);
+      text-align: center;
+      padding: 2rem;
+
+      h1 {
+        font-family: var(--font-primary);
+        font-size: 4.5rem;
+        margin: 0 0 1rem 0;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+      }
+
+      p {
+        font-family: var(--font-secondary);
+        font-size: 1.8rem;
+        margin: 0;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+      }
+    }
+  }
+
+  /* Section 2: About Section */
+  .about-section {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 4rem 2rem 2rem 2rem;
+    gap: 2rem;
+  }
+  .susan-image {
+    height: 80vh;
+    width: auto;
+    object-fit: cover;
+    border: var(--border-px) solid var(--colour-white);
+    margin: 0;
+  }
+
+  .text-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-self: flex-start;
+  }
+
+  .about-header{
+    color: var(--colour-dark);
+    font-family: var(--font-primary);
+    font-size: 60px;
+    margin: 0 0 1rem 0;
+  }
+
+  .about-body {
+    color: var(--colour-white);
+    font-family: var(--font-secondary);
+    font-size: 16.8px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .secondary-image {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .secondary-image img{
+    width: 22rem;
+    height: 22rem;
+    object-fit: cover;
+    border-radius: 50%;
+    border: var(--border-px) solid var(--colour-white);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    margin: 0;
+  }
+
+  /* --- SECTION 3: NAVIGATION CONFIG --- */
+  .nav-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .nav-images-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    height: 100%;
+  }
+
+  .nav-image-wrapper {
+    position: relative;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+  }
+
+  .nav-image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 1;
+  }
+
+  .nav-image-wrapper::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 2;
+
+    cursor: pointer;
+    transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+  }
+
+  .nav-image-header {
+    position: relative;
+    z-index: 3;
+    color: var(--colour-white);
+    font-family: var(--font-primary);
+    font-size: 5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    transition: 0.3s ease;
+    text-decoration: none;
+  }
+
+  .nav-image-subtext {
+    position: relative;
+    z-index: 3;
+    color: var(--colour-white);
+    font-family: var(--font-secondary);
+    font-size: 1.8rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    transition: 0.3s ease;
+    text-decoration: none;
+  }
+
+  .nav-image-wrapper:hover::after {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  .nav-image-wrapper:hover .nav-image-header {
+    color: var(--colour-dark);
+  }
+
+  .nav-image-wrapper:hover .nav-image-subtext {
+    color: var(--colour-dark);
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
     :root {
-        --border-px: 17px;
+      --border-px: 8px;
     }
 
-    /* Scroll Framework */
+    /* Disable Snap Scrolling */
     .snap-scroll-container {
-        width: 100%;
-        height: calc(100vh - var(--header-height));
-        overflow-y: auto;
-        scroll-snap-type: y mandatory;
-        scroll-behavior: smooth;
-
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    .snap-scroll-container::-webkit-scrollbar {
-        display: none;
+      height: auto;
+      scroll-snap-type: none;
+      overflow-y: visible;
     }
 
     .snap-section {
-        width: 100%;
-        height: 100%;
-        min-height: calc(100vh - var(--header-height));
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-        box-sizing: border-box;
-    }
-
-    /* Section 1: Carousel */
-    .carousel-section {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .carousel-section :global(.carousel-container) {
-        max-width: 100% !important;
-        width: 100%;
-        height: 100%;
+      height: auto;
+      min-height: auto;
+      scroll-snap-align: none;
+      padding: 0;
     }
 
     .carousel-section :global(.carousel-slide) {
-        aspect-ratio: auto !important;
-        height: calc(100vh - var(--header-height));
+      height: 55vh;
     }
 
-    /* Section 2: About Section */
-    .about-section {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-end;
-        justify-content: space-between;
-        padding: 4rem 2rem 2rem 2rem;
-        gap: 2rem;
+    .carousel-placeholder {
+      height: 55vh;
+      .placeholder-overlay h1 { font-size: 2.8rem; }
+      .placeholder-overlay p { font-size: 1.3rem; }
     }
-    .susan-image {
-        height: 80vh;
-        width: auto;
-        object-fit: cover;
-        border: var(--border-px) solid var(--colour-white);
-        margin: 0;
+
+    /* Arrange Vertically */
+    .about-section {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2.5rem;
+      padding: 4rem 1.5rem;
     }
 
     .text-container {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        align-self: flex-start;
+      align-self: center;
+      order: 0;
     }
 
-    .about-header{
-        color: var(--colour-dark);
-        font-family: var(--font-primary);
-        font-size: 60px;
-        margin: 0 0 1rem 0;
+    .about-header {
+      font-size: 3.5rem;
     }
 
     .about-body {
-        color: var(--colour-white);
-        font-family: var(--font-secondary);
-        font-size: 16.8px;
-        line-height: 1.6;
-        margin: 0;
+      font-size: 1.4rem;
+      line-height: 1.5;
+    }
+
+    .susan-image {
+      height: auto;
+      width: 100%;
+      max-width: 350px;
+      order: 1;
     }
 
     .secondary-image {
-        display: flex;
-        align-items: flex-end;
+      display: none;
     }
 
-    .secondary-image img{
-        width: 22rem;
-        height: 22rem;
-        object-fit: cover;
-        border-radius: 50%;
-        border: var(--border-px) solid var(--colour-white);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        margin: 0;
-    }
-
-    /* --- SECTION 3: NAVIGATION CONFIG --- */
-    .nav-section {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
+    /* Arrange Vertically */
     .nav-images-container {
-        display: flex;
-        flex-direction: row;
-        flex: 1;
-        height: 100%;
+      flex-direction: column;
+      height: 65vh;
     }
 
     .nav-image-wrapper {
-        position: relative;
-        width: 50%;
-        height: 100%;
-        overflow: hidden;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        text-decoration: none;
-    }
-
-    .nav-image-wrapper img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        z-index: 1;
-    }
-
-    .nav-image-wrapper::after{
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-
-        backdrop-filter: blur(8px);
-        background-color: rgba(0, 0, 0, 0.2);
-        z-index: 2;
-
-        cursor: pointer;
-        transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+      width: 100%;
+      height: 50%;
     }
 
     .nav-image-header {
-        position: relative;
-        z-index: 3;
-        color: var(--colour-white);
-        font-family: var(--font-primary);
-        font-size: 5rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin: 0;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-        transition: 0.3s ease;
-        text-decoration: none;
+      font-size: 3.2rem;
     }
-
-    .nav-image-subtext {
-        position: relative;
-        z-index: 3;
-        color: var(--colour-white);
-        font-family: var(--font-secondary);
-        font-size: 1.8rem;
-        margin-top: 0.5rem;
-        margin-bottom: 0;
-        opacity: 0.85;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-        transition: 0.3s ease;
-        text-decoration: none;
-    }
-
-    .nav-image-wrapper:hover::after {
-        background-color: rgba(0, 0, 0, 0);
-    }
-
-    .nav-image-wrapper:hover .nav-image-header {
-        color: var(--colour-dark);
-    }
-
-    .nav-image-wrapper:hover .nav-image-subtext {
-        color: var(--colour-dark);
-    }
-
-    /* Mobile Styling */
-    @media (#{$mobile}) {
-        :root {
-            --border-px: 8px;
-        }
-
-        /* Disable Snap Scrolling */
-        .snap-scroll-container {
-            height: auto;
-            scroll-snap-type: none;
-            overflow-y: visible;
-        }
-
-        .snap-section {
-            height: auto;
-            min-height: auto;
-            scroll-snap-align: none;
-            padding: 0;
-        }
-
-        .carousel-section :global(.carousel-slide) {
-            height: 55vh;
-        }
-
-        /* Arrange Vertically */
-        .about-section {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 2.5rem;
-            padding: 4rem 1.5rem;
-        }
-
-        .text-container {
-            align-self: center;
-            order: 0;
-        }
-
-        .about-header {
-            font-size: 3.5rem;
-        }
-
-        .about-body {
-            font-size: 1.4rem;
-            line-height: 1.5;
-        }
-
-        .susan-image {
-            height: auto;
-            width: 100%;
-            max-width: 350px;
-            order: 1;
-        }
-
-        .secondary-image {
-            display: none;
-        }
-
-        /* Arrange Vertically */
-        .nav-images-container {
-            flex-direction: column;
-            height: 65vh;
-        }
-
-        .nav-image-wrapper {
-            width: 100%;
-            height: 50%;
-        }
-
-        .nav-image-header {
-            font-size: 3.2rem;
-        }
-    }
+  }
 
 
 </style>

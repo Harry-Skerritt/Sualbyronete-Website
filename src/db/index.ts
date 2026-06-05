@@ -32,5 +32,5 @@ export function getDB() {
         // Fallback catch block
     }
 
-    throw new Error("Database environment could not be determined.");
+    throw new Error("Database environment could not be determined");
 }

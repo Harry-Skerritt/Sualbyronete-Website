@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropzone = document.getElementById("upload-dropzone");
     const fileInput = document.getElementById("parent-image-file") as unknown as HTMLInputElement;
     const imgPreview = document.getElementById("image-preview") as unknown as HTMLImageElement;
-    const alertBanner = document.getElementById("form-alert-banner");
 
     const parentNameInput = document.getElementById("parent-name") as unknown as HTMLInputElement;
     const parentBioInput = document.getElementById("parent-bio") as unknown as HTMLTextAreaElement;
@@ -84,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const handleFilePreview = (file: File) => {
         if (!file.type.startsWith("image/")) {
-            showAlert("Please select a valid image file.", "red");
+            window.showToast("Please select a valid image file!", true);
             return;
         }
         const objectURL = URL.createObjectURL(file);
@@ -116,10 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
-        hideAlert();
 
         if (!fileInput.files || fileInput.files.length === 0) {
-            showAlert("A parent photo is required!", "red");
+            window.showToast("A parent photo is required!", true);
             return;
         }
 
@@ -155,15 +153,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json() as { success: boolean; generatedId?: string; message?: string };
 
             if (response.ok && result.success) {
-                showAlert(`Success! Parent registered as System ID: ${result.generatedId}`, "green");
+                window.showToast(`Success! Parent registered as System ID: ${result.generatedId}`, false);
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
-                }, 2000);
+                }, 1000);
             } else {
                 throw new Error(result.message || "Failed to save parent entry records");
             }
         } catch (err: any) {
-            showAlert(`Submission Error: ${err.message}`, "red");
+            window.showToast(`Submission Error: ${err.message}`, true);
 
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -195,14 +193,4 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/admin/dashboard";
         });
     }
-
-    function showAlert(msg: string, color: "red" | "green") {
-        if (!alertBanner) return;
-        alertBanner.textContent = msg;
-        alertBanner.style.display = "block";
-        alertBanner.style.backgroundColor = color === "red" ? "#fef2f2" : "#f0fdf4";
-        alertBanner.style.color = color === "red" ? "#991b1b" : "#166534";
-        alertBanner.style.border = color === "red" ? "1.5px solid #f87171" : "1.5px solid #4ade80";
-    }
-    function hideAlert() { if (alertBanner) alertBanner.style.display = "none"; }
 });

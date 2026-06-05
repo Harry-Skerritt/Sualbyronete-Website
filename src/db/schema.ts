@@ -45,6 +45,7 @@ export const puppies = sqliteTable('puppies', {
     image: text('image').notNull(),
     dob: text('dob').notNull(),
     bio: text('bio').notNull().default("No bio specified."),
+    showInCarousel: integer('show_in_carousel', { mode: 'boolean' }).notNull().default(false),
 
     mother: text('mother').notNull().references(() => adults.id),
     father: text('father').notNull().references(() => adults.id),

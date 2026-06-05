@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropzone = document.getElementById("upload-dropzone");
     const fileInput = document.getElementById("pup-image-file") as unknown as HTMLInputElement;
     const imgPreview = document.getElementById("image-preview") as unknown as HTMLImageElement;
-    const alertBanner = document.getElementById("form-alert-banner");
     const discardBtn = document.getElementById("discard-form-btn");
 
     const pupNameInput = document.getElementById("pup-name") as unknown as HTMLInputElement;
@@ -70,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Photo Preview Processing ---
     const handleFilePreview = (file: File) => {
         if (!file.type.startsWith("image/")) {
-            showAlert("Please select a valid image file.", "red");
+            window.showToast("Please select a valid image file!", true);
             return;
         }
 
@@ -108,10 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Form Transmission ---
     formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
-        hideAlert();
 
         if (!fileInput.files || fileInput.files.length === 0) {
-            showAlert("A puppy photo is required!", "red");
+            window.showToast("A puppy photo is required!", true);
             return;
         }
 
@@ -150,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json() as { success: boolean; generatedId?: string; message?: string };
 
             if (response.ok && result.success) {
-                showAlert(`✔ Success! Puppy registered as System ID: ${result.generatedId}`, "green");
+                window.showToast(`Success! Puppy registered as System ID: ${result.generatedId}`, false);
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
                 }, 2000);
@@ -158,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(result.message || "Failed to save data record mapping entries");
             }
         } catch (err: any) {
-            showAlert(`Submission Error: ${err.message}`, "red");
+            window.showToast(`Submission Error: ${err.message}`, true);
 
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -177,7 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (uploadBtn) uploadBtn.style.display = "block";
         colourSelect.disabled = true;
         colourSelect.innerHTML = '<option value="">Choose a breed first...</option>';
-        hideAlert();
     });
 
     /* Discard Modal */
@@ -205,15 +202,4 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/admin/dashboard";
         });
     }
-
-    /* Alert Utilities */
-    function showAlert(msg: string, color: "red" | "green") {
-        if (!alertBanner) return;
-        alertBanner.textContent = msg;
-        alertBanner.style.display = "block";
-        alertBanner.style.backgroundColor = color === "red" ? "#fef2f2" : "#f0fdf4";
-        alertBanner.style.color = color === "red" ? "#991b1b" : "#166534";
-        alertBanner.style.border = color === "red" ? "1.5px solid #f87171" : "1.5px solid #4ade80";
-    }
-    function hideAlert() { if (alertBanner) alertBanner.style.display = "none"; }
 });

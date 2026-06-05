@@ -1,0 +1,187 @@
+---
+// src/pages/admin/photoEdit.astro
+import AdminLayout from "../../layouts/AdminLayout.astro";
+
+// DB
+import { getDB } from "../../db/index";
+import { puppies, adults } from "../../db/schema";
+import { desc } from "drizzle-orm";
+import CarouselSelectCard from "../../components/admin/CarouselSelectCard.astro";
+
+export const prerender = false;
+const db = getDB();
+
+const rawPuppies = await db.select().from(puppies).orderBy(desc(puppies.seqID));
+const sortedPuppies = [...rawPuppies].sort((a, b) => {
+    const aVal = a.showInCarousel ? 1 : 0;
+    const bVal = b.showInCarousel ? 1 : 0;
+    return bVal - aVal;
+});
+---
+
+
+<AdminLayout title="Edit Carousel | Admin Dashboard">
+    <main class="main-container">
+
+        <header class="admin-header">
+            <div class="header-text">
+                <h1>Homepage Carousel Manager</h1>
+                <p>Toggle which puppies feature in the main scrolling gallery on the homepage</p>
+            </div>
+
+            <div class="action-frame">
+                <button type="button" id="submit-btn" form="carousel-form" class="btn-save">
+                    Save Changes
+                </button>
+            </div>
+        </header>
+
+        <form id="carousel-form" class="form-layout">
+            <div class="cards-grid">
+                {sortedPuppies.map((pup: any) => (
+                        <CarouselSelectCard
+                                name={pup.name}
+                                image={pup.image}
+                                breed={pup.breed}
+                                dataId={pup.id}
+                                showInCarousel={pup.showInCarousel}
+                        />
+                ))}
+            </div>
+        </form>
+
+    </main>
+</AdminLayout>
+
+<style lang="scss">
+  .main-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--colour-light, #e2e8f0);
+    gap: 2rem;
+
+    .header-text {
+      h1 {
+        font-family: var(--font-primary);
+        font-size: 2.5rem;
+        color: var(--colour-dark);
+        margin: 0 0 0.5rem 0;
+      }
+      p {
+        font-family: var(--font-secondary);
+        font-size: 1.1rem;
+        color: var(--colour-light);
+        margin: 0;
+      }
+    }
+  }
+
+  .btn-save {
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--colour-white);
+    background-color: var(--colour-dark);
+    border: 2px solid var(--colour-dark);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--colour-light);
+      border-color: var(--colour-light);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      color: var(--colour-dark);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+    align-items: start;
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .admin-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+
+      .header-text {
+        h1 {
+          font-size: 1.5rem;
+          font-weight: 800;
+        }
+        p {
+          font-size: 0.8rem;
+        }
+      }
+
+      .action-frame {
+        width: 100%;
+
+        .btn-save {
+          width: 100%;
+          padding: 1rem;
+        }
+      }
+    }
+  }
+</style>
+
+<script>
+    const form = document.getElementById('carousel-form') as HTMLFormElement;
+    const saveBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+    const toast = document.getElementById('toast') as HTMLDivElement;
+
+    saveBtn?.addEventListener('click', async () => {
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Saving...";
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/api/update-carousel', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                window.showToast("Changes Saved! Returning to dashboard...")
+
+                setTimeout(() => {
+                    window.location.href = "/admin/dashboard";
+                }, 1000);
+            } else {
+                window.showToast("Failed to save updates...", true)
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Save Changes";
+            }
+        } catch (error) {
+            window.showToast("Network Error! Please try again later", true)
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Save Changes";
+        }
+    });
+</script>
