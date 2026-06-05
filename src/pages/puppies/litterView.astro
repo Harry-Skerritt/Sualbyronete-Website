@@ -1,0 +1,156 @@
+---
+// src/pages/puppies/litterView.astro
+
+import Layout from "../../layouts/Layout.astro";
+import PuppyCard from "../../components/PuppyCard.astro"
+import { Icon } from "astro-icon/components"
+
+const { searchParams } = Astro.url;
+const parentID = searchParams.get('parent') || "";
+const parentName = searchParams.get('name') || "";
+
+// DB
+import { getDB } from "../../db";
+import { puppies } from "../../db/schema";
+import { eq, or } from "drizzle-orm";
+
+if (!parentID) {
+    return Astro.redirect('/puppies');
+}
+
+const db = getDB();
+
+const litterPuppies = await db
+    .select().from(puppies)
+    .where(
+        or(
+            eq(puppies.mother, parentID),
+            eq(puppies.father, parentID)
+        )
+    );
+---
+
+<Layout title=`${parentName}'s Puppies | Sualbyronete`>
+
+    <main class="litter-view-container">
+
+        <header class="litter-header">
+            <h1>{parentName}'s Puppies</h1>
+            <a href="/adults" class="back-link">
+                <Icon name="magnifier" /> Back to Parents
+            </a>
+        </header>
+
+        <div class="puppy-grid">
+            {litterPuppies.length > 0 ? (
+                litterPuppies.map((pup: any) => (
+                        <div class="puppy-card-wrapper">
+                            <PuppyCard
+                                    puppyName={pup.name}
+                                    puppyGender={pup.gender}
+                                    puppyImage={pup.image}
+                                    puppyStatus={pup.status}
+                                    puppyBreed={pup.breed}
+                                    puppyColour={pup.colour}
+                                    puppyID={pup.id || ''}
+                            />
+                        </div>
+                ))
+            ) : (
+                    <div class="no-results">
+                        <p>No recorded puppies match this parent right now</p>
+                    </div>
+            )}
+        </div>
+
+    </main>
+
+</Layout>
+
+<style lang="scss">
+  .litter-view-container {
+    max-width: 117rem;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .litter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--colour-dark);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-family: var(--font-primary);
+      color: var(--colour-dark);
+      margin: 0;
+      font-size: 2.2rem;
+    }
+  }
+
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-secondary);
+    color: var(--colour-dark);
+    text-decoration: none;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .puppy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20.6rem, 1fr));
+    gap: 2rem;
+  }
+
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    color: var(--colour-dark);
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .litter-view-container {
+      padding: 1.5rem 1rem 4rem 1rem;
+    }
+
+    .litter-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+
+      h1 {
+        font-size: 1.8rem;
+        line-height: 2.2rem;
+      }
+    }
+
+    .back-link {
+      font-size: 1.1rem;
+      padding: 0.4rem 0;
+    }
+
+    .puppy-grid {
+      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+      gap: 1.5rem;
+    }
+
+    .no-results {
+      padding: 3rem 1rem;
+      font-size: 1.1rem;
+    }
+  }
+</style>

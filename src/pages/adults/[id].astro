@@ -88,7 +88,7 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
                     <dd>{getColourLabel(parent.colour)}</dd>
 
                     <dt>Puppies:</dt>
-                    <dd><a href={`/puppies/litterView?parent=${parent.id}`}>View Puppies</a></dd>
+                    <dd><a href={`/puppies/litterView?parent=${parent.id}&name=${parent.name}`}>View Puppies</a></dd>
 
                     <dt>Reg #:</dt>
                     <dd>{parent.regID}</dd>
@@ -303,98 +303,105 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     &:hover { text-decoration: underline; }
   }
 
+  dd a {
+    display: inline-block;
+    background-color: var(--colour-dark);
+    padding: 0.2rem 0.8rem;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+  }
+
 
   /* Mobile Styling */
   @media ($mobile) {
     .parent-info-container {
-      display: flex;
       flex-direction: column;
-      padding: 1.5rem 1.5rem;
-      gap: 2rem 0;
+      padding: 1rem 1.5rem 4rem;
+      gap: 2rem;
+      min-height: auto;
     }
 
-    /* Left (Top) Content */
     .left-content {
       width: 100%;
+      max-width: 100%;
       flex: none;
-      display: contents;
     }
 
     .parent-image {
       width: 100%;
-      max-width: 45rem;
+      max-width: 100%;
     }
 
-    img {
+    .parent-photo {
       height: auto;
       aspect-ratio: 1 / 1;
     }
 
-    .parent-name {
-      font-size: 3rem;
-      line-height: 3.4rem;
-    }
-
-    .parent-description {
-      width: 100%;
-      height: auto;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Pricing */
     .pricing-section {
-      order: 3;
-      width: 100%;
-      max-width: 45rem;
-      text-align: center;
-      align-self: center;
-      margin: 0;
-      padding-top: 2.5rem;
-      position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 0.3rem;
-        background-color: var(--colour-dark);
-        border-radius: 999px;
-      }
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-radius: 0.8rem;
+      border: 2px solid var(--colour-dark);
+      box-sizing: border-box;
     }
 
     .pricing-text {
       font-size: 1.4rem;
+      text-align: center;
     }
 
     .pricing-contact {
-      font-size: 1.4rem;
+      display: inline-block;
+      background-color: var(--colour-dark);
+      color: var(--colour-light);
+      padding: 0.3rem 0.8rem;
+      border-radius: 0.4rem;
+      margin-left: 0.3rem;
     }
 
     .deposit-text {
-      font-size: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.3rem;
+      text-align: center;
+      margin-top: 0.4rem;
     }
 
-    /* Right (Bottom) Content */
     .right-content {
-      display: flex;
-      flex-direction: column;
       width: 100%;
-      order: 2;
+    }
+
+    .parent-name {
+      font-size: 2.8rem;
+      line-height: 3.2rem;
+    }
+
+    .parent-description {
+      width: 100%;
+      font-size: 1.1rem;
+      line-height: 1.5rem;
     }
 
     .info-lists {
-      flex-direction: column;
-      gap: 2.5rem;
+      width: 100%;
     }
 
-    dd, dt {
-      font-size: 1.18rem;
+    .parent-specs-list {
+      grid-template-columns: 8.5rem 1fr;
+      gap: 0.6rem 0;
     }
 
-    .vertical-separator, .horizontal-separator {
-      display: none;
+    dt, dd {
+      font-size: 1.15rem;
+      height: 2.8rem;
+    }
+
+    dd a {
+      display: inline-block;
+      background-color: var(--colour-dark);
+      padding: 0.2rem 0.8rem;
+      border-radius: 0.4rem;
+      font-size: 1rem;
     }
   }
 
