@@ -387,9 +387,17 @@ const totalParents = adultCountResult[0]?.value ?? 0;
         const adultEditBtn = document.getElementById("adult-edit-btn");
         if (adultEditBtn) {
             adultEditBtn.addEventListener("click", () => {
-                window.location.href = "edit?type=adults"
+                window.location.href = "/edit?type=adults"
             })
         }
+
+        /* Home Page Photos */
+        const homeEditBtn = document.getElementById("photo-edit-btn");
+        if (homeEditBtn) {
+            homeEditBtn.addEventListener("click", () => {
+                window.location.href = "/photoEdit";
+            })
+            }
 
         /* Password */
         const modalEl = document.getElementById("password-change-modal");
