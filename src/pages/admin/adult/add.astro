@@ -3,24 +3,61 @@
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { Icon } from 'astro-icon/components'
 
-import {PUPPY_COLOURS} from "../../../config/puppyConstants";
+import { PUPPY_COLOURS } from "../../../config/puppyConstants";
+import { getDB } from "../../../db/index";
+import { adults } from "../../../db/schema";
+import { eq } from "drizzle-orm";
 import Modal from "../../../components/Modal.astro";
+
+export const prerender = false;
+
+// Param
+const { searchParams } = Astro.url;
+const isEditMode = searchParams.get("edit") === "true";
+const parentID = searchParams.get("id");
+
+const db = await getDB();
+
+let existingParent: any = null;
+
+if (isEditMode && parentID) {
+    const records = await db.select().from(adults).where(eq(adults.id, parentID));
+    if (records.length > 0) {
+        existingParent = records[0];
+    }
+}
+
+const pageTitle = isEditMode ? "Edit Parent Profile" : "Add Parent";
+const submitButtonLabel = isEditMode ? "Save Changes" : "Add Parent";
+
+const todayDateObj = new Date();
+const formattedToday = todayDateObj.toISOString().split("T")[0];
+
 ---
 
-<AdminLayout title="Add Parent | Admin Dashboard">
+<AdminLayout title={`${pageTitle} | Admin Dashboard`}>
     <main class="add-parent-view">
 
         <header class="page-header">
-            <p class="title-text">Add Parent</p>
+            <p class="title-text">{pageTitle}</p>
         </header>
 
         <div class="workspace-grid" id="parent-form-context" data-colours={JSON.stringify(PUPPY_COLOURS)}>
 
             <section class="left-panel">
                 <div class="image-uploader" id="upload-dropzone">
-                    <Icon name="camera" class="camera-icon"/>
-                    <img id="image-preview" src="" alt="Uploaded Preview" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 0.8rem;" />
-                    <a class="upload-button">Upload a Photo</a>
+                    <Icon name="camera" class="camera-icon" style={existingParent ? "display: none;" : ""}/>
+                    <img
+                            id="image-preview"
+                            src={existingParent ? `/images/adults/${existingParent.image}` : ""}
+                            alt="Uploaded Preview"
+                            style={existingParent
+                                ? "display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0.8rem;"
+                                : "display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 0.8rem;"
+                            }
+                    />
+
+                    <a class="upload-button" style={existingParent ? "display: none;" : ""}>Upload a Photo</a>
 
                     <input
                             type="file"
@@ -28,7 +65,7 @@ import Modal from "../../../components/Modal.astro";
                             name="parent-image-file"
                             accept="image/png, image/jpeg, image/webp"
                             style="display: none;"
-                            required
+                            required={!isEditMode}
                     />
                 </div>
 
@@ -43,7 +80,14 @@ import Modal from "../../../components/Modal.astro";
             <div class="vertical-separator" aria-hidden="true"/>
 
             <section class="right-panel">
-                <form class="parent-info-form" id="parent-add-form">
+                <form
+                        class="parent-info-form"
+                        id="parent-add-form"
+                        data-mode={isEditMode ? "edit" : "add"}
+                        data-id={parentID || ""}
+                        data-edit-mode={isEditMode.toString()}
+                        data-existing-colour={existingParent?.colour || ""}
+                >
 
                     <div class="form-row-full">
                         <div class="field-group">
@@ -52,6 +96,7 @@ import Modal from "../../../components/Modal.astro";
                                     type="text"
                                     id="parent-name"
                                     placeholder="Parent Name..."
+                                    value={existingParent?.name || ""}
                                     name="parent-name"
                                     required
                             />
@@ -67,7 +112,7 @@ import Modal from "../../../components/Modal.astro";
                                     name="parent-bio"
                                     rows="3"
                                     maxlength="256"
-                            />
+                            >{existingParent?.bio}</textarea>
                         </div>
                     </div>
 
@@ -76,9 +121,9 @@ import Modal from "../../../components/Modal.astro";
                             <label for="breed-select" class="dropdown-label">Breed: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
                                 <select id="breed-select" name="breed" required>
-                                    <option value="" selected>Choose Breed</option>
-                                    <option value="yorkie">Yorkshire Terrier</option>
-                                    <option value="biewer">Biewer Terrier</option>
+                                    <option value="" selected={!existingParent}>Choose Breed</option>
+                                    <option value="yorkie" selected={existingParent?.breed.toLowerCase() === "yorkie"}>Yorkshire Terrier</option>
+                                    <option value="biewer" selected={existingParent?.breed.toLowerCase() === "biewer"}>Biewer Terrier</option>
                                 </select>
                             </div>
                         </div>
@@ -90,7 +135,7 @@ import Modal from "../../../components/Modal.astro";
                             <input
                                     type="date"
                                     id="parent-dob"
-                                    value="2026-06-03"
+                                    value={existingParent?.dob || formattedToday}
                                     name="parent-dob"
                                     required
                             />
@@ -99,8 +144,8 @@ import Modal from "../../../components/Modal.astro";
                         <div class="field-group">
                             <label for="parent-for-sale">For Sale: <span class="required-accent">*</span></label>
                             <select id="parent-for-sale" name="forSale" required>
-                                <option value="true">Yes</option>
-                                <option value="false" selected>No</option>
+                                <option value="true" selected={existingParent?.forSale === true}>Yes</option>
+                                <option value="false" selected={existingParent ? existingParent.forSale === false : true}>No</option>
                             </select>
                         </div>
                     </div>
@@ -119,9 +164,9 @@ import Modal from "../../../components/Modal.astro";
                             <label for="gender-select" class="dropdown-label">Gender: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
                                 <select id="gender-select" name="gender" required>
-                                    <option value="">Choose Gender</option>
-                                    <option value="female">Female</option>
-                                    <option value="male">Male</option>
+                                    <option value="" selected={!existingParent}>Choose Gender</option>
+                                    <option value="female" selected={existingParent?.gender.toLowerCase() === "female"}>Female</option>
+                                    <option value="male" selected={existingParent?.gender.toLowerCase() === "male"}>Male</option>
                                 </select>
                             </div>
                         </div>
@@ -135,6 +180,7 @@ import Modal from "../../../components/Modal.astro";
                                     type="text"
                                     id="parent-ref"
                                     placeholder="Parent Reference..."
+                                    value={existingParent?.regID && existingParent.regID !== "#0000" ? existingParent.regID : ""}
                                     name="parent-ref"
                                     maxlength="16"
                             />
@@ -145,7 +191,7 @@ import Modal from "../../../components/Modal.astro";
                             <input
                                     type="text"
                                     id="parent-id"
-                                    value="..."
+                                    value={existingParent?.id || "..."}
                                     name="parent-id"
                                     disabled
                                     readonly
@@ -155,7 +201,7 @@ import Modal from "../../../components/Modal.astro";
 
                     <div class="action-buttons">
                         <button type="button" class="discard-btn" id="discard-trigger-btn">Discard Changes</button>
-                        <button type="submit" class="submit-btn">Add Parent</button>
+                        <button type="submit" class="submit-btn">{submitButtonLabel}</button>
                     </div>
 
                 </form>

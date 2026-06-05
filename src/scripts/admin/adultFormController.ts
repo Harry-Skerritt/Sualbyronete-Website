@@ -29,10 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const cameraIcon = dropzone?.querySelector(".camera-icon") as HTMLElement | null;
     const uploadBtn = dropzone?.querySelector(".upload-button") as HTMLElement | null;
 
+    // --- Dynamic Colour Selection ---
     const rawColours = contextEl.getAttribute("data-colours");
     const puppyColours = rawColours ? JSON.parse(rawColours) as Array<{ value: string; label: string; breed: string }> : [];
 
     const updateMockIdPreview = () => {
+        const isEditMode = formEl.getAttribute("data-edit-mode") === "true";
+        if (isEditMode) return;
+
         const breed = breedSelect.value.toLowerCase().trim();
         const gender = genderSelect.value.toLowerCase().trim();
 
@@ -49,15 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
         parentIdInput.value = `${breedCode}${genderCode}`;
     };
 
-    breedSelect.addEventListener("change", () => {
-        const selectedBreed = breedSelect.value.toLowerCase().trim();
+    const populateColoursForBreed = (breedValue: string) => {
+        const selectedBreed = breedValue.toLowerCase().trim();
         colourSelect.innerHTML = '<option value="">Choose Colour</option>';
         updateMockIdPreview();
 
         if (!selectedBreed) {
             colourSelect.disabled = true;
             colourSelect.innerHTML = '<option value="">Choose a breed first...</option>';
-            return;
+            return false;
         }
 
         const matchingColours = puppyColours.filter(
@@ -67,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (matchingColours.length === 0) {
             colourSelect.disabled = true;
             colourSelect.innerHTML = '<option value="">No colors found for this breed...</option>';
-            return;
+            return false;
         }
 
         colourSelect.disabled = false;
@@ -77,10 +81,26 @@ document.addEventListener("DOMContentLoaded", () => {
             opt.textContent = item.label;
             colourSelect.appendChild(opt);
         });
+        return true;
+    };
+
+    breedSelect.addEventListener("change", () => {
+        populateColoursForBreed(breedSelect.value);
     });
 
     genderSelect.addEventListener("change", updateMockIdPreview);
 
+    const isEditMode = formEl.getAttribute("data-edit-mode") === "true";
+    const savedColourCode = formEl.getAttribute("data-existing-colour");
+
+    if (isEditMode && breedSelect.value) {
+        const successfullyPopulated = populateColoursForBreed(breedSelect.value);
+        if (successfullyPopulated && savedColourCode) {
+            colourSelect.value = savedColourCode;
+        }
+    }
+
+    // --- Photo Preview Processing ---
     const handleFilePreview = (file: File) => {
         if (!file.type.startsWith("image/")) {
             window.showToast("Please select a valid image file!", true);
@@ -113,11 +133,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // --- Form Transmission ---
     formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        if (!fileInput.files || fileInput.files.length === 0) {
+        const mode = formEl.getAttribute("data-mode") || "add";
+        const parentId = formEl.getAttribute("data-id") || "";
+
+        if (mode === "add" && (!fileInput.files || fileInput.files.length === 0)) {
             window.showToast("A parent photo is required!", true);
+            return;
+        }
+
+        if (mode === "edit" && (!parentId || parentId === "...")) {
+            window.showToast("Submission Error: Missing profile identifier target ID", true);
             return;
         }
 
@@ -136,16 +165,25 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("breed", breedSelect.value);
         formData.append("bio", parentBioInput.value);
         formData.append("dob", parentDobInput.value);
-        formData.append("forSale", parentForSaleSelect.value);
+        formData.append("forSale", parentForSaleSelect.value === "true" ? "true" : "false");
         formData.append("colour", colourSelect.value);
         formData.append("gender", genderSelect.value);
 
         const regIdVal = parentRefInput.value;
         formData.append("regID", regIdVal.trim() ? regIdVal : "#0000");
-        formData.append("parentImage", fileInput.files[0]);
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            formData.append("parentImage", fileInput.files[0]);
+        }
+
+        let targetUrl = "/admin/api/add-submit?type=adult";
+        if (mode === "edit") {
+            formData.append("id", parentId);
+            targetUrl = "/admin/api/edit-submit?type=adult";
+        }
 
         try {
-            const response = await fetch("/admin/adult/add-submit", {
+            const response = await fetch(targetUrl, {
                 method: "POST",
                 body: formData
             });
@@ -153,10 +191,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json() as { success: boolean; generatedId?: string; message?: string };
 
             if (response.ok && result.success) {
-                window.showToast(`Success! Parent registered as System ID: ${result.generatedId}`, false);
+                const toastMessage = mode === "edit"
+                    ? "Success! Changes saved cleanly."
+                    : `Success! Parent registered as System ID: ${result.generatedId}`;
+
+                window.showToast(toastMessage, false);
+
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
-                }, 1000);
+                }, 10000);
             } else {
                 throw new Error(result.message || "Failed to save parent entry records");
             }

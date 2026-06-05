@@ -8,6 +8,7 @@ interface Props {
     name?: string;
     addDate?: string;
     dataId?: string;
+    type?: 'puppy' | 'adult';
 }
 
 const {
@@ -16,7 +17,8 @@ const {
     gender = "Unknown",
     name = "Unnamed Dog",
     addDate = "01-01-2026",
-    dataId = ""
+    dataId = "",
+    type = "puppy"
 } = Astro.props;
 
 import { Icon } from 'astro-icon/components'
@@ -24,7 +26,7 @@ import { formatGender } from "../../config/puppyConstants";
 
 ---
 
-<div class="dog-edit-card">
+<div class="dog-edit-card" data-id={dataId} data-type={type} data-name={name}>
     <div class="image-frame">
         <img src={image} alt={`Profile portrait photo of ${name}`} class="card-image"/>
     </div>
@@ -39,7 +41,7 @@ import { formatGender } from "../../config/puppyConstants";
         <button type="button" class="action-btn edit" title={`Edit ${name}'s profile parameters`} aria-label="Edit settings">
             <Icon name="edit" class="card-icon"/>
         </button>
-        <button type="button" class="action-btn delete" title={`Remove ${name} permanently from system database`} aria-label="Delete entry">
+        <button type="button" class="action-btn delete-trigger" title={`Remove ${name} permanently from system database`} aria-label="Delete entry">
             <Icon name="bin" class="card-icon"/>
         </button>
     </div>
@@ -152,5 +154,56 @@ import { formatGender } from "../../config/puppyConstants";
     width: 2.6rem;
     height: 2.6rem;
     pointer-events: none;
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .dog-edit-card {
+      flex-direction: column;
+      height: auto;
+      align-items: stretch;
+      padding: 1.5rem;
+      gap: 1.2rem;
+      max-width: 100%;
+    }
+
+    .image-frame {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto;
+    }
+
+    .metadata-panel {
+      height: auto;
+      gap: 0.6rem;
+      text-align: center;
+    }
+
+    .card-name {
+      font-size: 2.2rem;
+      white-space: normal;
+    }
+
+    .card-breed {
+      font-size: 1.3rem;
+    }
+
+    .card-date {
+      font-size: 1.2rem;
+    }
+
+    .control-actions {
+      flex-direction: row;
+      justify-content: center;
+      gap: 3rem;
+      height: auto;
+      padding-right: 0;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .action-btn {
+      padding: 0.5rem 2rem;
+    }
   }
 </style>

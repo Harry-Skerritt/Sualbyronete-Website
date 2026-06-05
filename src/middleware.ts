@@ -9,11 +9,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
         hostname.startsWith("admin.");
 
     if (isHandlingAdminHost) {
+        const searchParamsString = url.search;
+
         if (url.pathname === "/") {
-            return context.rewrite("/admin");
+            return context.rewrite(`/admin${searchParamsString}`);
         }
         if (!url.pathname.startsWith("/admin")) {
-            return context.rewrite(`/admin${url.pathname}`);
+            return context.rewrite(`/admin${url.pathname}${searchParamsString}`);
         }
     }
 

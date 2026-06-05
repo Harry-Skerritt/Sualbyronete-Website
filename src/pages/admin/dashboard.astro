@@ -372,7 +372,9 @@ const totalParents = adultCountResult[0]?.value ?? 0;
         const puppyEditBtn = document.getElementById("puppy-edit-btn");
         if (puppyEditBtn) {
             puppyEditBtn.addEventListener("click", () => {
-                window.location.href = "/edit?type=puppies";
+                const targetURL = new URL("/edit", window.location.origin);
+                targetURL.searchParams.set('type', 'puppies');
+                window.location.href = targetURL.toString();
             })
         }
 
@@ -387,7 +389,9 @@ const totalParents = adultCountResult[0]?.value ?? 0;
         const adultEditBtn = document.getElementById("adult-edit-btn");
         if (adultEditBtn) {
             adultEditBtn.addEventListener("click", () => {
-                window.location.href = "/edit?type=adults"
+                const targetURL = new URL("/edit", window.location.origin);
+                targetURL.searchParams.set('type', 'adults');
+                window.location.href = targetURL.toString();
             })
         }
 

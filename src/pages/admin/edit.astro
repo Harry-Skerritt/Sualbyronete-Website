@@ -1,7 +1,8 @@
 ---
-// src/admin/edit.astro
+// src/pages/admin/edit.astro
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import DogEditCard from "../../components/admin/DogEditCard.astro";
+import Modal from "../../components/Modal.astro"
 
 import { getDB } from "../../db";
 import { puppies, adults } from "../../db/schema";
@@ -17,6 +18,7 @@ const isPuppyMode = typeParam === "puppies";
 
 const viewTitle = isPuppyMode ? "Edit Puppies" : "Edit Parents";
 const countLabel = isPuppyMode ? "Total Puppies" : "Total Parents";
+const dogTypeAttr = isPuppyMode ? "puppy" : "adult";
 
 // DB
 const db = await getDB();
@@ -27,7 +29,7 @@ if (isPuppyMode) {
     itemsList = rawPuppies.map((p: any) => ({
         id: p.id,
         name: p.name,
-        image: `/images/puppies/${p.breed.toLowerCase() === 'yorkie' ? 'yorkies' : 'biewers'}/${p.image}`,
+        image: `/images/puppies/${p.image}`,
         breed: p.breed.toLowerCase(),
         gender: formatGender(p.gender),
         date: p.dateAdded
@@ -62,6 +64,7 @@ const totalCount = itemsList.length;
                             gender={dog.gender}
                             addDate={dog.date}
                             dataId={dog.id}
+                            type={dogTypeAttr}
                     />
             ))}
 
@@ -70,6 +73,16 @@ const totalCount = itemsList.length;
             )}
         </div>
     </main>
+
+    <Modal id="delete-confirm-modal" header="Delete Profile?">
+        <div class="modal-form-wrapper">
+            <p class="modal-sub-text">Are you sure you want to delete <strong id="modal-dog-target-name">this entry</strong>?<br /> This action will permanently wipe their data records and images from the database</p>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn cancel" data-modal-close>No, Cancel</button>
+                <button type="button" class="modal-btn save delete-confirm-btn" id="confirm-delete-action">Yes, Delete</button>
+            </div>
+        </div>
+    </Modal>
 
 
 </AdminLayout>
@@ -117,4 +130,173 @@ const totalCount = itemsList.length;
     gap: 1.5rem;
     width: 100%;
   }
+
+  /* Modal Styling */
+  /* Modal */
+  .modal-form-wrapper {
+    font-family: var(--font-secondary);
+    padding: 0.5rem 0;
+    .modal-sub-text {
+      font-size: 1.3rem;
+      color: #475569;
+      margin: 0 0 2rem 0;
+      line-height: 1.5;
+    }
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  .modal-btn {
+    padding: 0.8rem 1.8rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 0.6rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.2s ease;
+    &:active { transform: scale(0.98); }
+  }
+  .modal-btn.cancel {
+    background: var(--colour-white);
+    color: var(--colour-dark);
+    &:hover { background: var(--colour-light); }
+  }
+  .modal-btn.save {
+    background: var(--colour-dark);
+    color: white;
+    &:hover { filter: brightness(1.1); }
+  }
+  
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .edit-container {
+      padding: 0 1.5rem 3rem 1.5rem;
+    }
+
+    .edit-header {
+      font-size: 2.6rem;
+      margin-top: 1.5rem;
+    }
+
+    .dog-cards {
+      grid-template-columns: 1fr;
+      margin-top: 1.5rem;
+    }
+
+    .modal-actions {
+      @media (max-width: 480px) {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+
+        .modal-btn {
+          width: 100%;
+          text-align: center;
+          padding: 1rem;
+        }
+      }
+    }
+  }
 </style>
+
+<script>
+    let targetedCardId: string | null = null;
+    let targetedCardType: string | null = null;
+    let activeCardElement: HTMLElement | null = null;
+
+    const modal = document.getElementById("delete-confirm-modal");
+    const modalTargetNameText = document.getElementById("modal-dog-target-name");
+    const confirmDeleteBtn = document.getElementById("confirm-delete-action") as HTMLButtonElement;
+
+    document.addEventListener("click", (event) => {
+        const trigger = (event.target as HTMLElement).closest(".delete-trigger");
+        if (!trigger || !modal) return;
+
+        const parentCard = trigger.closest(".dog-edit-card") as HTMLElement;
+        if (!parentCard) return;
+
+        // Capture targets
+        targetedCardId = parentCard.dataset.id || null;
+        targetedCardType = parentCard.dataset.type || null;
+        activeCardElement = parentCard;
+
+        if (modalTargetNameText) {
+            modalTargetNameText.innerText = parentCard.dataset.name || "this entry";
+        }
+
+        // Open modal trigger
+        modal.classList.add("is-active");
+        modal.removeAttribute("aria-hidden");
+    });
+
+    document.addEventListener("click", (event) => {
+        const trigger = (event.target as HTMLElement).closest(".edit");
+        if (!trigger) return;
+
+        const parentCard = trigger.closest(".dog-edit-card") as HTMLElement;
+        if (!parentCard) return;
+
+        const dogId = parentCard.dataset.id;
+        const dogType = parentCard.dataset.type; // 'puppy' or 'adult'
+
+        if (!dogId || !dogType) return;
+
+        if (dogType === "puppy") {
+            window.location.href = `/puppy/add?edit=true&id=${dogId}`;
+        } else if (dogType === "adult") {
+            window.location.href = `/adult/add?edit=true&id=${dogId}`;
+        }
+    });
+
+    // Window dismissal clean-up closures
+    modal?.querySelectorAll('[data-modal-close]').forEach(closeBtn => {
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove("is-active");
+            modal.setAttribute("aria-hidden", "true");
+            targetedCardId = null;
+            targetedCardType = null;
+            activeCardElement = null;
+        });
+    });
+
+    // Process DB Action
+    confirmDeleteBtn?.addEventListener("click", async () => {
+        if (!targetedCardId || !targetedCardType || !modal) return;
+
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.innerText = "Deleting...";
+
+        try {
+            const response = await fetch(`/api/delete-dog`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: targetedCardId, type: targetedCardType })
+            });
+
+            const result = await response.json() as { success: boolean; message?: string };
+
+            if (response.ok && result.success) {
+                window.showToast("Profile wiped successfully!");
+
+                // Remove the targeted item smoothly from grid layout view channel
+                if (activeCardElement) {
+                    activeCardElement.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                    activeCardElement.style.opacity = "0";
+                    activeCardElement.style.transform = "scale(0.9)";
+                    setTimeout(() => activeCardElement?.remove(), 300);
+                }
+            } else {
+                window.showToast(result.message || "Failed to remove item record", true);
+            }
+        } catch (error) {
+            console.error(error);
+            window.showToast("Network communications failure", true);
+        } finally {
+            confirmDeleteBtn.disabled = false;
+            confirmDeleteBtn.innerText = "Yes, Delete";
+            modal.classList.remove("is-active");
+            modal.setAttribute("aria-hidden", "true");
+        }
+    });
+</script>

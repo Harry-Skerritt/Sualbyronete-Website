@@ -33,28 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const cameraIcon = dropzone?.querySelector(".camera-icon") as HTMLElement | null;
     const uploadBtn = dropzone?.querySelector(".upload-button") as HTMLElement | null;
 
-    // --- Dynamic Colour Selection Logic ---
+    // --- Dynamic Colour Selection ---
     const rawColours = contextEl.getAttribute("data-colours");
     const puppyColours = rawColours ? JSON.parse(rawColours) as Array<{ value: string; label: string; breed: string }> : [];
 
-    breedSelect.addEventListener("change", () => {
-        const selectedBreed = breedSelect.value.toLowerCase().trim();
+    const populateColoursForBreed = (breedValue: string) => {
+        const selectedBreed = breedValue.toLowerCase().trim();
         colourSelect.innerHTML = '<option value="">Choose Colour</option>';
 
         if (!selectedBreed) {
             colourSelect.disabled = true;
             colourSelect.innerHTML = '<option value="">Choose a breed first...</option>';
-            return;
+            return false;
         }
 
         const matchingColours = puppyColours.filter(
             item => item.breed.toLowerCase() === selectedBreed.toLowerCase()
-        )
+        );
 
         if (matchingColours.length === 0) {
             colourSelect.disabled = true;
             colourSelect.innerHTML = '<option value="">No colors found for this breed...</option>';
-            return;
+            return false;
         }
 
         colourSelect.disabled = false;
@@ -64,7 +64,22 @@ document.addEventListener("DOMContentLoaded", () => {
             opt.textContent = item.label;
             colourSelect.appendChild(opt);
         });
+        return true;
+    };
+
+    breedSelect.addEventListener("change", () => {
+        populateColoursForBreed(breedSelect.value);
     });
+
+    const isEditMode = formEl.getAttribute("data-edit-mode") === "true";
+    const savedColourCode = formEl.getAttribute("data-existing-colour");
+
+    if (isEditMode && breedSelect.value) {
+        const successfullyPopulated = populateColoursForBreed(breedSelect.value);
+        if (successfullyPopulated && savedColourCode) {
+            colourSelect.value = savedColourCode;
+        }
+    }
 
     // --- Photo Preview Processing ---
     const handleFilePreview = (file: File) => {
@@ -108,13 +123,21 @@ document.addEventListener("DOMContentLoaded", () => {
     formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        if (!fileInput.files || fileInput.files.length === 0) {
+        const mode = formEl.getAttribute("data-mode") || "add";
+        const puppyId = formEl.getAttribute("data-id") || "";
+
+        if (mode === "add" && (!fileInput.files || fileInput.files.length === 0)) {
             window.showToast("A puppy photo is required!", true);
             return;
         }
 
+        if (mode === "edit" && (!puppyId || puppyId === "...")) {
+            window.showToast("Submission Error: Missing profile identifier target ID", true);
+            return;
+        }
+
         const submitBtn = formEl.querySelector('.submit-btn') as HTMLButtonElement | null;
-        const originalBtnText = submitBtn ? submitBtn.textContent : "Add Puppy";
+        const originalBtnText = submitBtn ? submitBtn.textContent : (mode === "edit" ? "Save Changes" : "Add Puppy");
 
         if (submitBtn) {
             submitBtn.disabled = true;
@@ -137,10 +160,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const regIdVal = pupRefInput.value;
         formData.append("regID", regIdVal.trim() ? regIdVal : "#0000");
-        formData.append("puppyImage", fileInput.files[0]);
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            formData.append("puppyImage", fileInput.files[0]);
+        }
+
+        let targetUrl = "/admin/api/add-submit?type=puppy";
+        if (mode === "edit") {
+            formData.append("id", puppyId);
+            targetUrl = "/admin/api/edit-submit?type=puppy";
+        }
 
         try {
-            const response = await fetch("/admin/puppy/add-submit", {
+            const response = await fetch(targetUrl, {
                 method: "POST",
                 body: formData
             });
@@ -148,10 +180,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await response.json() as { success: boolean; generatedId?: string; message?: string };
 
             if (response.ok && result.success) {
-                window.showToast(`Success! Puppy registered as System ID: ${result.generatedId}`, false);
+                const toastMessage = mode === "edit"
+                    ? "Success! Changes saved cleanly."
+                    : `Success! Puppy registered as System ID: ${result.generatedId}`;
+
+                window.showToast(toastMessage, false);
+
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
-                }, 2000);
+                }, 1000);
             } else {
                 throw new Error(result.message || "Failed to save data record mapping entries");
             }
@@ -183,13 +220,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmDiscardBtn = document.getElementById("confirm-discard-btn");
 
     if (modalEl && discardTriggerBtn && confirmDiscardBtn) {
-        // Open the safety modal on initial discard click
         discardTriggerBtn.addEventListener("click", () => {
             modalEl.classList.add("is-active");
             modalEl.removeAttribute("aria-hidden");
         });
 
-        // Close the modal cleanly if clicking "No, Stay" or the backdrop close data bindings
         modalEl.querySelectorAll('[data-modal-close]').forEach(btn => {
             btn.addEventListener('click', () => {
                 modalEl.classList.remove("is-active");
@@ -197,7 +232,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Redirect directly to the administrator dashboard if "Yes, Discard" is verified
         confirmDiscardBtn.addEventListener("click", () => {
             window.location.href = "/admin/dashboard";
         });

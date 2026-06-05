@@ -26,7 +26,7 @@ export async function getCarouselGallery(): Promise<CarouselImageItem[]> {
             const displayBreed = pup.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier';
 
             return {
-                src: `/images/puppies/${pup.breed.toLowerCase()}s/${pup.image}`,
+                src: `/images/puppies/${pup.image}`,
                 alt: `${displayBreed} Puppy named ${pup.name}`,
                 title: formatGender(pup.name),
                 subtitle: `${displayBreed} | ${calculateAge(pup.dob)}`
