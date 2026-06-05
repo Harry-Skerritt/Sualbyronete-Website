@@ -33,5 +33,3 @@ migrations/
 .env
 .env.local
 
-# Admin Seed
-seed-admin.js
