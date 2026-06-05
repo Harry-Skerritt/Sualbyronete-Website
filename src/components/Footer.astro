@@ -7,11 +7,25 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <footer>
     <div class="footer-content">
-        <p>
-            <a href="#" id="admin-door" class="hidden-toggle">&copy;</a>
-            {currentYear} <span class="accent">Sualbyronete</span>. All rights reserved.
-        </p>
-        <p>Website Designed and Built by <a href="https://harryskerritt.co.uk">harryskerritt.co.uk</a></p>
+
+        <div class="copyright">
+            <p>
+                <a href="#" id="admin-door" class="hidden-toggle">&copy;</a>
+                {currentYear} <span class="accent">Sualbyronete</span>. All rights reserved.
+            </p>
+        </div>
+
+        <div class="policy-links">
+            <a href={`${baseURL}/privacy`} class="policy-link">Privacy Policy</a>
+            <span class="link-divider" aria-hidden="true">|</span>
+            <a href={`${baseURL}/cookies`} class="policy-link">Cookie Policy</a>
+            <span class="link-divider" aria-hidden="true">|</span>
+            <a href={`${baseURL}/tos`} class="policy-link">Terms of Service</a>
+        </div>
+
+        <div class="designer-credit">
+            <p>Website designed and created by <a href="https://harryskerritt.co.uk" target="_blank" rel="noopener noreferrer" class="credit-link">harryskerritt.co.uk</a></p>
+        </div>
     </div>
 </footer>
 
@@ -28,7 +42,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
 
     .footer-content {
-        max-width: 1200px;
+        max-width: 110rem;
         margin: 0 auto;
         padding: 0 1rem;
         display: flex;
@@ -44,9 +58,22 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
 
     p {
-        margin: 0;
-        font-size: 1rem;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--colour-white);
+      opacity: 0.9;
+      line-height: 1.5rem;
     }
+
+
+    .policy-links {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
 
     a {
         text-decoration: underline;
@@ -87,6 +114,12 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
         p {
             font-size: 0.95rem;
             line-height: 1.4;
+        }
+
+        .policy-links {
+            a {
+              font-size: 0.9rem;
+            }
         }
     }
 
