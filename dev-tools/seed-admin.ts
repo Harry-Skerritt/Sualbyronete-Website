@@ -1,4 +1,4 @@
-// seed-admin.js
+// seed-admin.ts
 import { createClient } from '@libsql/client';
 import crypto from 'crypto';
 import readline from 'readline/promises';
@@ -6,19 +6,21 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 
-function hashPassword(password) {
+function hashPassword(password: string) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
     return `${salt}:${hash}`;
 }
 
 async function main() {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const currentFilePath: string = fileURLToPath(import.meta.url);
+    const customDirname: string = path.dirname(currentFilePath);
+
     const client = createClient({
-        url: `file:${path.resolve(__dirname, '../local.db')}`,
+        url: `file:${path.resolve(customDirname, '../local.db')}`,
     });
 
-    const rl = new readline.Interface({
+    const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
@@ -59,7 +61,7 @@ async function main() {
 
             console.log(`\x1b[32m✔ Success! User "${name}" successfully written to local.db!\x1b[0m\n`);
 
-        } catch (error) {
+        } catch (error: any) {
             console.log();
             if (error.message.includes('UNIQUE constraint failed')) {
                 console.error(`\x1b[31mError: That username or email address already exists.\x1b[0m\n`);

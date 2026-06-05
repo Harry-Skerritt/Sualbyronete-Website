@@ -1,0 +1,273 @@
+---
+// src/components/ParentCard.astro
+
+import { Icon } from "astro-icon/components";
+import { calculateAge } from "../scripts/ageCalculator";
+
+
+interface Props {
+    parentName: string;
+    parentDoB: string;
+    parentImage: string;
+    parentForSale: boolean;
+    parentBreed: string;
+    parentColour: string;
+    parentID: string;
+    parentBio: string;
+}
+
+const {
+    parentName = "Unknown Parent",
+    parentDoB = "Unknown DoB",
+    parentImage = "default.jpg",
+    parentForSale = true,
+    parentBreed = "Unknown Breed",
+    parentColour = "Unknown Colour",
+    parentID = "XTXXX-X",
+    parentBio = "No bio specified",
+} = Astro.props;
+
+import { getColourLabel, formatGender } from "../config/puppyConstants";
+---
+
+<div class="parent-card">
+
+    <div class="parent-image">
+        <img
+                src={`/images/adults/${parentImage}`}
+                alt={`Adult ${parentBreed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}`}
+        />
+    </div>
+
+    <div class="parent-info" >
+        <p class="parent-name">{parentName}</p>
+        <p class="parent-colour">{calculateAge(parentDoB)} | {getColourLabel(parentColour)}</p>
+
+        <p class="parent-bio">{parentBio}</p>
+
+        <div class="buttons">
+            <a href={`/puppies/litterView?parent=${parentID}`} class="view-puppy button">
+                <Icon name="paw-print" class="button-icon"/>
+                View Puppies
+            </a>
+
+            <a href={`/adults/${parentID}`} class="adult-more button">
+                <Icon name="magnifier" class="button-icon"/>
+                See More
+            </a>
+        </div>
+    </div>
+
+    <div class=`for-sale-banner ${parentForSale === true ? '' : 'hidden'}`>
+        <p class="for-sale-text">For Sale</p>
+    </div>
+
+</div>
+
+
+
+<style lang="scss">
+    .parent-card {
+      width: 55rem;
+      height: 20rem;
+      background-color: transparent;
+      border: 5px solid var(--colour-dark);
+      margin: 1rem;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Image */
+    .parent-image {
+      width: 20rem;
+      overflow: hidden;
+    }
+
+    img {
+      height: 17rem;
+      width: auto;
+      object-fit: cover;
+      display: block;
+      aspect-ratio: 1 / 1;
+      border-radius: 0.5rem;
+      margin-left: 1.4rem;
+      border: 5px solid var(--colour-light);
+    }
+
+    /* Info */
+    .parent-info {
+      flex: 1;
+      height: 17rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0.3rem;
+      padding-right: 1rem;
+    }
+
+    .parent-name {
+      font-family: var(--font-primary);
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 3.3rem;
+      color: var(--colour-white);
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .parent-colour {
+      font-family: var(--font-primary);
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin: 0;
+      color: var(--colour-light);
+    }
+
+    .parent-bio {
+      font-family: var(--font-secondary);
+      font-size: 1.1rem;
+      margin: 0;
+      color: var(--colour-light);
+      margin-top: 0.8rem;
+    }
+
+    /* Buttons */
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-around;
+      min-height: 3.5rem;
+      flex: 1;
+      gap: 2rem;
+    }
+
+    .button {
+      width: 16rem;
+      height: 2.8rem;
+      background-color: var(--colour-dark);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--colour-light);
+      font-family: var(--font-secondary);
+      transition: all 0.15s ease;
+
+      &:hover {
+        transform: scale(1.005);
+        filter: brightness(0.9);
+      }
+    }
+
+    .adult-more {
+      border: 4px solid var(--colour-dark);
+      background-color: var(--colour-primary);
+      color: var(--colour-dark);
+
+      &:hover {
+        color: var(--colour-light);
+      }
+    }
+
+    /* For Sale */
+    .for-sale-banner {
+      position: absolute;
+      top: 0.8rem;
+      right: 1rem;
+      width: 12rem;
+      height: 4rem;
+      background-color: var(--colour-dark);
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .for-sale-text {
+      font-family: var(--font-secondary);
+      font-size: 1.5rem;
+      color: var(--colour-light);
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Mobile Styling */
+    @media(#{$mobile}) {
+      .parent-card {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+        margin: 1rem 0;
+      }
+
+      .parent-image {
+        width: 100%;
+        height: 20rem;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        margin-left: 0; /* Align perfectly to the edge */
+        border: none;   /* Removes double border look on small viewports */
+        border-bottom: 5px solid var(--colour-dark); /* Keeps it separated from text */
+        border-radius: 0; /* Let it sit flush with top edges of the card */
+      }
+
+      .parent-info {
+        height: auto;
+        padding: 1.5rem; /* Clean internal breathing room for text blocks */
+        gap: 0.5rem;
+      }
+
+      .parent-name {
+        font-size: 2.2rem;
+        line-height: 2.5rem;
+      }
+
+      .parent-colour {
+        font-size: 1.2rem;
+      }
+
+      .parent-bio {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .buttons {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .button {
+        width: 100%;
+        height: 3.2rem;
+      }
+
+      .for-sale-banner {
+        top: 1rem;
+        right: 1rem;
+        width: 8rem;
+        height: 2.8rem;
+      }
+
+      .for-sale-text {
+        font-size: 1.1rem;
+      }
+    }
+</style>

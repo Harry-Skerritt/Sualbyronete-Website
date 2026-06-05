@@ -32,6 +32,7 @@ const dbPuppies = await db.select().from(puppies);
                         option_two_icon="paw-print"
                         option_two_value="biewers"
                         default_selected={1}
+                        custom_event_name="pBreedChange"
                         class="breed-filter"
                 />
             </div>
@@ -100,7 +101,7 @@ const dbPuppies = await db.select().from(puppies);
 
         <!-- Content Grid -->
         <div id="puppy-grid" class="puppy-grid">
-            {dbPuppies.map(pup => (
+            {dbPuppies.map((pup: any) => (
                     <div class="puppy-card-wrapper"
                          data-breed={pup.breed}
                          data-gender={pup.gender.toLowerCase()}

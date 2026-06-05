@@ -1,52 +1,94 @@
 ---
 // src/pages/adults.astro
 import Layout from "../layouts/Layout.astro";
-import { Icon } from 'astro-icon/components'
 import PawHeader from "../components/PawHeader.astro";
 import TabbedFilter from "../components/TabbedFilter.astro";
+
+import { Icon } from "astro-icon/components"
+import { getDB } from "../db";
+import { adults } from "../db/schema";
+import { PUPPY_COLOURS } from "../config/puppyConstants";
+import ParentCard from "../components/ParentCard.astro";
+
+const db = getDB();
+const dbAdults = await db.select().from(adults);
 ---
 
 <Layout title="Adults | Sualbyronete">
-    <PawHeader text="Parent Dogs"/>
+    <main>
 
-    <div class="filter-parent">
+        <PawHeader text="Parent Dogs"/>
 
-        <!-- Breed Filter -->
-        <div class="tab-filter">
-            <TabbedFilter
-                    option_one="Yorkshire Terriers"
-                    option_one_icon="paw-print"
-                    option_one_value="yorkie"
-                    option_two="Biewer Terriers"
-                    option_two_icon="paw-print"
-                    option_two_value="biewer"
-                    default_selected={1}
-                    class="breed-filter"
-            />
+        <div class="filter-parent">
+
+            <!-- Breed Filter -->
+            <div class="tab-filter">
+                <TabbedFilter
+                        option_one="Yorkshire Terriers"
+                        option_one_icon="paw-print"
+                        option_one_value="yorkie"
+                        option_two="Biewer Terriers"
+                        option_two_icon="paw-print"
+                        option_two_value="biewer"
+                        default_selected={1}
+                        custom_event_name="aBreedChange"
+                        class="breed-filter"
+                />
+            </div>
+
+            <!-- Parent Selector -->
+            <div class="tab-filter">
+                <TabbedFilter
+                        option_one="Dams"
+                        option_one_icon="female"
+                        option_one_value="female"
+                        option_two="Sires"
+                        option_two_icon="male"
+                        option_two_value="male"
+                        default_selected={1}
+                        custom_event_name="aGenderChange"
+                        class="gender-filter"
+                />
+            </div>
         </div>
 
-        <!-- Parent Selector -->
-        <div class="tab-filter">
-            <TabbedFilter
-                    option_one="Dams"
-                    option_one_icon="female"
-                    option_one_value="female"
-                    option_two="Sires"
-                    option_two_icon="male"
-                    option_two_value="male"
-                    default_selected={1}
-                    class="parent-selector"
-            />
-        </div>
-    </div>
+        <!-- Content Grid -->
+        <div id="puppy-grid" class="parent-grid">
+            {dbAdults.map((parent: any) => (
+                    <div class="parent-card-wrapper"
+                         data-breed={parent.breed}
+                         data-gender={parent.gender ? parent.gender.toLowerCase() : ''}>
 
+                        <ParentCard
+                                parentName={parent.name}
+                                parentDoB={parent.dob}
+                                parentImage={parent.image}
+                                parentColour={parent.colour}
+                                parentBreed={parent.breed}
+                                parentForSale={parent.forSale}
+                                parentID={parent.id || ``}
+                                parentBio = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu massa  posuere, porttitor elit quis, eleifend odio. Fusce non iaculis eros."
+
+                        />
+
+                    </div>
+            ))}
+
+
+
+            <div id="no-results-message" class="no-results" style="display: none;">
+                No parents match your selected filter criteria.
+            </div>
+        </div>
+
+    </main>
 </Layout>
 
 
 <style lang="scss">
 
   .filter-parent {
-    max-width: 1750px;
+    max-width: 117rem;
     margin: 0 auto;
   }
 
@@ -59,13 +101,51 @@ import TabbedFilter from "../components/TabbedFilter.astro";
     margin-bottom: 1rem;
   }
 
+  .parent-grid {
+    border: 2px solid var(--colour-dark);
+    max-width: 117rem;
+    margin: 0 auto 2rem;
+    border-radius: 0.6rem;
+    padding: 2rem;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+
+    justify-items: center;
+    justify-content: center;
+  }
+
+  :global(.no-results) {
+    grid-column: 1/-1;
+    padding: 2rem;
+    text-align: center;
+    font-weight: bold;
+    font-family: var(--font-secondary);
+    color: var(--colour-dark);
+    font-size: 1.2rem;
+  }
+
   /* Mobile Styling */
   @media (#{$mobile}) {
-    .filter-parent {
+    .filter-parent ,
+    .parent-grid {
       width: calc(100% - 2rem) !important;
       margin-left: 1rem !important;
       margin-right: 1rem !important;
       box-sizing: border-box;
     }
+
+    .parent-grid {
+      padding: 1rem;
+      gap: 1.5rem;
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
 </style>
+
+<script is:inline set:html={`
+    window.PARENT_DATA = ${JSON.stringify(dbAdults)};
+`} />
+
+<script src="../scripts/parentFilter.ts"></script>

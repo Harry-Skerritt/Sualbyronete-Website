@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
-    "db:seed": "node dev-tools/seed-admin.js"
+    "db:seed": "node dev-tools/seed-admin.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.6.1",

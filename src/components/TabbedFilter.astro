@@ -11,6 +11,7 @@ interface Props {
     option_two_icon: string;
     option_two_value: string;
     default_selected: number;
+    custom_event_name: string;
     class?: string;
 }
 
@@ -22,11 +23,18 @@ const {
     option_two_icon,
     option_two_value,
     default_selected,
+    custom_event_name,
     class: className
 } = Astro.props;
 ---
 
-<div class={`filter-body ${className || ''}`} data-filter-bar data-active-tab={default_selected === 1 ? "one" : "two"}>
+<div
+        class={`filter-body ${className || ''}`}
+        data-filter-bar
+        data-active-tab={default_selected === 1 ? "one" : "two"}
+        data-custom-event={custom_event_name}
+        data-active-value={default_selected === 1 ? option_one_value : option_two_value}
+>
 
     <div class="sliding-indicator"></div>
 
@@ -148,6 +156,7 @@ const {
 
         filterBars.forEach(bar => {
             const options = bar.querySelectorAll('.filter-option');
+            const eventName = bar.getAttribute('data-custom-event') || 'breedChange';
 
             options.forEach(option => {
                 option.addEventListener('click', () => {
@@ -156,9 +165,10 @@ const {
                     if (!tabIndex || !targetState) return;
 
                     bar.setAttribute('data-active-tab', tabIndex);
+                    bar.setAttribute('data-active-value', targetState);
 
-                    const event = new CustomEvent('breedChange', {
-                        detail: { activeBreed: targetState }
+                    const event = new CustomEvent(eventName, {
+                        detail: { value: targetState }
                     });
                     window.dispatchEvent(event);
                 });

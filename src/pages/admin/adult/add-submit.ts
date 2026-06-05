@@ -20,6 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
         const gender = formData.get("gender")?.toString();
         const regID = formData.get("regID")?.toString() || "#0000";
         const imageFile = formData.get("parentImage") as File | null;
+        const bio = formData.get("bio")?.toString() || "No bio specified";
 
         if (!name || !breed || !dob || !forSaleStr || !colour || !gender || !imageFile) {
             return new Response(JSON.stringify({ success: false, message: "Server-side Validation Error: Missing required fields" }), { status: 400 });
@@ -38,6 +39,7 @@ export const POST: APIRoute = async ({ request }) => {
             regID: regID,
             forSale: isForSale,
             image: "placeholder-pending.jpg",
+            bio: bio,
         });
 
         // Retrieve row to catch computed virtual ID format

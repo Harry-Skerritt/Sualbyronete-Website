@@ -20,6 +20,7 @@ export const adults = sqliteTable('adults', {
     dob: text('dob').notNull(),
     regID: text('regID').notNull().default("#0000"),
     forSale: integer('forSale', { mode: 'boolean' }).notNull().default(false),
+    bio: text('bio').notNull().default("No bio specified"),
     puppies: text('puppies', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
     dateAdded: text('date_added').notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -43,6 +44,7 @@ export const puppies = sqliteTable('puppies', {
     status: text('status').notNull(),
     image: text('image').notNull(),
     dob: text('dob').notNull(),
+    bio: text('bio').notNull().default("No bio specified."),
 
     mother: text('mother').notNull().references(() => adults.id),
     father: text('father').notNull().references(() => adults.id),

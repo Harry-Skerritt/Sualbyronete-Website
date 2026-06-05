@@ -23,6 +23,7 @@ export const POST: APIRoute = async ({ request }) => {
         const father = formData.get("father")?.toString();
         const regID = formData.get("regID")?.toString() || "#0000";
         const imageFile = formData.get("puppyImage") as File | null;
+        const bio = formData.get("bio")?.toString() || "No bio specified";
 
         if (!name || !breed || !status || !dob || !availableFrom || !colour || !gender || !mother || !father || !imageFile) {
             return new Response(JSON.stringify({ success: false, message: "Server-side Validation Error: Missing required structural field updates." }), { status: 400 });
@@ -42,7 +43,8 @@ export const POST: APIRoute = async ({ request }) => {
             mother: mother,
             father: father,
             availableFrom: availableFrom,
-            regID: regID
+            regID: regID,
+            bio: bio
         });
 
         // Retrieve row to catch computed virtual ID format

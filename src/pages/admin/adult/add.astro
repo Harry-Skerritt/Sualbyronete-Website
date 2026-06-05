@@ -75,7 +75,7 @@ import Modal from "../../../components/Modal.astro";
                         <div class="field-group">
                             <label for="breed-select" class="dropdown-label">Breed: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
-                                <select id="breed-select" required>
+                                <select id="breed-select" name="breed" required>
                                     <option value="" selected>Choose Breed</option>
                                     <option value="yorkie">Yorkshire Terrier</option>
                                     <option value="biewer">Biewer Terrier</option>
@@ -98,9 +98,9 @@ import Modal from "../../../components/Modal.astro";
 
                         <div class="field-group">
                             <label for="parent-for-sale">For Sale: <span class="required-accent">*</span></label>
-                            <select id="parent-for-sale" required>
-                                <option value="for-sale">Yes</option>
-                                <option value="not-for-sale" selected>No</option>
+                            <select id="parent-for-sale" name="forSale" required>
+                                <option value="true">Yes</option>
+                                <option value="false" selected>No</option>
                             </select>
                         </div>
                     </div>
@@ -109,7 +109,7 @@ import Modal from "../../../components/Modal.astro";
                         <div class="field-group">
                             <label for="colour-select" class="dropdown-label">Colour: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
-                                <select id="colour-select" required disabled>
+                                <select id="colour-select" name="colour" required disabled>
                                     <option value="">Choose a breed first...</option>
                                 </select>
                             </div>
@@ -118,7 +118,7 @@ import Modal from "../../../components/Modal.astro";
                         <div class="field-group">
                             <label for="gender-select" class="dropdown-label">Gender: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
-                                <select id="gender-select" required>
+                                <select id="gender-select" name="gender" required>
                                     <option value="">Choose Gender</option>
                                     <option value="female">Female</option>
                                     <option value="male">Male</option>

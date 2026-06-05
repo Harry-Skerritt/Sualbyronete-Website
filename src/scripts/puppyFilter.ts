@@ -1,15 +1,15 @@
 // src/scripts/puppyFilter.ts
 
 
-let currentBreedFilter = "yorkies";
+let currentPuppyBreedFilter: string = "yorkies";
 let dbPuppies = [];
 
-function getDbData() {
+function getPuppyDbData() {
     dbPuppies = (window as any).PUPPY_DATA || [];
 }
 
 function filterColourDropdown(breedLabel: string) {
-    const colourSelect = document.getElementById("colour-select") as HTMLSelectElement;
+    const colourSelect = document.getElementById("colour-select") as unknown as HTMLSelectElement;
     const coloursArray = (window as any).PUPPY_COLOURS || [];
 
     if (!colourSelect) return;
@@ -38,9 +38,9 @@ function renderPuppies() {
     const cards = document.querySelectorAll('.puppy-card-wrapper') as NodeListOf<HTMLElement>;
     const noResultsMsg = document.getElementById('no-results-message');
 
-    const genderValue = (document.getElementById('gender-select') as HTMLSelectElement)?.value || 'all';
-    const colourValue = (document.getElementById('colour-select') as HTMLSelectElement)?.value || 'all';
-    const availabilityValue = (document.getElementById('availability-select') as HTMLSelectElement)?.value || 'all';
+    const genderValue = (document.getElementById('gender-select') as unknown as HTMLSelectElement)?.value || 'all';
+    const colourValue = (document.getElementById('colour-select') as unknown as HTMLSelectElement)?.value || 'all';
+    const availabilityValue = (document.getElementById('availability-select') as unknown as HTMLSelectElement)?.value || 'all';
 
     let visibleCount = 0;
 
@@ -52,7 +52,7 @@ function renderPuppies() {
         const cardStatus = card.getAttribute('data-status') || '';
 
         const normalisedCardBreed = cardBreed.toLowerCase();
-        const normalisedFilterBreed = currentBreedFilter.toLowerCase();
+        const normalisedFilterBreed = currentPuppyBreedFilter.toLowerCase();
         const matchesBreed = normalisedCardBreed.includes('york') === normalisedFilterBreed.includes('york');
 
         const matchesGender = genderValue === 'all' || cardGender === genderValue;
@@ -80,7 +80,7 @@ function renderPuppies() {
 }
 
 function initPageLogic() {
-    getDbData();
+    getPuppyDbData();
 
     const bar = document.querySelector('[data-filter-bar]');
     const activeTabIndex = bar?.getAttribute('data-active-tab') || 'one';
@@ -88,7 +88,7 @@ function initPageLogic() {
 
     if (activeTab) {
         const initialBreed = activeTab.getAttribute('data-target') || 'yorkies';
-        currentBreedFilter = initialBreed;
+        currentPuppyBreedFilter = initialBreed;
         console.log(activeTabIndex);
         filterColourDropdown(initialBreed);
     }
@@ -111,7 +111,7 @@ function initPageLogic() {
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
             // Set dropdown selects index back to 0 ("All")
-            const selects = document.querySelectorAll('[data-filter-select]') as NodeListOf<HTMLSelectElement>;
+            const selects = document.querySelectorAll('[data-filter-select]') as unknown as NodeListOf<HTMLSelectElement>;
             selects.forEach(select => {
                 select.selectedIndex = 0;
             });
@@ -127,16 +127,16 @@ function initPageLogic() {
     });
 
     // Tabbed layout listeners
-    window.removeEventListener('breedChange', handleBreedChange);
-    window.addEventListener('breedChange', handleBreedChange);
+    window.removeEventListener('pBreedChange', handleBreedChange);
+    window.addEventListener('pBreedChange', handleBreedChange);
 }
 
 function handleBreedChange(e: Event) {
-    const customEvent = e as CustomEvent<{ activeBreed: string }>;
+    const customEvent = e as CustomEvent<{ value: string }>;
 
-    if(customEvent.detail && customEvent.detail.activeBreed) {
-        currentBreedFilter = customEvent.detail.activeBreed;
-        filterColourDropdown(currentBreedFilter);
+    if(customEvent.detail && customEvent.detail.value) {
+        currentPuppyBreedFilter = customEvent.detail.value;
+        filterColourDropdown(currentPuppyBreedFilter);
         renderPuppies();
     }
 

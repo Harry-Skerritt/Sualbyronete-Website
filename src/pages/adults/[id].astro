@@ -1,9 +1,10 @@
 ---
-// src/pages/puppies/[id].astro
+// src/pages/adults/[id].astro
+
 import Layout from "../../layouts/Layout.astro"
 
 import { getDB } from "../../db/index";
-import { puppies, adults } from "../../db/schema";
+import { adults } from "../../db/schema";
 import { calculateAge } from "../../scripts/ageCalculator";
 import { eq } from "drizzle-orm";
 
@@ -14,111 +15,84 @@ if (!id) {
 
 const db = getDB();
 
-const puppyArray = await db.select().from(puppies).where(eq(puppies.id, id));
-const puppy = puppyArray[0];
+const adultArray = await db.select().from(adults).where(eq(adults.id, id));
+const parent = adultArray[0];
 
-if (!puppy) {
+if (!parent) {
     return Astro.redirect('/404');
 }
 
-const allAdults = await db.select().from(adults);
-const adultMap = new Map(allAdults.map((adult: any) => [adult.id, adult.name]));
-
-const motherName = adultMap.get(puppy.mother) || puppy.mother;
-const fatherName = adultMap.get(puppy.father) || puppy.father;
-const dynamicAge = calculateAge(puppy.dob);
 
 import { getColourLabel, formatGender } from "../../config/puppyConstants";
 ---
 
-<Layout title={`Meet ${puppy.name} | Sualbyronete`}>
-    <main class="puppy-info-container">
+<Layout title={`Meet ${parent.name} | Sualbyronete`}>
+    <main class="parent-info-container">
 
         <!-- Left Hand Content (Image & Pricing) -->
         <div class="left-content">
-            <div class="puppy-image">
-                <div class="puppy-status-badge" data-status={puppy.status.toLowerCase()}>
-                    <h1 class="puppy-status">{puppy.status.toUpperCase()}</h1>
+            <div class="parent-image">
+                <div class=`parent-status-badge ${parent.forSale === true ? '' : 'hidden'}`>
+                    <h1 class="parent-status">For Sale</h1>
                 </div>
 
                 <img
-                        src={`/images/puppies/${puppy.breed.toLowerCase()}s/${puppy.image}`}
-                        alt={`${puppy.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
+                        src={`/images/adults/${parent.image}`}
+                        alt={`${parent.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} parent`}
+                        class={`parent-photo ${parent.forSale ? '' : 'not-for-sale'}`}
                 />
             </div>
 
-            <div class="pricing-section">
-                <span class="pricing-text">
-                    For Pricing please
-                    <a href={`/contact?ref=${puppy.id}&name=${puppy.name}`} class="pricing-contact">Contact Me</a>
-                </span>
+            {parent.forSale && (
+                    <div class="pricing-section">
+                    <span class="pricing-text">
+                        For Pricing please
+                        <a href={`/contact?ref=${parent.id}&name=${parent.name}`} class="pricing-contact">Contact Me</a>
+                    </span>
 
-                <span class="deposit-text">
-                    <span class="accent">*</span>
-                    All puppies require a non-refundable reservation deposit of £100.
-                    This will ensure your puppy is held for X days
-                </span>
-            </div>
+                        <span class="deposit-text">
+                        <span class="accent">*</span>
+                        All dogs require a non-refundable reservation deposit of £100.
+                        This will ensure your dog is held for X days
+                    </span>
+                    </div>
+            )}
         </div>
 
-        <!-- Right Hand Content (Puppy Info) -->
+        <!-- Right Hand Content (parent Info) -->
         <div class="right-content">
-            <div class="puppy-main-header">
-                <p class="puppy-name">{formatGender(puppy.name)}</p>
-                <span class="puppy-description">
-                    {puppy.bio}
+            <div class="parent-main-header">
+                <p class="parent-name">{formatGender(parent.name)}</p>
+                <span class="parent-description">
+                    {parent.bio}
                 </span>
             </div>
 
             <div class="horizontal-separator"/>
 
             <div class="info-lists">
-                <dl class="puppy-specs-list">
+                <dl class="parent-specs-list">
                     <dt>Breed:</dt>
-                    <dd>{puppy.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</dd>
+                    <dd>{parent.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</dd>
 
                     <dt>DoB:</dt>
-                    <dd>{puppy.dob}</dd>
+                    <dd>{parent.dob}</dd>
 
                     <dt>Age:</dt>
-                    <dd>{dynamicAge}</dd>
+                    <dd>{calculateAge(parent.dob)}</dd>
 
                     <dt>Gender:</dt>
-                    <dd>{formatGender(puppy.gender)}</dd>
+                    <dd>{formatGender(parent.gender)}</dd>
 
                     <dt>Colour:</dt>
-                    <dd>{getColourLabel(puppy.colour)}</dd>
+                    <dd>{getColourLabel(parent.colour)}</dd>
 
-                    <dt>Available From:</dt>
-                    <dd>{puppy.availableFrom}</dd>
-
-                    <dt>Mother:</dt>
-                    <dd><a href={`/adults/${puppy.mother}`}>{motherName}</a></dd>
-
-                    <dt>Father:</dt>
-                    <dd><a href={`/adults/${puppy.father}`}>{fatherName}</a></dd>
+                    <dt>Puppies:</dt>
+                    <dd><a href={`/puppies/litterView?parent=${parent.id}`}>View Puppies</a></dd>
 
                     <dt>Reg #:</dt>
-                    <dd>{puppy.regID}</dd>
+                    <dd>{parent.regID}</dd>
                 </dl>
-
-                <div class="vertical-separator"/>
-
-                <div class="included-info">
-                    <h1 class="included-header">All Puppies come included with:</h1>
-                    <ul class="included-list">
-                        <li>Vaccinations</li>
-                        <li>Health Record</li>
-                        <li>Pedigree</li>
-
-                        <li>
-                            Puppy Pack Including:
-                            <ul class="puppy-pack-list">
-                                <li>Feeding Instructions</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
             </div>
 
         </div>
@@ -129,7 +103,7 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
 
 <style lang="scss">
 
-  .puppy-info-container {
+  .parent-info-container {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -138,6 +112,8 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     padding: 2rem 3rem;
     box-sizing: border-box;
     gap: 4rem;
+
+    min-height: calc(100vh - 12rem);
   }
 
   /* Left Content */
@@ -148,11 +124,11 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
   }
 
   /* Image */
-  .puppy-image {
+  .parent-image {
     width: 37rem;
   }
 
-  .puppy-status-badge {
+  .parent-status-badge {
     width: 100%;
     height: 4rem;
     border: 0.4rem solid var(--colour-light);
@@ -161,9 +137,11 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: var(--colour-dark);
   }
 
-  .puppy-status {
+  .parent-status {
+    display: flex;
     color: var(--colour-white);
     font-family: var(--font-secondary);
     font-size: 2rem;
@@ -171,28 +149,7 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     margin: 0;
   }
 
-  /* Status Styling */
-  .puppy-status-badge[data-status="new"] {
-    background-color: var(--puppy-new-colour);
-  }
-
-  .puppy-status-badge[data-status="available"] {
-    background-color: var(--puppy-available-colour);
-  }
-
-  .puppy-status-badge[data-status="reserved"] {
-    background-color: var(--puppy-reserved-colour);
-  }
-
-  .puppy-status-badge[data-status="sold"] {
-    background-color: var(--puppy-sold-colour);
-  }
-
-  .puppy-status-badge[data-status="not available"] {
-    background-color: var(--puppy-not-available-colour);
-  }
-
-  img {
+  .parent-photo {
     width: 100%;
     height: 37rem;
     object-fit: cover;
@@ -201,6 +158,15 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     border: 0.4rem solid var(--colour-light);
     border-top: none;
     box-sizing: border-box;
+
+    &.not-for-sale {
+      border-top: 0.4rem solid var(--colour-light) !important;
+      border-radius: 0.8rem !important;
+    }
+  }
+
+  .hidden{
+    display: none;
   }
 
   /* Pricing */
@@ -245,12 +211,12 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     padding: 0;
   }
 
-  .puppy-main-header {
+  .parent-main-header {
     width: 100%;
     margin-bottom: 1.5rem;
   }
 
-  .puppy-name {
+  .parent-name {
     font-family: var(--font-primary);
     font-size: 4rem;
     font-weight: bold;
@@ -261,7 +227,7 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     width: 100%;
   }
 
-  .puppy-description {
+  .parent-description {
     display: block;
     font-family: var(--font-secondary);
     color: var(--colour-white);
@@ -288,8 +254,8 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     gap: 3rem;
   }
 
-  /* Puppy Info */
-  .puppy-specs-list {
+  /* parent Info */
+  .parent-specs-list {
     flex: 1;
     display: grid;
     grid-template-columns: 12rem 1fr;
@@ -337,48 +303,10 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
     &:hover { text-decoration: underline; }
   }
 
-  .vertical-separator {
-    width: 0.3rem;
-    align-self: stretch;
-    min-height: 25rem;
-    background-color: var(--colour-dark);
-    border-radius: 999px;
-    margin: 0;
-  }
-
-  /* Included Info */
-  .included-info {
-    flex: 1;
-    padding-left: 1rem;
-  }
-
-  .included-header {
-    color: var(--colour-dark);
-    font-family: var(--font-primary);
-    font-size: 1.8rem;
-    font-weight: 900;
-    margin: 0 0 1rem 0;
-  }
-
-  .included-list {
-    margin: 0;
-    padding-left: 1.5rem;
-    li {
-      color: var(--colour-light);
-      font-family: var(--font-secondary);
-      font-size: 1.2rem;
-      margin-bottom: 0.4rem;
-    }
-  }
-
-  .puppy-pack-list {
-    margin-top: 0.3rem;
-    padding-left: 1.2rem;
-  }
 
   /* Mobile Styling */
   @media ($mobile) {
-    .puppy-info-container {
+    .parent-info-container {
       display: flex;
       flex-direction: column;
       padding: 1.5rem 1.5rem;
@@ -392,7 +320,7 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
       display: contents;
     }
 
-    .puppy-image {
+    .parent-image {
       width: 100%;
       max-width: 45rem;
     }
@@ -402,12 +330,12 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
       aspect-ratio: 1 / 1;
     }
 
-    .puppy-name {
+    .parent-name {
       font-size: 3rem;
       line-height: 3.4rem;
     }
 
-    .puppy-description {
+    .parent-description {
       width: 100%;
       height: auto;
       margin-bottom: 0.5rem;
@@ -467,16 +395,6 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
 
     .vertical-separator, .horizontal-separator {
       display: none;
-    }
-
-    .puppy-specs-list {
-      width: 100%;
-      grid-template-columns: 11rem 1fr;
-    }
-
-    .included-info {
-      width: 100%;
-      padding-left: 0;
     }
   }
 
