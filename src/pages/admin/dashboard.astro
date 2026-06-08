@@ -5,6 +5,7 @@ import AdminEditButton from "../../components/admin/AdminEditButton.astro";
 import DataCounter from "../../components/admin/DataCounter.astro";
 import Modal from "../../components/Modal.astro";
 import { getCachedData } from "../../scripts/databaseCache";
+import {ADMIN_SITE_NAME, SITE_NAME} from "../../config/siteSettings";
 
 // Name from Cookie
 const nameCookie = Astro.cookies.get('admin_user_name');
@@ -19,7 +20,7 @@ const totalPuppies = allPuppies.length;
 const totalParents = parents.length;
 ---
 
-<AdminLayout title="Admin Dashboard | Sualbyronete">
+<AdminLayout title=`${ADMIN_SITE_NAME} | ${SITE_NAME}`>
 
     <main class="dashboard-container">
 

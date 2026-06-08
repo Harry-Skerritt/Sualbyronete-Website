@@ -3,6 +3,7 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
+import {SITE_NAME} from "../config/siteSettings";
 
 const baseURL = import.meta.env.BASE_URL;
 
@@ -11,7 +12,7 @@ interface Props {
 	showHeader?: boolean;
 }
 
-const { title = "Sualbyronette | Dog Breeder", showHeader = true } = Astro.props;
+const { title = `${SITE_NAME} | Dog Breeder`, showHeader = true } = Astro.props;
 ---
 <!doctype html>
 <html lang="en-GB">

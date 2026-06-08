@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import PuppyCard from "../../components/PuppyCard.astro"
 import { Icon } from "astro-icon/components"
 import { getCachedData } from "../../scripts/databaseCache";
+import {SITE_NAME} from "../../config/siteSettings";
 
 const { searchParams } = Astro.url;
 const parentID = searchParams.get('parent') || "";
@@ -21,7 +22,7 @@ const litterPuppies = allPuppies.filter((pup: any) =>
 );
 ---
 
-<Layout title=`${parentName}'s Puppies | Sualbyronete`>
+<Layout title=`${parentName}'s Puppies | ${SITE_NAME}`>
 
     <main class="litter-view-container">
 

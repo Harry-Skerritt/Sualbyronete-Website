@@ -1,0 +1,144 @@
+---
+// src/pages/about.astro
+import Layout from "../layouts/Layout.astro";
+import {ABOUT_SECTIONS, SITE_NAME} from "../config/siteSettings";---
+
+<Layout title=`About Me | ${SITE_NAME}`>
+
+    <main class="about-container">
+
+        <aside class="left-container">
+            <div class="about-image-sticky">
+                <img src="images/susan.jpg" alt="Susan Francis"/>
+            </div>
+        </aside>
+
+        <section class="right-container">
+            <h1 class="about-header">Hi I'm Sue</h1>
+
+            {ABOUT_SECTIONS.map((section: any) => (
+                <>
+                    {section.title && <h2 class="about-subheader">{section.title}</h2>}
+                    <p class="about-body">{section.body}</p>
+                </>
+            ))}
+        </section>
+
+    </main>
+
+</Layout>
+
+
+<style lang="scss">
+    .about-container {
+      max-width: 110rem;
+      min-height: calc(100vh - calc(var(--header-height) * 2));
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
+      box-sizing: border-box;
+    }
+
+    /* Left */
+    .left-container {
+      width: 28rem;
+      flex-shrink: 0;
+      align-self: flex-start;
+      position: sticky;
+      top: calc(var(--header-height) + 2rem);
+    }
+
+    .about-image-sticky {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: scale(1.02);
+        }
+      }
+    }
+
+    /* Right */
+    .right-container {
+      flex: 1;
+      max-width: 65rem;
+    }
+
+    .about-header {
+      font-family: var(--font-primary);
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 0 0 2rem 0;
+      color: var(--colour-dark);
+    }
+
+    .about-subheader {
+      font-family: var(--font-secondary);
+      color: var(--colour-light);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin: 2.5rem 0 0.2rem 0;
+      padding: 0;
+    }
+
+    .about-body {
+      font-family: var(--font-secondary);
+      color: var(--colour-white);
+      font-size: 1.15rem;
+      line-height: 1.75rem;
+      margin: 0 0 1.5rem 0;
+    }
+
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .about-container {
+        flex-direction: column;
+        gap: 2.5rem;
+        padding: 2rem 1.5rem;
+      }
+
+      .left-container {
+        width: 100%;
+        max-width: 32rem;
+        margin: 0 auto;
+      }
+
+      .about-image-sticky {
+        position: relative;
+        top: 0;
+      }
+
+      .right-container {
+        width: 100%;
+      }
+
+      .about-header {
+        font-size: 2.8rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .about-subheader {
+        font-size: 1.6rem;
+        margin-top: 2.5rem;
+      }
+
+      .about-body {
+        font-size: 1.3rem;
+        line-height: 1.65rem;
+      }
+    }
+</style>

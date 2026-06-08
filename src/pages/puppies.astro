@@ -8,11 +8,12 @@ import PuppyCard from "../components/PuppyCard.astro";
 import {Icon} from "astro-icon/components";
 import { PUPPY_COLOURS } from "../config/puppyConstants";
 import { getCachedData } from "../scripts/databaseCache";
+import {SITE_NAME} from "../config/siteSettings";
 
 const { allPuppies } = await getCachedData();
 ---
 
-<Layout title="Puppies | Sualbyronete">
+<Layout title=`Puppies | ${SITE_NAME}`>
     <main>
 
         <PawHeader text="Available Puppies"/>

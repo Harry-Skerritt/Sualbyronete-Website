@@ -2,9 +2,10 @@
 // src/pages/policies/privacy.astro
 
 import PolicyLayout from "../../layouts/PolicyLayout.astro";
+import {SITE_NAME} from "../../config/siteSettings";
 ---
 
-<PolicyLayout title="Privacy Policy">
+<PolicyLayout title=`Privacy Policy | ${SITE_NAME}`>
 
     <main class="policy-main">
 

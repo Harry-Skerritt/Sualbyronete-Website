@@ -6,6 +6,7 @@ import { Icon } from 'astro-icon/components'
 import {PUPPY_COLOURS} from "../../../config/puppyConstants";
 import { getCachedData } from "../../../scripts/databaseCache";
 import Modal from "../../../components/Modal.astro";
+import {ADMIN_SITE_NAME} from "../../../config/siteSettings";
 
 export const prerender = false;
 
@@ -39,7 +40,7 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
 
 ---
 
-<AdminLayout title={`${pageTitle} | Admin Dashboard`}>
+<AdminLayout title={`${pageTitle} | ${ADMIN_SITE_NAME}`}>
     <main class="add-puppy-view">
 
         <header class="page-header">

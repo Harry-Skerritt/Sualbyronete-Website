@@ -24,7 +24,8 @@ export async function getCarouselGallery(): Promise<CarouselImageItem[]> {
                 src: `/images/puppies/${pup.image}`,
                 alt: `${displayBreed} Puppy named ${pup.name}`,
                 title: formatGender(pup.name),
-                subtitle: `${displayBreed} | ${calculateAge(pup.dob)}`
+                subtitle: `${displayBreed} | ${calculateAge(pup.dob)}`,
+                puppyID: pup.id
             };
         });
     } catch (error) {

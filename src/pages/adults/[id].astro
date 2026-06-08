@@ -22,9 +22,10 @@ if (!parent) {
 
 
 import { getColourLabel, formatGender } from "../../config/puppyConstants";
+import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/siteSettings";
 ---
 
-<Layout title={`Meet ${parent.name} | Sualbyronete`}>
+<Layout title={`Meet ${parent.name} | ${SITE_NAME}`}>
     <main class="parent-info-container">
 
         <!-- Left Hand Content (Image & Pricing) -->
@@ -50,8 +51,8 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
 
                         <span class="deposit-text">
                         <span class="accent">*</span>
-                        All dogs require a non-refundable reservation deposit of £100.
-                        This will ensure your dog is held for X days
+                        All dogs require a non-refundable reservation deposit of {RESERVATION_COST}.
+                        This will ensure your dog is held for {RESERVATION_LENGTH}
                     </span>
                     </div>
             )}

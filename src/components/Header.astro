@@ -3,6 +3,7 @@
 
 import '../styles/global.css'
 import { Icon } from 'astro-icon/components'
+import {SITE_NAME} from "../config/siteSettings";
 
 const { pathname } = Astro.url;
 const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -11,6 +12,7 @@ const links = [
     { name: 'Home', href: baseURL === "" ? "/" : baseURL },
     { name: 'Puppies', href: `${baseURL}/puppies` },
     { name: 'Adults', href: `${baseURL}/adults` },
+    { name: 'About', href: `${baseURL}/about` },
     { name: 'Contact', href: `${baseURL}/contact`}
 ];
 
@@ -33,7 +35,7 @@ const isActive = (href: string) => {
         <a href={`${baseURL === "" ? "/" : baseURL}`} class="left-group">
             <img src={`${baseURL}/logo-basic/Logo-Basic.png`} alt="basic-logo" class="logo"/>
             <div class="vert-separator"></div>
-            <h1 class="header-text">Sualbyronete</h1>
+            <h1 class="header-text">{SITE_NAME}</h1>
         </a>
 
         <!-- Mobile Hamburger Menu -->
@@ -293,7 +295,7 @@ const isActive = (href: string) => {
 
         .nav-links {
             flex-direction: column;
-            gap: 3rem;
+            gap: 2rem;
             width: 100%;
             align-items: center;
         }

@@ -5,6 +5,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 // DB
 import { getCachedData } from "../../scripts/databaseCache";
 import CarouselSelectCard from "../../components/admin/CarouselSelectCard.astro";
+import {ADMIN_SITE_NAME} from "../../config/siteSettings";
 
 export const prerender = false;
 const { allPuppies } = await getCachedData();
@@ -23,7 +24,7 @@ const sortedPuppies = [...allPuppies].sort((a, b) => {
 ---
 
 
-<AdminLayout title="Edit Carousel | Admin Dashboard">
+<AdminLayout title=`Edit Carousel | ${ADMIN_SITE_NAME}`>
     <main class="main-container">
 
         <header class="admin-header">

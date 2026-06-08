@@ -1,11 +1,12 @@
 ---
 // src/pages/404.astro
 import Layout from "../layouts/Layout.astro";
+import {SITE_NAME} from "../config/siteSettings";
 
 const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Layout title="Page Not Found!" showHeader={false}>
+<Layout title=`Page Not Found! | ${SITE_NAME}` showHeader={false}>
     <main class="not-found-container">
         <div class="content">
             <img src={`${baseURL}/logo/Logo.png`} alt="Logo" class="logo"/>

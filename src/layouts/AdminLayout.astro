@@ -4,6 +4,7 @@ import "../styles/global.css";
 import AdminHeader from "../components/admin/AdminHeader.astro";
 import Footer from "../components/Footer.astro";
 import Toast from "../components/admin/Toast.astro";
+import {ADMIN_SITE_NAME, SITE_NAME} from "../config/siteSettings";
 
 const baseURL = import.meta.env.BASE_URL;
 
@@ -13,7 +14,7 @@ interface Props {
     showFooter?: boolean;
 }
 
-const { title = "Sualbyronette | Admin Panel", showHeader = true, showFooter = true } = Astro.props;
+const { title = `${SITE_NAME} | ${ADMIN_SITE_NAME}`, showHeader = true, showFooter = true } = Astro.props;
 ---
 <!doctype html>
 <html lang="en-GB">

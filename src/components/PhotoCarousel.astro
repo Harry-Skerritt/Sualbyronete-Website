@@ -5,6 +5,7 @@ interface ImageItem {
     alt: string;
     title: string;
     subtitle: string;
+    puppyID: string
 }
 
 interface Props {
@@ -29,7 +30,9 @@ const { images } = Astro.props;
                         <div class="slide-bg" style={`background-image: url(${img.src});`}></div>
 
                         <div class="slide-content">
-                            <img src={img.src} alt={img.alt} loading={index === 0 ? "eager" : "lazy"} />
+                            <a href=`/puppies/${img.puppyID}` class="click-wrapper">
+                                <img src={img.src} alt={img.alt} loading={index === 0 ? "eager" : "lazy"} />
+                            </a>
                             <div class="slide-overlay">
                                 <h2>{img.title}</h2>
                                 <p>{img.subtitle}</p>
@@ -103,9 +106,16 @@ const { images } = Astro.props;
         justify-content: center;
     }
 
-    .slide-content img {
+    .click-wrapper {
+        display: block;
         height: 100%;
-        width: auto;
+        width: 100%;
+        text-decoration: none;
+    }
+
+    .click-wrapper img {
+        height: 100%;
+        width: 100%;
         object-fit: cover;
         display: block;
     }

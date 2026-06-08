@@ -7,6 +7,7 @@ import Modal from "../../components/Modal.astro"
 import { getCachedData } from "../../scripts/databaseCache";
 import { getColourLabel, formatGender } from "../../config/puppyConstants";
 import {count, desc} from "drizzle-orm";
+import {ADMIN_SITE_NAME} from "../../config/siteSettings";
 
 export const prerender = false;
 // Get URL Param
@@ -49,7 +50,7 @@ if (isPuppyMode) {
 const totalCount = itemsList.length;
 ---
 
-<AdminLayout title={`${viewTitle} | Admin Dashboard`}>
+<AdminLayout title={`${viewTitle} | ${ADMIN_SITE_NAME}`}>
     <main class="edit-container">
         <span class="edit-header">{viewTitle}</span>
         <span class="edit-count">{countLabel}: {totalCount}</span>

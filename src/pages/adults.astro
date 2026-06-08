@@ -6,11 +6,12 @@ import TabbedFilter from "../components/TabbedFilter.astro";
 
 import { getCachedData } from "../scripts/databaseCache";
 import ParentCard from "../components/ParentCard.astro";
+import {SITE_NAME} from "../config/siteSettings";
 
 const { parents } = await getCachedData();
 ---
 
-<Layout title="Adults | Sualbyronete">
+<Layout title=`Adults | ${SITE_NAME}`>
     <main>
 
         <PawHeader text="Parent Dogs"/>

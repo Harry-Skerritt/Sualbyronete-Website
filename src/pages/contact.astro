@@ -4,6 +4,14 @@
 import Layout from "../layouts/Layout.astro";
 
 import { Icon } from "astro-icon/components"
+import {
+    CONTACT_NUMBER,
+    FACEBOOK_LINK,
+    INSTAGRAM_LINK,
+    MESSENGER_LINK,
+    SITE_NAME, TURNSTYLE_SITE_KEY,
+    WHATSAPP_LINK
+} from "../config/siteSettings";
 
 // Get ref from URL
 const { searchParams } = Astro.url;
@@ -22,7 +30,7 @@ const errorCode = searchParams.get('error');
 ---
 
 
-<Layout title="Contact Me | Sualbyronete">
+<Layout title=`Contact Me | ${SITE_NAME}`>
 
     <main class="contact-container">
         <section class="left-panel">
@@ -36,24 +44,24 @@ const errorCode = searchParams.get('error');
             <div class="other-contact-container">
                 <span class="phone-number">
                     Call Me:
-                    <a href="tel:+4407701043475" class="accent">07701043475</a>
+                    <a href=`tel:+44${CONTACT_NUMBER}` class="accent">{CONTACT_NUMBER}</a>
                 </span>
 
                 <span class="social-header">Find me on Socials:</span>
                 <div class="social-container">
-                    <a href="https://www.instagram.com/suefrancis55/" target="_blank" class="social-link">
+                    <a href={INSTAGRAM_LINK} target="_blank" class="social-link">
                         <Icon name="social/instagram" class="social-contact"/>
                     </a>
 
-                    <a href="https://facebook.com/susan.francis.3158" target="_blank" class="social-link">
+                    <a href={FACEBOOK_LINK} target="_blank" class="social-link">
                         <Icon name="social/facebook" class="social-contact"/>
                     </a>
 
-                    <a href="https://wa.me/447701043475?text=Hi%20Sue,%20I%20saw%20your%20website%20and%20wanted%20to%20reach%20out!" target="_blank" class="social-link">
+                    <a href={WHATSAPP_LINK} target="_blank" class="social-link">
                         <Icon name="social/whatsapp" class="social-contact"/>
                     </a>
 
-                    <a href="https://m.me/susan.francis.3158" class="social-link" target="_blank">
+                    <a href={MESSENGER_LINK} class="social-link" target="_blank">
                         <Icon name="social/messenger" class="social-contact"/>
                     </a>
                 </div>
@@ -68,6 +76,7 @@ const errorCode = searchParams.get('error');
                     <h2 class="form-header-text">Or use my contact form...</h2>
                 </div>
 
+                <!-- Todo: Swap these for toasts -->
                 <!-- Success Banner -->
                 {isSuccess && (
                         <div class="alert-banner success">
@@ -138,7 +147,7 @@ const errorCode = searchParams.get('error');
                     </div>
 
                     <label for="turnstile">Verification <span class="required-marker">*</span> </label>
-                    <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div> <!-- Make this work once deployed -->
+                    <div class="cf-turnstile" data-sitekey={TURNSTYLE_SITE_KEY}></div> <!-- Make this work once deployed -->
 
                     <button type="submit" class="send-btn" id="submit-btn">
                         <span class="text">Send</span>
