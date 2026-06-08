@@ -3,8 +3,7 @@
 
 import Layout from "../../layouts/Layout.astro"
 
-import { getDB } from "../../db/index";
-import { adults } from "../../db/schema";
+import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
 import { eq } from "drizzle-orm";
 
@@ -13,10 +12,9 @@ if (!id) {
     return Astro.redirect('/404');
 }
 
-const db = getDB();
+const { parents } = await getCachedData();
 
-const adultArray = await db.select().from(adults).where(eq(adults.id, id));
-const parent = adultArray[0];
+const parent = parents.find((a: any) => a.id === id);
 
 if (!parent) {
     return Astro.redirect('/404');

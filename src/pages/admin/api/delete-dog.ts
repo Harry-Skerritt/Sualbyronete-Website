@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { getDB } from "../../../db/index";
 import { puppies, adults } from "../../../db/schema";
 import { eq } from "drizzle-orm";
+import { invalidateCachedData } from "../../../scripts/databaseCache.ts";
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -30,6 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
             );
         }
 
+        invalidateCachedData();
         return new Response(
             JSON.stringify({ success: true }),
             { status: 200, headers: { "Content-Type": "application/json" } }

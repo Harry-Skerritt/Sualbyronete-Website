@@ -5,6 +5,7 @@ import { puppies, adults } from '../../../db/schema';
 import { eq, desc } from 'drizzle-orm';
 import fs from 'fs/promises';
 import path from 'path';
+import { invalidateCachedData } from "../../../scripts/databaseCache.ts";
 
 export const prerender = false;
 
@@ -106,6 +107,7 @@ export const POST: APIRoute = async ({ request, params }) => {
         const fileArrayBuffer = await imageFile.arrayBuffer();
         await fs.writeFile(path.join(targetDirectory, uniqueFileName), Buffer.from(fileArrayBuffer));
 
+        invalidateCachedData();
         return new Response(JSON.stringify({ success: true, generatedId: calculatedSystemId }), { status: 200 });
 
     } catch (error: any) {

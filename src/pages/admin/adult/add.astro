@@ -4,9 +4,7 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { Icon } from 'astro-icon/components'
 
 import { PUPPY_COLOURS } from "../../../config/puppyConstants";
-import { getDB } from "../../../db/index";
-import { adults } from "../../../db/schema";
-import { eq } from "drizzle-orm";
+import { getCachedData } from "../../../scripts/databaseCache";
 import Modal from "../../../components/Modal.astro";
 
 export const prerender = false;
@@ -16,15 +14,12 @@ const { searchParams } = Astro.url;
 const isEditMode = searchParams.get("edit") === "true";
 const parentID = searchParams.get("id");
 
-const db = await getDB();
+const { parents } = await getCachedData();
 
 let existingParent: any = null;
 
 if (isEditMode && parentID) {
-    const records = await db.select().from(adults).where(eq(adults.id, parentID));
-    if (records.length > 0) {
-        existingParent = records[0];
-    }
+    existingParent = parents.find((parent: any) => parent.id === parentID) || null;
 }
 
 const pageTitle = isEditMode ? "Edit Parent Profile" : "Add Parent";

@@ -3,20 +3,23 @@
 import AdminLayout from "../../layouts/AdminLayout.astro";
 
 // DB
-import { getDB } from "../../db/index";
-import { puppies, adults } from "../../db/schema";
-import { desc } from "drizzle-orm";
+import { getCachedData } from "../../scripts/databaseCache";
 import CarouselSelectCard from "../../components/admin/CarouselSelectCard.astro";
 
 export const prerender = false;
-const db = getDB();
+const { allPuppies } = await getCachedData();
 
-const rawPuppies = await db.select().from(puppies).orderBy(desc(puppies.seqID));
-const sortedPuppies = [...rawPuppies].sort((a, b) => {
-    const aVal = a.showInCarousel ? 1 : 0;
-    const bVal = b.showInCarousel ? 1 : 0;
-    return bVal - aVal;
-});
+const sortedPuppies = [...allPuppies].sort((a, b) => {
+    const aCarousel = a.showInCarousel ? 1 : 0;
+    const bCarousel = b.showInCarousel ? 1 : 0;
+
+    if (bCarousel !== aCarousel){
+        return bCarousel - aCarousel;
+    }
+
+    // Fall back
+    return b.seqID - a.seqID;
+})
 ---
 
 

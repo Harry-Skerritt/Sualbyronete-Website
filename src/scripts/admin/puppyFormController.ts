@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropzone = document.getElementById("upload-dropzone");
     const fileInput = document.getElementById("pup-image-file") as unknown as HTMLInputElement;
     const imgPreview = document.getElementById("image-preview") as unknown as HTMLImageElement;
+    const copySelect = document.getElementById("pup-copy") as unknown as HTMLSelectElement;
+
     const discardBtn = document.getElementById("discard-form-btn");
 
     const pupNameInput = document.getElementById("pup-name") as unknown as HTMLInputElement;
@@ -71,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         populateColoursForBreed(breedSelect.value);
     });
 
+    // Pre-pop edit mode
     const isEditMode = formEl.getAttribute("data-edit-mode") === "true";
     const savedColourCode = formEl.getAttribute("data-existing-colour");
 
@@ -79,6 +82,36 @@ document.addEventListener("DOMContentLoaded", () => {
         if (successfullyPopulated && savedColourCode) {
             colourSelect.value = savedColourCode;
         }
+    }
+
+    // --- Litter Copy ----
+    if (copySelect) {
+        const rawPuppies = contextEl.getAttribute("data-all-puppies");
+        const allPuppiesList = rawPuppies ? JSON.parse(rawPuppies) : [];
+
+        copySelect.addEventListener("change", () => {
+            const selectedID = copySelect.value;
+            if (!selectedID) return;
+
+            const targetPup = allPuppiesList.find((p: any) => p.id === selectedID);
+            if (!targetPup) return;
+
+            pupBioInput.value = targetPup.bio;
+            pupStatusSelect.value = targetPup.status || "";
+            breedSelect.value = targetPup.breed || "";
+            pupDobInput.value = targetPup.dob || "";
+            pupAvailableInput.value = targetPup.availableFrom || "";
+            motherSelect.value = targetPup.mother || "";
+            fatherSelect.value = targetPup.father || "";
+
+            populateColoursForBreed(targetPup.breed);
+            colourSelect.value = targetPup.colour || "";
+
+            formEl.setAttribute("data-mode", "add");
+            formEl.setAttribute("data-id", "");
+
+            window.showToast(`Litter details copied from ${targetPup.name}! Complete remaining fields to add as a new puppy`, false);
+        })
     }
 
     // --- Photo Preview Processing ---

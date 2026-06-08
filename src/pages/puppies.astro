@@ -6,12 +6,10 @@ import TabbedFilter from "../components/TabbedFilter.astro";
 import PuppyCard from "../components/PuppyCard.astro";
 
 import {Icon} from "astro-icon/components";
-import { getDB } from "../db";
-import { puppies } from "../db/schema";
 import { PUPPY_COLOURS } from "../config/puppyConstants";
+import { getCachedData } from "../scripts/databaseCache";
 
-const db = getDB();
-const dbPuppies = await db.select().from(puppies);
+const { allPuppies } = await getCachedData();
 ---
 
 <Layout title="Puppies | Sualbyronete">
@@ -101,7 +99,7 @@ const dbPuppies = await db.select().from(puppies);
 
         <!-- Content Grid -->
         <div id="puppy-grid" class="puppy-grid">
-            {dbPuppies.map((pup: any) => (
+            {allPuppies.map((pup: any) => (
                     <div class="puppy-card-wrapper"
                          data-breed={pup.breed}
                          data-gender={pup.gender.toLowerCase()}
@@ -432,7 +430,7 @@ const dbPuppies = await db.select().from(puppies);
 
 
 <script is:inline set:html={`
-    window.PUPPY_DATA = ${JSON.stringify(dbPuppies)};
+    window.PUPPY_DATA = ${JSON.stringify(allPuppies)};
     window.PUPPY_COLOURS = ${JSON.stringify(PUPPY_COLOURS)};
 `} />
 

@@ -4,24 +4,19 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 import AdminEditButton from "../../components/admin/AdminEditButton.astro";
 import DataCounter from "../../components/admin/DataCounter.astro";
 import Modal from "../../components/Modal.astro";
+import { getCachedData } from "../../scripts/databaseCache";
 
 // Name from Cookie
 const nameCookie = Astro.cookies.get('admin_user_name');
 const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
 
 // DB
-import { getDB } from "../../db/index";
-import { puppies, adults } from "../../db/schema";
-import { count } from "drizzle-orm";
-
 export const prerender = false;
-const db = getDB();
 
-const puppyCountResult = await db.select({ value: count() }).from(puppies);
-const totalPuppies = puppyCountResult[0]?.value ?? 0;
+const { allPuppies, parents } = await getCachedData();
 
-const adultCountResult = await db.select({ value: count() }).from(adults);
-const totalParents = adultCountResult[0]?.value ?? 0;
+const totalPuppies = allPuppies.length;
+const totalParents = parents.length;
 ---
 
 <AdminLayout title="Admin Dashboard | Sualbyronete">

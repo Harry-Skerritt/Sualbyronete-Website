@@ -4,30 +4,21 @@
 import Layout from "../../layouts/Layout.astro";
 import PuppyCard from "../../components/PuppyCard.astro"
 import { Icon } from "astro-icon/components"
+import { getCachedData } from "../../scripts/databaseCache";
 
 const { searchParams } = Astro.url;
 const parentID = searchParams.get('parent') || "";
 const parentName = searchParams.get('name') || "";
 
-// DB
-import { getDB } from "../../db";
-import { puppies } from "../../db/schema";
-import { eq, or } from "drizzle-orm";
-
 if (!parentID) {
     return Astro.redirect('/puppies');
 }
 
-const db = getDB();
-
-const litterPuppies = await db
-    .select().from(puppies)
-    .where(
-        or(
-            eq(puppies.mother, parentID),
-            eq(puppies.father, parentID)
-        )
-    );
+// DB
+const { allPuppies } = await getCachedData();
+const litterPuppies = allPuppies.filter((pup: any) =>
+        pup.mother === parentID || pup.father === parentID
+);
 ---
 
 <Layout title=`${parentName}'s Puppies | Sualbyronete`>

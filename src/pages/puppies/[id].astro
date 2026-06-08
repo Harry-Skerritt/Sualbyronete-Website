@@ -2,8 +2,7 @@
 // src/pages/puppies/[id].astro
 import Layout from "../../layouts/Layout.astro"
 
-import { getDB } from "../../db/index";
-import { puppies, adults } from "../../db/schema";
+import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
 import { eq } from "drizzle-orm";
 
@@ -12,17 +11,15 @@ if (!id) {
     return Astro.redirect('/404');
 }
 
-const db = getDB();
+const { allPuppies, parents } = await getCachedData();
 
-const puppyArray = await db.select().from(puppies).where(eq(puppies.id, id));
-const puppy = puppyArray[0];
+const puppy = allPuppies.find((p: any) => p.id === id);
 
 if (!puppy) {
     return Astro.redirect('/404');
 }
 
-const allAdults = await db.select().from(adults);
-const adultMap = new Map(allAdults.map((adult: any) => [adult.id, adult.name]));
+const adultMap = new Map(parents.map((adult: any) => [adult.id, adult.name]));
 
 const motherName = adultMap.get(puppy.mother) || puppy.mother;
 const fatherName = adultMap.get(puppy.father) || puppy.father;

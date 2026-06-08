@@ -4,13 +4,11 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 import DogEditCard from "../../components/admin/DogEditCard.astro";
 import Modal from "../../components/Modal.astro"
 
-import { getDB } from "../../db";
-import { puppies, adults } from "../../db/schema";
+import { getCachedData } from "../../scripts/databaseCache";
 import { getColourLabel, formatGender } from "../../config/puppyConstants";
 import {count, desc} from "drizzle-orm";
 
 export const prerender = false;
-
 // Get URL Param
 const { searchParams } = Astro.url;
 const typeParam = searchParams.get("type")?.toLowerCase().trim() || "puppies";
@@ -21,29 +19,31 @@ const countLabel = isPuppyMode ? "Total Puppies" : "Total Parents";
 const dogTypeAttr = isPuppyMode ? "puppy" : "adult";
 
 // DB
-const db = await getDB();
+const { allPuppies, parents } = await getCachedData();
 let itemsList = [];
 
 if (isPuppyMode) {
-    const rawPuppies = await db.select().from(puppies).orderBy(desc(puppies.seqID));
-    itemsList = rawPuppies.map((p: any) => ({
-        id: p.id,
-        name: p.name,
-        image: `/images/puppies/${p.image}`,
-        breed: p.breed.toLowerCase(),
-        gender: formatGender(p.gender),
-        date: p.dateAdded
-    }));
+   itemsList = [...allPuppies]
+       .sort((a, b) => b.seqID - a.seqID)
+       .map((p: any) => ({
+           id: p.id,
+           name: p.name,
+           image: `/images/puppies/${p.image}`,
+           breed: p.breed.toLowerCase(),
+           gender: formatGender(p.gender),
+           date: p.dateAdded
+       }));
 } else {
-    const rawAdults = await db.select().from(adults).orderBy(desc(adults.seqId));
-    itemsList = rawAdults.map((a: any) => ({
-        id: a.id,
-        name: a.name,
-        image: `/images/adults/${a.image}`,
-        breed: a.breed.toLowerCase(),
-        gender: formatGender(a.gender),
-        date: a.dateAdded
-    }));
+    itemsList = [...parents]
+        .sort((a, b) => b.seqID - a.seqID)
+        .map((a: any) => ({
+            id: a.id,
+            name: a.name,
+            image: `/images/adults/${a.image}`,
+            breed: a.breed.toLowerCase(),
+            gender: formatGender(a.gender),
+            date: a.dateAdded
+        }));
 }
 
 const totalCount = itemsList.length;

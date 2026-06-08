@@ -4,14 +4,10 @@ import Layout from "../layouts/Layout.astro";
 import PawHeader from "../components/PawHeader.astro";
 import TabbedFilter from "../components/TabbedFilter.astro";
 
-import { Icon } from "astro-icon/components"
-import { getDB } from "../db";
-import { adults } from "../db/schema";
-import { PUPPY_COLOURS } from "../config/puppyConstants";
+import { getCachedData } from "../scripts/databaseCache";
 import ParentCard from "../components/ParentCard.astro";
 
-const db = getDB();
-const dbAdults = await db.select().from(adults);
+const { parents } = await getCachedData();
 ---
 
 <Layout title="Adults | Sualbyronete">
@@ -54,7 +50,7 @@ const dbAdults = await db.select().from(adults);
 
         <!-- Content Grid -->
         <div id="puppy-grid" class="parent-grid">
-            {dbAdults.map((parent: any) => (
+            {parents.map((parent: any) => (
                     <div class="parent-card-wrapper"
                          data-breed={parent.breed}
                          data-gender={parent.gender ? parent.gender.toLowerCase() : ''}>
@@ -145,7 +141,7 @@ const dbAdults = await db.select().from(adults);
 </style>
 
 <script is:inline set:html={`
-    window.PARENT_DATA = ${JSON.stringify(dbAdults)};
+    window.PARENT_DATA = ${JSON.stringify(parents)};
 `} />
 
 <script src="../scripts/parentFilter.ts"></script>

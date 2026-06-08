@@ -4,9 +4,7 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { Icon } from 'astro-icon/components'
 
 import {PUPPY_COLOURS} from "../../../config/puppyConstants";
-import { getDB } from "../../../db/index";
-import { puppies, adults } from "../../../db/schema";
-import { eq } from "drizzle-orm";
+import { getCachedData } from "../../../scripts/databaseCache";
 import Modal from "../../../components/Modal.astro";
 
 export const prerender = false;
@@ -16,19 +14,15 @@ const { searchParams } = Astro.url;
 const isEditMode = searchParams.get("edit") === "true";
 const puppyID = searchParams.get("id");
 
-const db = await getDB();
+const { allPuppies, parents } = await getCachedData();
 
-let existingPuppy: any = null;
-
-const parents = await db.select().from(adults);
 const mothers = parents.filter((p: any) => p.gender.toLowerCase() === 'female');
 const fathers = parents.filter((p: any) => p.gender.toLowerCase() === 'male');
 
+let existingPuppy: any = null;
+
 if (isEditMode && puppyID) {
-    const records = await db.select().from(puppies).where(eq(puppies.id, puppyID));
-    if (records.length > 0) {
-        existingPuppy = records[0];
-    }
+    existingPuppy = allPuppies.find((pup: any) => pup.id === puppyID) || null;
 }
 
 const formatBreedName = (b: string) => b.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier';
@@ -52,7 +46,12 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
             <p class="title-text">{pageTitle}</p>
         </header>
 
-        <div class="workspace-grid" id="puppy-form-context" data-colours={JSON.stringify(PUPPY_COLOURS)}>
+        <div
+                class="workspace-grid"
+                id="puppy-form-context"
+                data-colours={JSON.stringify(PUPPY_COLOURS)}
+                data-all-puppies={JSON.stringify(allPuppies)}
+        >
 
             <section class="left-panel">
                 <div class="image-uploader" id="upload-dropzone">
@@ -83,6 +82,20 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
                         <span class="required-accent">*</span>
                         Indicates required field
                     </span>
+                </div>
+
+                <div class=`copy-field field-group ${isEditMode ? "hidden" : ""}`>
+                    <label for="pup-copy" class="dropdown-label">Copy Details From:</label>
+                    <div class="select-wrapper">
+                        <select id="pup-copy">
+                            <option value="" selected>Chose Existing Puppy</option>
+                            {allPuppies.map((pup: any) => (
+                                    <option value={pup.id}>
+                                        {pup.name} - {formatBreedName(pup.breed)} ({pup.id})
+                                    </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </section>
 
@@ -458,6 +471,17 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
       }
     }
 
+    .copy-field {
+      &::before {
+        content: "";
+        display: block;
+        width: 100%;
+        border-top: 2px solid rgba(0, 0, 0, 0.15);
+        margin-bottom: 1rem;
+      }
+      padding-top: 2rem;
+    }
+
     input:disabled,
     textarea:disabled,
     select:disabled {
@@ -600,6 +624,10 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
       background: var(--colour-dark);
       color: white;
       &:hover { filter: brightness(1.1); }
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     /* Mobile Styling */
