@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro"
 
 import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
-import { eq } from "drizzle-orm";
+import { PUPPY_INCLUSIONS } from "../../config/siteSettings";
 
 const { id } = Astro.params;
 if (!id) {
@@ -105,21 +105,21 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
                 <div class="included-info">
                     <h1 class="included-header">All Puppies come included with:</h1>
                     <ul class="included-list">
-                        <li>Pedigree</li>
-                        <li>Vaccinations</li>
-                        <li>Health Record</li>
-                        <li>Microchipped</li>
-                        <li>Insured</li>
-                        <li>Socialised with other dogs</li>
-
-                        <li>
-                            Puppy Pack Including:
-                            <ul class="puppy-pack-list">
-                                <li>Owners Contract</li>
-                                <li>Feeding Instructions</li>
-                                <li>History from Birth to when they join your family</li>
-                            </ul>
-                        </li>
+                        {PUPPY_INCLUSIONS.map((item: any) => {
+                            if (typeof item === 'string') {
+                                return <li>{item}</li>;
+                            }
+                            return (
+                                    <li>
+                                        {item.title}
+                                        <ul class="puppy-pack-list">
+                                            {item.subItems?.map((subItem: string) => (
+                                                    <li>{subItem}</li>
+                                            ))}
+                                        </ul>
+                                    </li>
+                            );
+                        })}
                     </ul>
                 </div>
             </div>

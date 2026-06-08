@@ -4,9 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import PhotoCarousel from "../components/PhotoCarousel.astro";
 
 import { getCarouselGallery } from "../scripts/getFeaturedPuppies";
+import { BREEDER_IMAGE, BREEDER_NAME_SHORT, HOME_PAGE_ABOUT, SITE_NAME, baseURL } from "../config/siteSettings";
 const petGallery = await getCarouselGallery();
-
-const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout>
@@ -19,9 +18,9 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
                     <PhotoCarousel images={petGallery}/>
             ) : (
                     <div class="carousel-placeholder">
-                        <img src={`${baseURL}/logo-basic/Logo-Basic.png`} alt="Sualbyronete Welcome Banner" class="placeholder-bg" />
+                        <img src={`${baseURL}/logo-basic/Logo-Basic.png`} alt=`${SITE_NAME} Welcome Banner` class="placeholder-bg" />
                         <div class="placeholder-overlay">
-                            <h1>Welcome to Sualbyronete</h1>
+                            <h1>Welcome to {SITE_NAME}</h1>
                             <p>Breeder of Yorkshire and Biewer Terriers</p>
                         </div>
                     </div>
@@ -30,17 +29,11 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 
         <!-- Section 2: About Section -->
         <section class="snap-section about-section">
-            <img src={`${baseURL}/images/susan.jpg`} alt="An Image of Susan" class="susan-image"/>
+            <img src={`${baseURL}/${BREEDER_IMAGE.src}`} alt={BREEDER_IMAGE.alt} class="breeder-image"/>
 
             <div class="text-container">
-                <h1 class="about-header">Hi, I'm Sue</h1>
-                <p class="about-body">
-                   I have bred Yorkshire Terriers for over 30 years, and my journey began with my first beloved pet, Zoey.
-                    My love for the breed grew with Xena and Zara, whose puppies made it even stronger.
-                    After losing them, I became interested in showing Yorkshire Terriers and was proud to own successful dogs such as Bella and Byron, who qualified for Crufts for life.
-                    Grace, Byron’s daughter, has always held a special place in my heart and remains part of my logo.
-                    I later discovered a passion for Biewer Terriers, and today I continue breeding both with dedication, care, and high standards
-                </p>
+                <h1 class="about-header">Hi, I'm {BREEDER_NAME_SHORT}</h1>
+                <p class="about-body">{HOME_PAGE_ABOUT}</p>
                 <a class="read-more-about" href="/about">Read More</a>
             </div>
 
@@ -169,7 +162,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     padding: 4rem 2rem 2rem 2rem;
     gap: 2rem;
   }
-  .susan-image {
+  .breeder-image {
     height: 80vh;
     width: auto;
     object-fit: cover;

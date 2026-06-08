@@ -5,6 +5,7 @@ import Layout from "../layouts/Layout.astro";
 
 import { Icon } from "astro-icon/components"
 import {
+    baseURL, BREEDER_IMAGE, BREEDER_NAME_SHORT,
     CONTACT_NUMBER,
     FACEBOOK_LINK,
     INSTAGRAM_LINK,
@@ -36,9 +37,9 @@ const errorCode = searchParams.get('error');
         <section class="left-panel">
             <span class="contact-header">CONTACT ME</span>
 
-            <div class="susan-container">
-                <img src="images/susan.jpg" alt="Susan Francis" class="contact-image"/>
-                <span class="susan-desc">Susan Francis</span>
+            <div class="breeder-container">
+                <img src={`${baseURL}/${BREEDER_IMAGE.src}`} alt={BREEDER_IMAGE.alt} class="contact-image"/>
+                <span class="contact-desc">{BREEDER_NAME_SHORT}</span>
             </div>
 
             <div class="other-contact-container">
@@ -197,7 +198,7 @@ const errorCode = searchParams.get('error');
     }
 
     /* Image */
-    .susan-container {
+    .breeder-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -214,7 +215,7 @@ const errorCode = searchParams.get('error');
       border: 10px solid var(--colour-dark);
     }
 
-    .susan-desc {
+    .contact-desc {
       font-family: var(--font-primary);
       color: var(--colour-white);
       font-size: 2rem;

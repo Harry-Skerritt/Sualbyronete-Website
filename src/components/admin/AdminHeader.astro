@@ -1,6 +1,7 @@
 ---
 // src/components/admin/AdminHeader.astro
 import {Icon} from "astro-icon/components";
+import {SITE_NAME} from "../../config/siteSettings";
 
 const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -10,7 +11,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
     <div class="header-container">
         <!-- Title -->
         <a href={`${baseURL}/dashboard`} style="text-decoration: none">
-            <h1 class="header-text full-title">Sualbyronete Admin Dashboard</h1>
+            <h1 class="header-text full-title">{SITE_NAME} Admin Dashboard</h1>
             <h1 class="header-text short-title">Admin Dashboard</h1>
         </a>
 

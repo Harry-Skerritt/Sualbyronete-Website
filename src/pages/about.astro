@@ -1,7 +1,7 @@
 ---
 // src/pages/about.astro
 import Layout from "../layouts/Layout.astro";
-import {ABOUT_SECTIONS, SITE_NAME} from "../config/siteSettings";---
+import { ABOUT_SECTIONS, BREEDER_IMAGE, BREEDER_NAME_SHORT, SITE_NAME, baseURL } from "../config/siteSettings";---
 
 <Layout title=`About Me | ${SITE_NAME}`>
 
@@ -9,12 +9,12 @@ import {ABOUT_SECTIONS, SITE_NAME} from "../config/siteSettings";---
 
         <aside class="left-container">
             <div class="about-image-sticky">
-                <img src="images/susan.jpg" alt="Susan Francis"/>
+                <img src={`${baseURL}/${BREEDER_IMAGE.src}`} alt={BREEDER_IMAGE.alt} />
             </div>
         </aside>
 
         <section class="right-container">
-            <h1 class="about-header">Hi I'm Sue</h1>
+            <h1 class="about-header">Hi I'm {BREEDER_NAME_SHORT}</h1>
 
             {ABOUT_SECTIONS.map((section: any) => (
                 <>
