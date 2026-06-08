@@ -1,0 +1,68 @@
+---
+// src/pages/coming-soon.astro
+import Layout from "../../layouts/Layout.astro";
+import {baseURL, SITE_NAME} from "../../config/siteSettings";---
+
+<Layout title=`Coming Soon! | ${SITE_NAME}` showHeader={false}>
+
+    <main class="main-container">
+
+        <div class="centre-content">
+            <img src=`${baseURL}/logo/Logo.png` alt="Logo" class="logo"/>
+            <h1 class="text">Coming Soon</h1>
+        </div>
+
+    </main>
+
+</Layout>
+
+<style lang="scss">
+    .main-container {
+      max-width: 110rem;
+      margin: 0 auto;
+      min-height: calc(100vh - var(--header-height));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .centre-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .logo {
+      width: 100%;
+      max-width: 32rem;
+      height: auto;
+      display: block;
+    }
+
+    .text {
+      font-family: var(--font-primary);
+      font-size: 4rem;
+      line-height: 1.1;
+      text-align: center;
+      color: var(--colour-dark);
+      font-weight: 800;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .logo {
+        max-width: 20rem;
+      }
+
+      .text {
+        font-size: 2.5rem;
+      }
+    }
+</style>

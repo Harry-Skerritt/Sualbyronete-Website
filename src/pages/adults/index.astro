@@ -1,12 +1,12 @@
 ---
 // src/pages/adults.astro
-import Layout from "../layouts/Layout.astro";
-import PawHeader from "../components/PawHeader.astro";
-import TabbedFilter from "../components/TabbedFilter.astro";
+import Layout from "../../layouts/Layout.astro";
+import PawHeader from "../../components/PawHeader.astro";
+import TabbedFilter from "../../components/TabbedFilter.astro";
 
-import { getCachedData } from "../scripts/databaseCache";
-import ParentCard from "../components/ParentCard.astro";
-import {SITE_NAME} from "../config/siteSettings";
+import { getCachedData } from "../../scripts/databaseCache";
+import ParentCard from "../../components/ParentCard.astro";
+import {SITE_NAME} from "../../config/siteSettings";
 
 const { parents } = await getCachedData();
 ---
@@ -145,4 +145,4 @@ const { parents } = await getCachedData();
     window.PARENT_DATA = ${JSON.stringify(parents)};
 `} />
 
-<script src="../scripts/parentFilter.ts"></script>
+<script src="../../scripts/parentFilter.ts"></script>

@@ -1,14 +1,14 @@
 ---
 // src/pages/puppies.astro
-import Layout from "../layouts/Layout.astro";
-import PawHeader from "../components/PawHeader.astro";
-import TabbedFilter from "../components/TabbedFilter.astro";
-import PuppyCard from "../components/PuppyCard.astro";
+import Layout from "../../layouts/Layout.astro";
+import PawHeader from "../../components/PawHeader.astro";
+import TabbedFilter from "../../components/TabbedFilter.astro";
+import PuppyCard from "../../components/PuppyCard.astro";
 
 import {Icon} from "astro-icon/components";
-import { PUPPY_COLOURS } from "../config/puppyConstants";
-import { getCachedData } from "../scripts/databaseCache";
-import { SITE_NAME } from "../config/siteSettings";
+import { PUPPY_COLOURS } from "../../config/puppyConstants";
+import { getCachedData } from "../../scripts/databaseCache";
+import { SITE_NAME } from "../../config/siteSettings";
 
 const { allPuppies } = await getCachedData();
 ---
@@ -435,5 +435,5 @@ const { allPuppies } = await getCachedData();
     window.PUPPY_COLOURS = ${JSON.stringify(PUPPY_COLOURS)};
 `} />
 
-<script src="../scripts/puppyFilter.ts"></script>
+<script src="../../scripts/puppyFilter.ts"></script>
 

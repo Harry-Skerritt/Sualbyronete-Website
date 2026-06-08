@@ -1,0 +1,155 @@
+---
+// src/pages/maintenance.astro
+import Layout from "../../layouts/Layout.astro";
+import { SITE_NAME, baseURL, CONTACT_NUMBER, FACEBOOK_LINK } from "../../config/siteSettings";
+---
+
+<Layout title={`Under Maintenance | ${SITE_NAME}`} showHeader={false}>
+
+    <main class="main-container">
+
+        <div class="centre-content">
+            <img src={`${baseURL}/logo/Logo.png`} alt="Logo" class="logo"/>
+
+            <div class="text-group">
+                <h1 class="text">Under Maintenance</h1>
+                <p class="subtext">
+                    We're currently updating our system to improve your experience.
+                    We'll be back online shortly!
+                </p>
+            </div>
+
+            <div class="urgent-contact">
+                <p>Need to reach us urgently?</p>
+                <div class="links">
+                    <a href={`tel:+44${CONTACT_NUMBER}`} class="accent-link">Call: {CONTACT_NUMBER}</a>
+                    <span class="bullet">•</span>
+                    <a href={FACEBOOK_LINK} target="_blank" class="accent-link">Facebook Updates</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</Layout>
+
+<style lang="scss">
+  .main-container {
+    max-width: 110rem;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+
+  .centre-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 40rem;
+  }
+
+  .logo {
+    width: 100%;
+    max-width: 32rem;
+    height: auto;
+    display: block;
+  }
+
+  .text-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .text {
+    font-family: var(--font-primary);
+    font-size: 4rem;
+    line-height: 1.1;
+    color: var(--colour-dark);
+    font-weight: 800;
+    margin: 0;
+    padding: 0;
+  }
+
+  .subtext {
+    font-family: var(--font-secondary);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--colour-white);
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .urgent-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    color: var(--colour-light);
+    text-align: center;
+
+    p {
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .bullet {
+      color: var(--colour-dark);
+    }
+  }
+
+  .accent-link {
+    color: var(--colour-dark);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: filter 0.1s ease;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .centre-content {
+      gap: 2rem;
+    }
+
+    .logo {
+      max-width: 20rem;
+    }
+
+    .text {
+      font-size: 2.3rem;
+    }
+
+    .subtext {
+      font-size: 1rem;
+    }
+
+    .urgent-contact {
+      font-size: 0.95rem;
+    }
+  }
+</style>
