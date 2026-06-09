@@ -3,6 +3,7 @@
 const form = document.getElementById('login-form');
 const errorBanner = document.getElementById('error-banner');
 const errorText = document.getElementById('error-text');
+const rememberCheckbox = document.getElementById('remember-me-checkbox') as HTMLInputElement;
 
 /* Login */
 form?.addEventListener('submit', async (e) => {
@@ -10,6 +11,7 @@ form?.addEventListener('submit', async (e) => {
 
     const username = (document.getElementById('uname') as HTMLInputElement).value;
     const password = (document.getElementById('psw') as HTMLInputElement).value;
+    const remember = rememberCheckbox ? rememberCheckbox.checked : false;
 
     if (errorBanner) errorBanner.style.display = 'none';
 
@@ -18,7 +20,7 @@ form?.addEventListener('submit', async (e) => {
         const response = await fetch ('/admin/auth/login-submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, password, remember }),
         });
 
         const data = (await response.json()) as { success: boolean; message?: string };

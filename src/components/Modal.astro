@@ -19,7 +19,7 @@ const { id, header = "Notification" } = Astro.props;
         <!-- Header -->
         <div class="modal-header">
             <h2 id={`${id}-title`} class="header-text">{header}</h2>
-            <button type="button" class="close-button" aria-label="Close modal" data-modal-close>
+            <button type="button" class="close-button" title="Close" aria-label="Close modal" data-modal-close>
                 <Icon name="close" class="close-icon"/>
             </button>
         </div>

@@ -2,6 +2,7 @@
 // src/components/admin/CarouselSelectCard.astro
 
 import { Switch } from 'free-astro-components'
+import {getFormattedBreed} from "../../config/puppyConstants";
 
 interface Props {
     image?: string;
@@ -35,7 +36,7 @@ const {
     <div class="card-content">
         <div class="metadata-panel">
             <h3 class="card-name">{name}</h3>
-            <p class="card-breed">{breed.toLowerCase() === "yorkie" ? "Yorkshire Terrier" : "Biewer Terrier"}</p>
+            <p class="card-breed">{getFormattedBreed(breed)}</p>
         </div>
 
         <div class="control-panel">

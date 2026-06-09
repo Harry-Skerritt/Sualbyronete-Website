@@ -1,7 +1,7 @@
 // src/scripts/getFeaturedPuppies.ts
 
 import { getCachedData } from "./databaseCache.ts";
-import { formatGender, getColourLabel } from "../config/puppyConstants";
+import {formatGender, getColourLabel, getFormattedBreed} from "../config/puppyConstants";
 import { calculateAge } from "./ageCalculator";
 
 export interface CarouselImageItem {
@@ -19,13 +19,11 @@ export async function getCarouselGallery(): Promise<CarouselImageItem[]> {
         const carouselPuppies = allPuppies.filter((pup:any) => pup.showInCarousel === true);
 
         return carouselPuppies.map((pup: any) => {
-            const displayBreed = pup.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier';
-
             return {
                 src: `/images/puppies/${pup.image}`,
-                alt: `${displayBreed} Puppy named ${pup.name}`,
+                alt: `${getFormattedBreed(pup.breed)} Puppy named ${pup.name}`,
                 title: formatGender(pup.name),
-                subtitle: `${displayBreed} | ${calculateAge(pup.dob)}`,
+                subtitle: `${getFormattedBreed(pup.breed)} | ${calculateAge(pup.dob)}`,
                 puppyID: pup.id
             };
         });

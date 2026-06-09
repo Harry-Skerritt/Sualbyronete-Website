@@ -20,7 +20,7 @@ const isFemale = puppyGender?.toLowerCase() === "female";
 <div class="recent-puppy-card" data-id={puppyID} data-type={type} data-name={puppyName}>
 
     <div class="puppy-image-wrapper">
-        <img src={puppyImage} alt=`{Photo of ${puppyName}`}/>
+        <img src={puppyImage} alt={`Photo of ${puppyName}`}/>
     </div>
 
     <div class="puppy-data-row">
@@ -130,10 +130,10 @@ const isFemale = puppyGender?.toLowerCase() === "female";
     opacity: 0.9;
 
     &.male {
-      color: #3f80bc; /* Soft dashboard blue */
+      color: #3f80bc;
     }
     &.female {
-      color: #d872bd; /* Soft dashboard pink */
+      color: #d872bd;
     }
   }
 
@@ -154,7 +154,7 @@ const isFemale = puppyGender?.toLowerCase() === "female";
 
   .puppy-actions-tray {
     display: flex;
-    flex-direction: row; /* Horizontal layout runs cleaner on modern dashboard strips */
+    flex-direction: row;
     gap: 0.5rem;
     align-items: center;
   }
@@ -200,6 +200,59 @@ const isFemale = puppyGender?.toLowerCase() === "female";
 
     &:active {
       transform: scale(0.95);
+    }
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .recent-puppy-card {
+      flex-direction: column;
+      height: auto;
+      align-items: stretch;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .puppy-image-wrapper {
+      width: 100%;
+      height: 14rem;
+      aspect-ratio: auto;
+    }
+
+    .puppy-data-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.2rem;
+    }
+
+    .puppy-info-block {
+      align-items: center;
+      text-align: center;
+    }
+
+    .title-gender-row {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .puppy-metadata {
+      justify-content: center;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .puppy-actions-tray {
+      justify-content: center;
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 0.8rem;
+      gap: 1.5rem;
+
+      .action-btn {
+        width: 45%;
+        height: 2.8rem;
+        border-radius: 0.6rem;
+      }
     }
   }
 </style>

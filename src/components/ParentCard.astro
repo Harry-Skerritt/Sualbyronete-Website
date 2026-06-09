@@ -27,7 +27,7 @@ const {
     parentBio = "No bio specified",
 } = Astro.props;
 
-import { getColourLabel, formatGender } from "../config/puppyConstants";
+import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyConstants";
 ---
 
 <div class="parent-card">
@@ -35,7 +35,7 @@ import { getColourLabel, formatGender } from "../config/puppyConstants";
     <div class="parent-image">
         <img
                 src={`/images/adults/${parentImage}`}
-                alt={`Adult ${parentBreed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}`}
+                alt={`Adult ${getFormattedBreed(parentBreed)}`}
         />
     </div>
 

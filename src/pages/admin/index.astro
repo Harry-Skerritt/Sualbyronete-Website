@@ -52,7 +52,7 @@ import Modal from "../../components/Modal.astro"
                     <!-- Action Row -->
                     <div class="action-utilities">
                         <label class="remember-check">
-                            <input type="checkbox" name="remember">
+                            <input type="checkbox" name="remember" id="remember-me-checkbox">
                             <span class="checkbox-box"></span>
                             <span class="label-text">Remember Me</span>
                         </label>
@@ -60,7 +60,7 @@ import Modal from "../../components/Modal.astro"
                     </div>
 
                     <div class="button-wrapper">
-                        <button type="submit" class="login-btn">Log In</button>
+                        <button type="submit" class="login-btn" title="Log In">Log In</button>
                     </div>
                 </form>
             </div>
@@ -455,38 +455,68 @@ import Modal from "../../components/Modal.astro"
 <script>
     import "../../scripts/admin/login.ts"
 
-    /* Modal */
-    const forgotLink = document.getElementById('forgot-link');
-    const modalCancel = document.getElementById('modal-cancel');
-    const targetModal = document.getElementById('forgot-modal');
-    const forgotForm = document.getElementById('forgot-form');
+    function initLoginPersistence() {
+        const loginForm = document.getElementById('login-form') as HTMLFormElement;
+        const usernameInput = document.getElementById('uname') as HTMLInputElement;
+        const rememberCheckbox = document.getElementById('remember-me-checkbox') as HTMLInputElement;
 
-    forgotLink?.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (targetModal) {
-            targetModal.classList.add('is-active');
-            targetModal.setAttribute('aria-hidden', 'false');
-            targetModal.querySelector('input')?.focus();
+        /* Modal */
+        const forgotLink = document.getElementById('forgot-link');
+        const modalCancel = document.getElementById('modal-cancel');
+        const targetModal = document.getElementById('forgot-modal');
+        const forgotForm = document.getElementById('forgot-form');
+
+        /* Check for remember me */
+        if (usernameInput && rememberCheckbox) {
+            const savedUsername = localStorage.getItem("remembered_admin_user");
+            if(savedUsername) {
+                usernameInput.value = savedUsername;
+                rememberCheckbox.checked = true;
+            }
         }
-    });
 
-    modalCancel?.addEventListener('click', () => {
-        if (targetModal)
-        {
-            targetModal.classList.remove('is-active');
-            targetModal.setAttribute('aria-hidden', 'true');
-        }
-    });
+        /* Listen to Submit event */
+        loginForm.addEventListener('submit', () => {
+            if (!usernameInput || !rememberCheckbox) return;
 
-    forgotForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const emailVal = (document.getElementById('email-entry') as HTMLInputElement).value;
+            if (rememberCheckbox.checked) {
+                localStorage.setItem("remembered_admin_user", usernameInput.value.trim());
+            } else {
+                localStorage.removeItem("remembered_admin_user");
+            }
+        });
 
-        alert(`Reset email sent to: ${emailVal}`);
+        /* Forgot Password Modal */
+        forgotLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (targetModal) {
+                targetModal.classList.add('is-active');
+                targetModal.setAttribute('aria-hidden', 'false');
+                targetModal.querySelector('input')?.focus();
+            }
+        });
 
-        if (targetModal) {
-            targetModal.classList.remove('is-active');
-            targetModal.setAttribute('aria-hidden', 'true');
-        }
-    });
+        modalCancel?.addEventListener('click', () => {
+            if (targetModal)
+            {
+                targetModal.classList.remove('is-active');
+                targetModal.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        forgotForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const emailVal = (document.getElementById('email-entry') as HTMLInputElement).value;
+
+            alert(`Reset email sent to: ${emailVal}`);
+
+            if (targetModal) {
+                targetModal.classList.remove('is-active');
+                targetModal.setAttribute('aria-hidden', 'true');
+            }
+        });
+    }
+
+    initLoginPersistence();
+    document.addEventListener('astro:page-load', initLoginPersistence);
 </script>

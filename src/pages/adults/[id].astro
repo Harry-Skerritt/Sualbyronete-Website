@@ -21,7 +21,7 @@ if (!parent) {
 }
 
 
-import { getColourLabel, formatGender } from "../../config/puppyConstants";
+import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
 import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/siteSettings";
 ---
 
@@ -37,7 +37,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
 
                 <img
                         src={`/images/adults/${parent.image}`}
-                        alt={`${parent.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} parent`}
+                        alt={`${getFormattedBreed(parent.breed)} parent`}
                         class={`parent-photo ${parent.forSale ? '' : 'not-for-sale'}`}
                 />
             </div>
@@ -72,7 +72,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
             <div class="info-lists">
                 <dl class="parent-specs-list">
                     <dt>Breed:</dt>
-                    <dd>{parent.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</dd>
+                    <dd>{getFormattedBreed(parent.breed)}</dd>
 
                     <dt>DoB:</dt>
                     <dd>{parent.dob}</dd>
@@ -90,7 +90,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
                     <dd><a href={`/puppies/litterView?parent=${parent.id}&name=${parent.name}`}>View Puppies</a></dd>
 
                     <dt>Reg #:</dt>
-                    <dd>{parent.regID}</dd>
+                    <dd>#{parent.regID}</dd>
                 </dl>
             </div>
 

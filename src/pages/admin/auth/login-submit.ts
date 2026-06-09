@@ -19,9 +19,10 @@ function verifyPassword(typedPassword: string, storedHashInDB: string): boolean 
 
 export const POST: APIRoute = async ({ request, cookies }) => {
     try {
-        const { username, password } = (await request.json()) as {
+        const { username, password, remember } = (await request.json()) as {
             username?: string;
             password?: string;
+            remember?: boolean;
         };
 
         // Core Validation Check
@@ -57,10 +58,13 @@ export const POST: APIRoute = async ({ request, cookies }) => {
                 .where(eq(adminUsers.id, user.id));
         } catch (e) { /* background fail safe */ }
 
+        // 30 Day (in ms) if remember selected, 24 hours (in ms) if not
+        const dynamicLifespan = remember ? 60 * 60 * 24 * 30 : 60 * 60 * 24;
+
         // Set an HTTP-Only, Secure Cookie Gatekeeper
         cookies.set('admin_session', 'true', {
             path: '/',
-            maxAge: 86400, // 24 hours
+            maxAge: dynamicLifespan,
             secure: process.env.NODE_ENV === 'production',
             httpOnly: true, // Safeguards cookie data from window.document hacks
             sameSite: 'strict'
@@ -68,7 +72,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
         cookies.set('admin_user_name', user.name, {
             path: '/',
-            maxAge: 86400, // 24 hours
+            maxAge: dynamicLifespan,
             secure: process.env.NODE_ENV === 'production',
             httpOnly: false,
             sameSite: 'strict'

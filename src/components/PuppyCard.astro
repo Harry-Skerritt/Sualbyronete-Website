@@ -16,7 +16,7 @@ interface Props {
 const { puppyName, puppyGender, puppyImage, puppyStatus, puppyBreed, puppyColour, puppyID } = Astro.props;
 const statusKey = puppyStatus.toLowerCase();
 
-import { getColourLabel, formatGender } from "../config/puppyConstants";
+import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyConstants";
 ---
 
 <div class="puppy-card">
@@ -27,7 +27,7 @@ import { getColourLabel, formatGender } from "../config/puppyConstants";
     <div class="puppy-image">
         <img
                 src={`/images/puppies/${puppyImage}`}
-                alt={`${puppyBreed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
+                alt={`${getFormattedBreed(puppyBreed)} Puppy`}
         />
     </div>
 

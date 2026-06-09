@@ -25,7 +25,7 @@ const motherName = adultMap.get(puppy.mother) || puppy.mother;
 const fatherName = adultMap.get(puppy.father) || puppy.father;
 const dynamicAge = calculateAge(puppy.dob);
 
-import { getColourLabel, formatGender } from "../../config/puppyConstants";
+import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
 import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/siteSettings";
 ---
 
@@ -41,7 +41,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
 
                 <img
                         src={`/images/puppies/${puppy.image}`}
-                        alt={`${puppy.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'} Puppy`}
+                        alt={`${getFormattedBreed(puppy.breed)} Puppy`}
                 />
             </div>
 
@@ -73,7 +73,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
             <div class="info-lists">
                 <dl class="puppy-specs-list">
                     <dt>Breed:</dt>
-                    <dd>{puppy.breed.toLowerCase() === 'yorkie' ? 'Yorkshire Terrier' : 'Biewer Terrier'}</dd>
+                    <dd>{getFormattedBreed(puppy.breed)}</dd>
 
                     <dt>DoB:</dt>
                     <dd>{puppy.dob}</dd>
@@ -97,7 +97,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
                     <dd><a href={`/adults/${puppy.father}`}>{fatherName}</a></dd>
 
                     <dt>Reg #:</dt>
-                    <dd>{puppy.regID}</dd>
+                    <dd>#{puppy.regID}</dd>
                 </dl>
 
                 <div class="vertical-separator"/>
