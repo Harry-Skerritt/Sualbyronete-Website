@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { getDB } from "../../../db/index";
 import { puppies } from "../../../db/schema";
 import { eq, inArray } from "drizzle-orm";
+import {invalidateCachedData} from "../../../scripts/databaseCache.ts";
 
 export const POST: APIRoute = async ({ request, redirect }) => {
     try {
@@ -32,6 +33,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
                     .where(eq(puppies.id, pup.id));
 
                 updatePromises.push(query);
+                invalidateCachedData();
             }
         }
 

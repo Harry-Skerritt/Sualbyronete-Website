@@ -1,11 +1,11 @@
 ---
 // src/pages/admin/photoEdit.astro
-import AdminLayout from "../../layouts/AdminLayout.astro";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
 
 // DB
-import { getCachedData } from "../../scripts/databaseCache";
-import CarouselSelectCard from "../../components/admin/CarouselSelectCard.astro";
-import {ADMIN_SITE_NAME} from "../../config/siteSettings";
+import { getCachedData } from "../../../scripts/databaseCache";
+import CarouselSelectCard from "../../../components/admin/CarouselSelectCard.astro";
+import {ADMIN_SITE_NAME} from "../../../config/siteSettings";
 
 export const prerender = false;
 const { allPuppies } = await getCachedData();

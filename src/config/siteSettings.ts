@@ -54,10 +54,6 @@ export const PUPPY_INCLUSIONS = [
     }
 ];
 
-// --- Bios ---
-export const DEFAULT_YORKIE_BIO = "Default Yorkie Bio";
-
-export const DEFAULT_BIEWER_BIO = "Default Biewer Bio";
 
 // --- About Section ---
 export const HOME_PAGE_ABOUT = " " +

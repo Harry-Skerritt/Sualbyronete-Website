@@ -472,7 +472,13 @@ const latestPuppies = [...allPuppies]
         });
 
         /* Home Page Photos */
-        document.getElementById("photo-edit-btn")?.addEventListener("click", () => { window.location.href = "/photoEdit"; });
+        document.getElementById("photo-edit-btn")?.addEventListener("click", () => { window.location.href = "/system/editPhotos"; });
+
+        /* Default Bios */
+        document.getElementById("bio-edit-btn")?.addEventListener("click", () => { window.location.href = "/system/editBios"; });
+
+        /* Include Lists */
+        document.getElementById("puppy-pack-edit-btn")?.addEventListener("click", () => { window.location.href = "/system/editPuppyPack"; });
 
         /* Password Modal Management */
         const pwdModalEl = document.getElementById("password-change-modal");

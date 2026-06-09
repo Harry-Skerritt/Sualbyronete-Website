@@ -1,0 +1,283 @@
+---
+// src/pages/admin/system/editBios.astro
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { ADMIN_SITE_NAME } from "../../../config/siteSettings";
+import { getCachedData } from "../../../scripts/databaseCache";
+
+export const prerender = false;
+
+const { defaultBios } = await getCachedData();
+---
+
+<AdminLayout title=`Edit Default Bios | ${ADMIN_SITE_NAME}`>
+
+    <main class="main-container">
+        <header class="admin-header">
+            <div class="header-text">
+                <h1>Puppy Default Bio Manager</h1>
+                <p>Set the default bio for a puppy if a custom one is not specified</p>
+            </div>
+
+            <div class="action-frame">
+                <button type="submit" id="submit-btn" form="bio-form" class="btn-save">
+                    Save Changes
+                </button>
+            </div>
+        </header>
+
+        <form id="bio-form" class="editor-container">
+            <div class="editor-wrapper">
+                <h2 class="editor-header">Yorkshire Terrier Bio:</h2>
+                <textarea
+                        id="yorkie-bio"
+                        placeholder="Enter standard default copy parameters for Yorkshire Terriers..."
+                        name="yorkie-bio"
+                        rows="5"
+                        maxlength="256"
+                >{defaultBios.yorkie}</textarea>
+                <span class="char-counter">Maximum 256 characters</span>
+            </div>
+
+            <div class="separator" aria-hidden="true"/>
+
+            <div class="editor-wrapper">
+                <h2 class="editor-header">Biewer Terrier Bio:</h2>
+                <textarea
+                        id="biewer-bio"
+                        placeholder="Enter standard default copy parameters for Biewer Terriers..."
+                        name="biewer-bio"
+                        rows="5"
+                        maxlength="256"
+                >{defaultBios.biewer}</textarea>
+                <span class="char-counter">Maximum 256 characters</span>
+            </div>
+        </form>
+
+    </main>
+
+</AdminLayout>
+
+<style lang="scss">
+  .main-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--colour-light);
+    gap: 2rem;
+
+    .header-text {
+      h1 {
+        font-family: var(--font-primary);
+        font-size: 2.5rem;
+        color: var(--colour-dark);
+        margin: 0 0 0.5rem 0;
+      }
+      p {
+        font-family: var(--font-secondary);
+        font-size: 1.1rem;
+        color: var(--colour-light);
+        margin: 0;
+      }
+    }
+  }
+
+  .btn-save {
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--colour-white);
+    background-color: var(--colour-dark);
+    border: 2px solid var(--colour-dark);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--colour-light);
+      border-color: var(--colour-light);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      color: var(--colour-dark);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  .editor-container {
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    width: 100%;
+    margin-top: 1rem;
+    align-items: flex-start;
+  }
+
+  .editor-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .editor-header {
+    font-family: var(--font-primary);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--colour-dark);
+    margin: 0;
+  }
+
+  textarea {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 3px solid var(--colour-light);
+    border-radius: 1.2rem;
+    padding: 1.2rem;
+    color: var(--colour-light);
+    font-family: var(--font-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    box-sizing: border-box;
+    resize: none;
+    transition: all 0.2s ease-in-out;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+      font-style: italic;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--colour-dark);
+      background-color: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .char-counter {
+    font-family: var(--font-secondary);
+    font-size: 0.9rem;
+    color: var(--colour-light);
+    opacity: 0.6;
+    align-self: flex-end;
+  }
+
+  .separator {
+    width: 3px;
+    background-color: rgba(255, 255, 255, 0.1);
+    align-self: stretch;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .main-container {
+      padding: 1.5rem 1rem;
+    }
+
+    .admin-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+
+      .header-text {
+        h1 {
+          font-size: 1.8rem;
+          font-weight: 800;
+        }
+        p {
+          font-size: 0.95rem;
+        }
+      }
+
+      .action-frame {
+        width: 100%;
+
+        .btn-save {
+          width: 100%;
+          padding: 1rem;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .editor-container {
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .separator {
+      width: 100%;
+      height: 2px;
+      margin: 0.5rem 0;
+    }
+
+    .editor-header {
+      font-size: 1.4rem;
+    }
+
+    textarea {
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 1rem;
+    }
+  }
+
+</style>
+
+<script>
+    // Handle form submit
+    const form = document.getElementById('bio-form');
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = "Saving..."; }
+
+        const yorkieBio = (document.getElementById('yorkie-bio') as HTMLInputElement).value;
+        const biewerBio = (document.getElementById('biewer-bio') as HTMLInputElement).value;
+
+        try {
+            const response = await fetch('/admin/api/save-bios', {
+               method: 'POST',
+               header: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ yorkieBio, biewerBio })
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                window.showToast("Default bios updated successfully!");
+
+                setTimeout(() => {
+                    window.location.href = "/admin/dashboard";
+                }, 1000);
+            } else {
+                window.showToast("Failed to save changes", true);
+            }
+        } catch (err) {
+            window.showToast("Network failed to connect", true)
+        } finally {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = "Save Changes"; }
+        }
+    });
+</script>

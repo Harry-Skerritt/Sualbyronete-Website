@@ -1,6 +1,11 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
+export const systemSettings = sqliteTable('system_settings', {
+   key: text('key').primaryKey(),
+   value: text('value').notNull(),
+});
+
 export const adults = sqliteTable('adults', {
     seqId: integer('seq_id').primaryKey({ autoIncrement: true}),
     breed: text('breed', { enum: ["state-one", "state-two"] }).notNull(),

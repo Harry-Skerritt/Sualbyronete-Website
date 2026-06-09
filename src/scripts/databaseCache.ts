@@ -1,11 +1,12 @@
 // src/scripts/databaseCache.ts
 
 import { getDB } from "../db";
-import { puppies, adults } from "../db/schema.ts";
+import { puppies, adults, systemSettings } from "../db/schema.ts";
 
 interface CachedData {
     allPuppies: any[];
     parents: any[];
+    defaultBios: { yorkie: string; biewer: string };
     lastFetched: number;
 }
 
@@ -21,6 +22,7 @@ export async function getCachedData(forceRefresh = false) {
         return {
             allPuppies: databaseMemoryCache.allPuppies,
             parents: databaseMemoryCache.parents,
+            defaultBios: databaseMemoryCache.defaultBios,
             fromCache: true
         };
     }
@@ -30,6 +32,7 @@ export async function getCachedData(forceRefresh = false) {
     databaseMemoryCache = {
         allPuppies: freshData.allPuppies,
         parents: freshData.parents,
+        defaultBios: freshData.defaultBios,
         lastFetched: now
     };
 
@@ -46,9 +49,20 @@ export function invalidateCachedData() {
 
 async function fetchFreshRows() {
     const db = await getDB();
-    const [puppyRows, adultRows] = await Promise.all([
+    const [puppyRows, adultRows, settingsRows] = await Promise.all([
         db.select().from(puppies),
         db.select().from(adults),
+        db.select().from(systemSettings),
     ]);
-    return { allPuppies: puppyRows, parents: adultRows };
+
+    const defaultBios = {
+        yorkie: settingsRows.find((row: any) => row.key === 'yorkie_default_bio')?.value || "No default Yorkshire Terrier bio configured yet.",
+        biewer: settingsRows.find((row: any) => row.key === 'biewer_default_bio')?.value || "No default Biewer Terrier bio configured yet."
+    };
+
+    return {
+        allPuppies: puppyRows,
+        parents: adultRows,
+        defaultBios,
+    };
 }
