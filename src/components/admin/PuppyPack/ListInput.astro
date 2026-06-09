@@ -1,0 +1,153 @@
+---
+// src/components/admin/PuppyPack/ListInput.astro
+
+import { Icon } from "astro-icon/components"
+
+interface Props {
+    label?: string;
+    value?: string;
+    id?: string;
+}
+
+const { label = "Enter list item text...", value = "", id } = Astro.props;
+---
+
+<div class="comp-list-item" data-id={id} role="listitem">
+
+    <button
+            type="button"
+            class="drag-handle-btn"
+            aria-label="Drag to reorder list item"
+            title="Drag to reorder"
+    >
+        <img src="/icons/drag.svg" class="drag-icon"/>
+    </button>
+
+    <input
+            type="text"
+            class="comp-input"
+            placeholder={label}
+            value={value}
+            name="list-item-value"
+    />
+
+    <button
+            type="button"
+            class="comp-delete-btn"
+            aria-label="Delete List Item"
+            title="Remove Item"
+    >
+        <img src="/icons/close.svg" class="btn-icon"/>
+    </button>
+
+</div>
+
+<style lang="scss">
+    .comp-list-item {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--colour-dark);
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      border-radius: 0.8rem;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-sizing: border-box;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .drag-handle-btn {
+      width: 2rem;
+      height: 2.5rem;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      background-color: transparent;
+      border: none;
+      flex-shrink: 0;
+      outline: none;
+      border-radius: 0.35rem;
+      transition: background-color 0.15s ease;
+
+      &:focus-visible {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &:active {
+        cursor: grabbing;
+      }
+
+      .drag-icon {
+        width: 1.4rem;
+        height: 1.4rem;
+        color: var(--colour-primary);
+        opacity: 0.6;
+        transition: 0.15s all ease;
+      }
+
+      &:hover .drag-icon {
+        opacity: 1;
+      }
+    }
+
+
+    .comp-input {
+      flex: 1;
+      height: 2.6rem;
+      border-radius: 0.5rem;
+      padding: 0 0.8rem;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      background-color: rgba(255, 255, 255, 0.07);
+      color: var(--colour-white);
+      font-family: var(--font-secondary);
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: all 0.15s ease-in-out;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+        font-style: italic;
+      }
+
+      &:focus {
+        border-color: var(--colour-light);
+        background-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .comp-delete-btn {
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background-color: rgba(239, 68, 68, 0.3);
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 0;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background-color: #ef4444;
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .btn-icon {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+</style>

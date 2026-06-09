@@ -19,7 +19,7 @@ if (!id) {
     return Astro.redirect('/404');
 }
 
-const { allPuppies, parents, defaultBios } = await getCachedData();
+const { allPuppies, parents, defaultBios, puppyPack } = await getCachedData();
 
 const puppy = allPuppies.find((p: any) => p.id === id);
 
@@ -27,17 +27,44 @@ if (!puppy) {
     return Astro.redirect('/404');
 }
 
-const adultMap = new Map(parents.map((adult: any) => [adult.id, adult.name]));
 
+// Parents
+const adultMap = new Map(parents.map((adult: any) => [adult.id, adult.name]));
 const motherName = adultMap.get(puppy.mother) || puppy.mother;
 const fatherName = adultMap.get(puppy.father) || puppy.father;
 const dynamicAge = calculateAge(puppy.dob);
 
+// Bio
 const isBioEmpty = !puppy.bio || puppy.bio.trim() === "" || puppy.bio === "No bio specified";
 const normalisedBreed = puppy.breed?.toLowerCase().trim();
 const dynamicBio = isBioEmpty
     ? (normalisedBreed === "yorkie" || normalisedBreed === "yorkshire terrier" ? defaultBios.yorkie : defaultBios.biewer)
     : puppy.bio;
+
+// Puppy Pack
+interface NormalItem {
+    title: string;
+    subItems: string[];
+}
+
+const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, currentItem) => {
+    if (!currentItem.isSubItem) {
+        accumulator.push({
+            title: currentItem.value,
+            subItems: []
+        });
+    } else {
+        if (accumulator.length > 0) {
+            accumulator[accumulator.length - 1].subItems.push(currentItem.value);
+        } else {
+            accumulator.push({
+                title: currentItem.value,
+                subItems: []
+            });
+        }
+    }
+    return accumulator;
+}, []);
 ---
 
 <Layout title={`Meet ${puppy.name} | ${SITE_NAME}`}>
@@ -116,21 +143,19 @@ const dynamicBio = isBioEmpty
                 <div class="included-info">
                     <h1 class="included-header">All Puppies come included with:</h1>
                     <ul class="included-list">
-                        {PUPPY_INCLUSIONS.map((item: any) => {
-                            if (typeof item === 'string') {
-                                return <li>{item}</li>;
-                            }
-                            return (
-                                    <li>
-                                        {item.title}
-                                        <ul class="puppy-pack-list">
-                                            {item.subItems?.map((subItem: string) => (
-                                                    <li>{subItem}</li>
-                                            ))}
-                                        </ul>
-                                    </li>
-                            );
-                        })}
+                        {formattedInclusions.map((item) => (
+                                <li>
+                                    {item.title}
+
+                                    {item.subItems && item.subItems.length > 0 && (
+                                            <ul class="puppy-pack-list">
+                                                {item.subItems.map((subItem) => (
+                                                        <li>{subItem}</li>
+                                                ))}
+                                            </ul>
+                                    )}
+                                </li>
+                        ))}
                     </ul>
                 </div>
             </div>

@@ -8,7 +8,7 @@ export const systemSettings = sqliteTable('system_settings', {
 
 export const adults = sqliteTable('adults', {
     seqId: integer('seq_id').primaryKey({ autoIncrement: true}),
-    breed: text('breed', { enum: ["state-one", "state-two"] }).notNull(),
+    breed: text('breed').notNull(),
     gender: text('gender').notNull(),
 
     id: text('id').generatedAlwaysAs(

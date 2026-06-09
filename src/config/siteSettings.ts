@@ -38,21 +38,21 @@ export const PUPPY_COLOURS = [
 ]
 
 export const PUPPY_INCLUSIONS = [
-    "Pedigree",
-    "Vaccinations",
-    "Health Record",
-    "Microchipped",
-    "Insured",
-    "Socialised with other dogs",
-    {
-        "title": "Puppy Pack Including:",
-        "subItems": [
-            "Owners Contract",
-            "Feeding Instructions",
-            "History from Birth to when they join your family"
-        ]
-    }
+    { id: "inc_1", value: "Pedigree", sortOrder: 0, isSubItem: false },
+    { id: "inc_2", value: "Vaccinations", sortOrder: 1, isSubItem: false },
+    { id: "inc_3", value: "Health Record", sortOrder: 2, isSubItem: false },
+    { id: "inc_4", value: "Microchipped", sortOrder: 3, isSubItem: false },
+    { id: "inc_5", value: "Insured", sortOrder: 4, isSubItem: false },
+    { id: "inc_6", value: "Socialised with other dogs", sortOrder: 5, isSubItem: false },
+    { id: "inc_7", value: "Puppy Pack Including:", sortOrder: 6, isSubItem: false },
+    { id: "inc_8", value: "Owners Contract", sortOrder: 7, isSubItem: true },
+    { id: "inc_9", value: "Feeding Instructions", sortOrder: 8, isSubItem: true },
+    { id: "inc_10", value: "History from Birth to when they join your family", sortOrder: 9, isSubItem: true }
 ];
+
+// --- Bios ---
+export const YORKIE_DEFAULT_BIO = "This is a Yorkshire Terrier!";
+export const BIEWER_DEFAULT_BIO = "This is a Biewer Terrier!";
 
 
 // --- About Section ---

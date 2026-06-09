@@ -2,11 +2,13 @@
 
 import { getDB } from "../db";
 import { puppies, adults, systemSettings } from "../db/schema.ts";
+import { PUPPY_INCLUSIONS, YORKIE_DEFAULT_BIO, BIEWER_DEFAULT_BIO } from "../config/siteSettings.ts";
 
 interface CachedData {
     allPuppies: any[];
     parents: any[];
     defaultBios: { yorkie: string; biewer: string };
+    puppyPack: any[];
     lastFetched: number;
 }
 
@@ -23,6 +25,7 @@ export async function getCachedData(forceRefresh = false) {
             allPuppies: databaseMemoryCache.allPuppies,
             parents: databaseMemoryCache.parents,
             defaultBios: databaseMemoryCache.defaultBios,
+            puppyPack: databaseMemoryCache.puppyPack,
             fromCache: true
         };
     }
@@ -33,6 +36,7 @@ export async function getCachedData(forceRefresh = false) {
         allPuppies: freshData.allPuppies,
         parents: freshData.parents,
         defaultBios: freshData.defaultBios,
+        puppyPack: freshData.puppyPack,
         lastFetched: now
     };
 
@@ -55,14 +59,28 @@ async function fetchFreshRows() {
         db.select().from(systemSettings),
     ]);
 
+    // Bios
     const defaultBios = {
-        yorkie: settingsRows.find((row: any) => row.key === 'yorkie_default_bio')?.value || "No default Yorkshire Terrier bio configured yet.",
-        biewer: settingsRows.find((row: any) => row.key === 'biewer_default_bio')?.value || "No default Biewer Terrier bio configured yet."
+        yorkie: settingsRows.find((row: any) => row.key === 'yorkie_default_bio')?.value || YORKIE_DEFAULT_BIO,
+        biewer: settingsRows.find((row: any) => row.key === 'biewer_default_bio')?.value || BIEWER_DEFAULT_BIO,
     };
+
+    // Puppy Pack
+    const packRecord = settingsRows.find((row: any) => row.key === 'puppy_pack_data');
+    let puppyPack = PUPPY_INCLUSIONS;
+
+    if (packRecord && packRecord.value) {
+        try {
+            puppyPack = JSON.parse(packRecord.value);
+        } catch (e) {
+            console.error("Failed to parse puppy_pack_data JSON from systemSettings, using config defaults.", e);
+        }
+    }
 
     return {
         allPuppies: puppyRows,
         parents: adultRows,
         defaultBios,
+        puppyPack,
     };
 }

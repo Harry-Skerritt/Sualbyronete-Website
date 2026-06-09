@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
-                }, 10000);
+                }, 1000);
             } else {
                 throw new Error(result.message || "Failed to save parent entry records");
             }

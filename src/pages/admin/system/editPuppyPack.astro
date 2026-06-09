@@ -1,3 +1,283 @@
 ---
+// src/pages/admin/system/editPuppyPack.astro
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { ADMIN_SITE_NAME } from "../../../config/siteSettings";
+import ListInput from "../../../components/admin/PuppyPack/ListInput.astro";
+import { getCachedData } from "../../../scripts/databaseCache";
 
+export const prerender = false;
+
+const { puppyPack } = await getCachedData();
+
+const initialItems = puppyPack;
 ---
+
+<AdminLayout title=`Edit Puppy Pack | ${ADMIN_SITE_NAME}`>
+
+    <main class="main-container">
+        <header class="admin-header">
+            <div class="header-text">
+                <h1>Puppy Pack Manager</h1>
+                <p>Set all the things which come included with a puppy</p>
+            </div>
+
+            <div class="action-frame">
+                <button type="submit" id="submit-btn" class="btn-save">
+                    Save Changes
+                </button>
+            </div>
+        </header>
+
+        <div class="workspace-wrapper">
+            <div id="list-sort-container" class="list-sort-container" role="list">
+                {initialItems.map((item: any) =>
+                        <div class={`item-row-wrapper ${item.isSubItem ? 'is-sub-item' : ''}`} data-id={item.id}>
+                            <ListInput label={item.isSubItem ? "Enter sub-item parameter..." : "Enter list item text..."} value={item.value} id={item.id} />
+                        </div>
+                )}
+            </div>
+
+            <div class="list-actions-tray">
+                <button type="button" id="add-item-btn" class="action-trigger primary-add">
+                    <span class="icon-plus">+</span> Add Item
+                </button>
+                <button type="button" id="add-sub-btn" class="action-trigger secondary-add" style="display: none;">
+                    <span class="icon-plus">+</span> Add Sub Item
+                </button>
+            </div>
+        </div>
+
+        <template id="row-template-item">
+            <div class="item-row-wrapper">
+                <ListInput label="Enter list item text..." value="" id="blueprint-temp-id" />
+            </div>
+        </template>
+
+        <template id="row-template-sub">
+            <div class="item-row-wrapper is-sub-item">
+                <ListInput label="Enter sub-item parameter..." value="" id="blueprint-temp-sub-id" />
+            </div>
+        </template>
+
+    </main>
+
+</AdminLayout>
+
+
+<style lang="scss">
+  .main-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--colour-light);
+    gap: 2rem;
+
+    .header-text {
+      h1 {
+        font-family: var(--font-primary);
+        font-size: 2.5rem;
+        color: var(--colour-dark);
+        margin: 0 0 0.5rem 0;
+      }
+      p {
+        font-family: var(--font-secondary);
+        font-size: 1.1rem;
+        color: var(--colour-light);
+        margin: 0;
+      }
+    }
+  }
+
+  .btn-save {
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--colour-white);
+    background-color: var(--colour-dark);
+    border: 2px solid var(--colour-dark);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--colour-light);
+      border-color: var(--colour-light);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      color: var(--colour-dark);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  .workspace-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .list-sort-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+
+  .item-row-wrapper {
+    width: 100%;
+    transition: padding 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+
+    &.dragging {
+      opacity: 0.25;
+      transform: scale(0.98);
+
+      .comp-list-item {
+        border: 2px dashed var(--colour-light, #fff);
+        box-shadow: none;
+        background-color: transparent !important;
+      }
+    }
+
+    &.is-sub-item {
+      padding-left: 3rem;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 1.25rem;
+        top: -0.5rem;
+        bottom: 50%;
+        width: 25px;
+        border-left: 2px dashed rgba(255, 255, 255, 0.5);
+        border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+        border-bottom-left-radius: 4px;
+      }
+    }
+  }
+
+  .list-actions-tray {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .action-trigger {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.15s ease-in-out;
+
+    .icon-plus {
+      font-size: 1.1rem;
+    }
+
+    &.primary-add {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid var(--colour-light);
+      color: var(--colour-light);
+
+      &:hover {
+        background-color: var(--colour-light);
+        color: var(--colour-dark);
+      }
+    }
+
+    &.secondary-add {
+      background-color: transparent;
+      border: 1.5px dashed rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
+
+      &:hover {
+        border-color: var(--colour-light);
+        color: var(--colour-white);
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+    }
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .main-container {
+      padding: 1.5rem 1rem;
+    }
+
+    .admin-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+
+      .header-text {
+        h1 {
+          font-size: 1.8rem;
+          font-weight: 800;
+        }
+
+        p {
+          font-size: 0.95rem;
+        }
+      }
+
+      .action-frame {
+        width: 100%;
+
+        .btn-save {
+          width: 100%;
+          padding: 1rem;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .item-row-wrapper.is-sub-item {
+      padding-left: 1.5rem;
+      &::before {
+        left: 0.5rem;
+      }
+    }
+
+    .list-actions-tray {
+      flex-direction: column; align-items: stretch; gap: 0.75rem;
+      .action-trigger {
+        width: 100%;
+        justify-content: center;
+        padding: 0.85rem;
+      }
+    }
+  }
+
+
+</style>
+
+<script>
+    import { initPuppyPackEditor } from "../../../scripts/admin/puppyPackEditor";
+    initPuppyPackEditor();
+    document.addEventListener('astro:page-load', initPuppyPackEditor);
+</script>
