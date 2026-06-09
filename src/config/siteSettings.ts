@@ -28,6 +28,15 @@ export const MESSENGER_LINK = "https://m.me/susan.francis.3158";
 export const RESERVATION_COST = "£100";
 export const RESERVATION_LENGTH = "10 Days";
 
+export const PUPPY_COLOURS = [
+    { value: "black-tan",        label: "Black & Tan",          breed: "Yorkie" },
+    { value: "steel-blue-tan",   label: "Steel Blue & Tan",     breed: "Yorkie" },
+    { value: "black",            label: "Black",                breed: "Biewer" },
+    { value: "black-tan",        label: "Black & Tan",          breed: "Biewer" },
+    { value: "white-tan",        label: "White & Tan",          breed: "Biewer" },
+
+]
+
 export const PUPPY_INCLUSIONS = [
     "Pedigree",
     "Vaccinations",
@@ -44,6 +53,11 @@ export const PUPPY_INCLUSIONS = [
         ]
     }
 ];
+
+// --- Bios ---
+export const DEFAULT_YORKIE_BIO = "Default Yorkie Bio";
+
+export const DEFAULT_BIEWER_BIO = "Default Biewer Bio";
 
 // --- About Section ---
 export const HOME_PAGE_ABOUT = " " +

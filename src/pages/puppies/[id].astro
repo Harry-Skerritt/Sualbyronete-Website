@@ -4,7 +4,15 @@ import Layout from "../../layouts/Layout.astro"
 
 import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
-import { PUPPY_INCLUSIONS } from "../../config/siteSettings";
+import {
+    DEFAULT_BIEWER_BIO,
+    DEFAULT_YORKIE_BIO,
+    PUPPY_INCLUSIONS,
+    RESERVATION_COST,
+    RESERVATION_LENGTH,
+    SITE_NAME
+} from "../../config/siteSettings";
+import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
 
 const { id } = Astro.params;
 if (!id) {
@@ -25,8 +33,11 @@ const motherName = adultMap.get(puppy.mother) || puppy.mother;
 const fatherName = adultMap.get(puppy.father) || puppy.father;
 const dynamicAge = calculateAge(puppy.dob);
 
-import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
-import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/siteSettings";
+const isBioEmpty = !puppy.bio || puppy.bio.trim() === "" || puppy.bio === "No bio specified";
+const normalisedBreed = puppy.breed?.toLowerCase().trim();
+const dynamicBio = isBioEmpty
+    ? (normalisedBreed === "yorkie" || normalisedBreed === "yorkshire terrier" ? DEFAULT_YORKIE_BIO : DEFAULT_BIEWER_BIO)
+    : puppy.bio;
 ---
 
 <Layout title={`Meet ${puppy.name} | ${SITE_NAME}`}>
@@ -64,7 +75,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
             <div class="puppy-main-header">
                 <p class="puppy-name">{formatGender(puppy.name)}</p>
                 <span class="puppy-description">
-                    {puppy.bio}
+                    {dynamicBio}
                 </span>
             </div>
 
