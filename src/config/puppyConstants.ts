@@ -20,3 +20,9 @@ export const getColourLabel = (dbValue: string): string => {
         const match = PUPPY_COLOURS.find(item => item.value === cleanValue);
         return match ? match.label : dbValue;
 };
+
+export const getFormattedBreed = (breed: string): string => {
+        const normalisedBreed = breed?.toLowerCase().trim();
+        const isYorkie = normalisedBreed === "yorkie" || normalisedBreed === "yorkshire terrier";
+        return isYorkie ? "Yorkshire Terrier" : "Biewer Terrier";
+};
