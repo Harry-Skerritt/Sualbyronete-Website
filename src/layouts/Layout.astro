@@ -2,9 +2,11 @@
 // src/layouts/Layout.astro
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Toast from "../components/admin/Toast.astro";
+import CookieBanner from "../components/CookieBanner.astro";
 import "../styles/global.css";
 import {SITE_NAME} from "../config/siteSettings";
-import Toast from "../components/admin/Toast.astro";
+
 
 const baseURL = import.meta.env.BASE_URL;
 
@@ -30,5 +32,6 @@ const { title = `${SITE_NAME} | Dog Breeder`, showHeader = true } = Astro.props;
 			<Toast />
 			<slot />
 		<Footer />
+		<CookieBanner />
 	</body>
 </html>

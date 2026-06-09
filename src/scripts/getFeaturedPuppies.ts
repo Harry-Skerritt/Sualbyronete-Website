@@ -9,6 +9,7 @@ export interface CarouselImageItem {
     alt: string;
     title: string;
     subtitle: string;
+    puppyID?: string;
 }
 
 export async function getCarouselGallery(): Promise<CarouselImageItem[]> {

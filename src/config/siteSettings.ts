@@ -6,6 +6,7 @@ export const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 // --- Head Names ---
 export const SITE_NAME = "Sualbyronete";
 export const ADMIN_SITE_NAME = "Admin Dashboard";
+export const SITE_DESCRIPTION = "Breeder of Yorkshire and Biewer Terriers";
 
 // --- Breeder Info ---
 export const BREEDER_NAME = "Susan Francis";

@@ -4,7 +4,14 @@ import Layout from '../layouts/Layout.astro';
 import PhotoCarousel from "../components/PhotoCarousel.astro";
 
 import { getCarouselGallery } from "../scripts/getFeaturedPuppies";
-import { BREEDER_IMAGE, BREEDER_NAME_SHORT, HOME_PAGE_ABOUT, SITE_NAME, baseURL } from "../config/siteSettings";
+import {
+    BREEDER_IMAGE,
+    BREEDER_NAME_SHORT,
+    HOME_PAGE_ABOUT,
+    SITE_NAME,
+    baseURL,
+    SITE_DESCRIPTION
+} from "../config/siteSettings";
 const petGallery = await getCarouselGallery();
 ---
 
@@ -21,7 +28,7 @@ const petGallery = await getCarouselGallery();
                         <img src={`${baseURL}/logo-basic/Logo-Basic.png`} alt=`${SITE_NAME} Welcome Banner` class="placeholder-bg" />
                         <div class="placeholder-overlay">
                             <h1>Welcome to {SITE_NAME}</h1>
-                            <p>Breeder of Yorkshire and Biewer Terriers</p>
+                            <p>{SITE_DESCRIPTION}</p>
                         </div>
                     </div>
             )}

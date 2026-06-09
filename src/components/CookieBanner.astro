@@ -1,0 +1,162 @@
+---
+// src/components/CookieBanner.astro
+---
+
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog" aria-live="polite" aria-label="Cookie Consent">
+    <div class="cookie-content">
+        <p class="cookie-text">
+            We use cookies to optimize your experience on our site and analyze traffic.
+            By clicking <strong>"Accept"</strong>, you agree to our use of cookies.
+            Read our <a href="/policies/cookie" class="cookie-policy-link">Cookie Policy</a> to learn more.
+        </p>
+
+        <div class="cookie-buttons">
+            <button id="deny-cookies" class="cookie-btn btn-secondary">Decline</button>
+            <button id="accept-cookies" class="cookie-btn btn-primary">Accept</button>
+        </div>
+    </div>
+</div>
+
+<style lang="scss">
+    .cookie-banner {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      max-width: 35rem;
+      background-color: var(--colour-dark);
+      color: var(--colour-white);
+      padding: 1.5rem;
+      border-radius: 1.2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      z-index: 999999;
+      box-sizing: border-box;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+
+      &.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(2rem);
+      }
+    }
+
+    .cookie-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .cookie-text {
+      font-family: var(--font-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+      color: var(--colour-white);
+    }
+
+    .cookie-policy-link {
+      color: var(--colour-light);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 600;
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+
+    .cookie-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    .cookie-btn {
+      font-family: var(--font-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.6rem 1.5rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+
+      &.btn-primary {
+        background-color: var(--colour-light);
+        color: var(--colour-dark);
+        &:hover {
+          background-color: #ffffff;
+          transform: translateY(-1px);
+        }
+      }
+
+      &.btn-secondary {
+        background-color: transparent;
+        color: var(--colour-white);
+        border: 2px solid var(--colour-light);
+        &:hover {
+          color: #ffffff;
+          background-color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .cookie-banner {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        max-width: none;
+        border-radius: 1rem;
+        padding: 1.25rem;
+      }
+
+      .cookie-buttons {
+        width: 100%;
+      }
+
+      .cookie-btn {
+        flex: 1;
+        text-align: center;
+      }
+    }
+</style>
+
+<script>
+    function initCookieBanner() {
+        const banner = document.getElementById('cookie-banner');
+        const acceptBtn = document.getElementById('accept-cookies');
+        const denyBtn = document.getElementById('deny-cookies');
+
+        if (!banner || !acceptBtn || !denyBtn) return;
+
+        // Check if choice already made
+        const consent = localStorage.getItem('cookie-consent');
+
+        if (!consent) {
+            banner.classList.remove('hidden');
+        }
+
+        // Handle Accept
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookie-consent', 'accepted');
+            banner.classList.add('hidden');
+
+            console.log("Cookies accepted by user!");
+        });
+
+        // Handle Deny
+        denyBtn.addEventListener('click', () => {
+            localStorage.setItem('cookie-consent', 'declined');
+            banner.classList.add('hidden');
+            console.log("Cookies denied by user!");
+        });
+    }
+
+    initCookieBanner();
+
+    document.addEventListener('astro:page-load', initCookieBanner);
+</script>

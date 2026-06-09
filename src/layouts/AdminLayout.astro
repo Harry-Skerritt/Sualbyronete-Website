@@ -5,6 +5,7 @@ import AdminHeader from "../components/admin/AdminHeader.astro";
 import Footer from "../components/Footer.astro";
 import Toast from "../components/admin/Toast.astro";
 import {ADMIN_SITE_NAME, SITE_NAME} from "../config/siteSettings";
+import CookieBanner from "../components/CookieBanner.astro";
 
 const baseURL = import.meta.env.BASE_URL;
 
@@ -32,7 +33,6 @@ const { title = `${SITE_NAME} | ${ADMIN_SITE_NAME}`, showHeader = true, showFoot
         <Toast />
         <slot />
     { showFooter && <Footer /> }
-
-
+    <CookieBanner />
 </body>
 </html>
