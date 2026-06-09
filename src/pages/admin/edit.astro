@@ -1,13 +1,13 @@
 ---
 // src/pages/admin/edit.astro
 import AdminLayout from "../../layouts/AdminLayout.astro";
-import DogEditCard from "../../components/admin/DogEditCard.astro";
 import Modal from "../../components/Modal.astro"
 
 import { getCachedData } from "../../scripts/databaseCache";
 import { getColourLabel, formatGender } from "../../config/puppyConstants";
 import {count, desc} from "drizzle-orm";
 import {ADMIN_SITE_NAME} from "../../config/siteSettings";
+import RecentPuppyCard from "../../components/admin/RecentPuppyCard.astro";
 
 export const prerender = false;
 // Get URL Param
@@ -58,19 +58,19 @@ const totalCount = itemsList.length;
 
         <div class="dog-cards">
             {itemsList.map((dog: any) => (
-                    <DogEditCard
-                            name={dog.name}
-                            image={dog.image}
-                            breed={dog.breed}
-                            gender={dog.gender}
-                            addDate={dog.date}
-                            dataId={dog.id}
-                            type={dogTypeAttr}
-                    />
+                <RecentPuppyCard
+                    puppyName={dog.name}
+                    puppyGender={dog.gender}
+                    puppyBreed={dog.breed}
+                    puppyImage={dog.image}
+                    puppyID={dog.id}
+                    puppyAddDate={dog.date}
+                    type={dogTypeAttr}
+                />
             ))}
 
             {totalCount === 0 && (
-                    <p class="empty-state-text">No data records found in system database storage profiles.</p>
+                    <p class="empty-state-text">No data records found in system database storage profiles</p>
             )}
         </div>
     </main>
@@ -128,12 +128,12 @@ const totalCount = itemsList.length;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     margin-top: 2rem;
+    margin-bottom: 2rem;
     gap: 1.5rem;
     width: 100%;
   }
 
   /* Modal Styling */
-  /* Modal */
   .modal-form-wrapper {
     font-family: var(--font-secondary);
     padding: 0.5rem 0;
@@ -210,47 +210,26 @@ const totalCount = itemsList.length;
     const modalTargetNameText = document.getElementById("modal-dog-target-name");
     const confirmDeleteBtn = document.getElementById("confirm-delete-action") as HTMLButtonElement;
 
-    document.addEventListener("click", (event) => {
-        const trigger = (event.target as HTMLElement).closest(".delete-trigger");
-        if (!trigger || !modal) return;
+    document.addEventListener("dog:delete-intent", (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const { id, type, name, element } = customEvent.detail;
 
-        const parentCard = trigger.closest(".dog-edit-card") as HTMLElement;
-        if (!parentCard) return;
+        if (!modal) return;
 
-        // Capture targets
-        targetedCardId = parentCard.dataset.id || null;
-        targetedCardType = parentCard.dataset.type || null;
-        activeCardElement = parentCard;
+        targetedCardId = id;
+        targetedCardType = type;
+        activeCardElement = element;
 
         if (modalTargetNameText) {
-            modalTargetNameText.innerText = parentCard.dataset.name || "this entry";
+            modalTargetNameText.innerText = name || "this entry";
         }
 
-        // Open modal trigger
+        // Display page-specific modal window context
         modal.classList.add("is-active");
         modal.removeAttribute("aria-hidden");
     });
 
-    document.addEventListener("click", (event) => {
-        const trigger = (event.target as HTMLElement).closest(".edit");
-        if (!trigger) return;
-
-        const parentCard = trigger.closest(".dog-edit-card") as HTMLElement;
-        if (!parentCard) return;
-
-        const dogId = parentCard.dataset.id;
-        const dogType = parentCard.dataset.type; // 'puppy' or 'adult'
-
-        if (!dogId || !dogType) return;
-
-        if (dogType === "puppy") {
-            window.location.href = `/puppy/add?edit=true&id=${dogId}`;
-        } else if (dogType === "adult") {
-            window.location.href = `/adult/add?edit=true&id=${dogId}`;
-        }
-    });
-
-    // Window dismissal clean-up closures
+    // Close Modal
     modal?.querySelectorAll('[data-modal-close]').forEach(closeBtn => {
         closeBtn.addEventListener('click', () => {
             modal.classList.remove("is-active");
@@ -261,7 +240,7 @@ const totalCount = itemsList.length;
         });
     });
 
-    // Process DB Action
+    // API Execution
     confirmDeleteBtn?.addEventListener("click", async () => {
         if (!targetedCardId || !targetedCardType || !modal) return;
 
@@ -278,9 +257,11 @@ const totalCount = itemsList.length;
             const result = await response.json() as { success: boolean; message?: string };
 
             if (response.ok && result.success) {
-                window.showToast("Profile wiped successfully!");
+                if (typeof window.showToast === 'function') {
+                    window.showToast("Profile wiped successfully!");
+                }
 
-                // Remove the targeted item smoothly from grid layout view channel
+                // Smoothly remove whichever element fired the delete call
                 if (activeCardElement) {
                     activeCardElement.style.transition = "opacity 0.3s ease, transform 0.3s ease";
                     activeCardElement.style.opacity = "0";
@@ -288,11 +269,15 @@ const totalCount = itemsList.length;
                     setTimeout(() => activeCardElement?.remove(), 300);
                 }
             } else {
-                window.showToast(result.message || "Failed to remove item record", true);
+                if (typeof window.showToast === 'function') {
+                    window.showToast(result.message || "Failed to remove item record", true);
+                }
             }
         } catch (error) {
             console.error(error);
-            window.showToast("Network communications failure", true);
+            if (typeof window.showToast === 'function') {
+                window.showToast("Network communications failure", true);
+            }
         } finally {
             confirmDeleteBtn.disabled = false;
             confirmDeleteBtn.innerText = "Yes, Delete";

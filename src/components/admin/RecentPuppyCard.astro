@@ -1,0 +1,251 @@
+---
+// src/components/admin/RecentPuppyCard.astro
+import {baseURL} from "../../config/siteSettings";
+import {Icon} from "astro-icon/components";
+import {getFormattedBreed} from "../../config/puppyConstants";
+interface Props {
+    puppyName: string;
+    puppyAddDate: string;
+    puppyID: string;
+    puppyImage: string;
+    puppyBreed: string;
+    puppyGender: string;
+    type?: string;
+}
+
+const { puppyName, puppyAddDate, puppyID, puppyImage, puppyBreed, puppyGender, type = "puppy" } = Astro.props;
+const isFemale = puppyGender?.toLowerCase() === "female";
+---
+
+<div class="recent-puppy-card" data-id={puppyID} data-type={type} data-name={puppyName}>
+
+    <div class="puppy-image-wrapper">
+        <img src={puppyImage} alt=`{Photo of ${puppyName}`}/>
+    </div>
+
+    <div class="puppy-data-row">
+        <div class="puppy-info-block">
+            <div class="title-gender-row">
+                <p class="puppy-name">{puppyName}</p>
+                <Icon
+                        name={isFemale ? "gender/female" : "gender/male"}
+                        class={`gender-icon ${isFemale ? "female" : "male"}`}
+                        title={puppyGender}
+                />
+            </div>
+
+            <div class="puppy-metadata">
+                <span class="puppy-breed">{getFormattedBreed(puppyBreed)} </span>
+                <span class="metadata-divider">•</span>
+                <span class="puppy-added">Added {puppyAddDate}</span>
+            </div>
+        </div>
+
+        <div class="puppy-actions-tray">
+            <button type="button" class="action-btn edit-btn" title={`Edit ${puppyName}'s profile parameters`} aria-label="Edit Puppy">
+                <Icon name="edit" class="card-icon"/>
+            </button>
+            <button type="button" class="action-btn delete-btn" title={`Remove ${puppyName} permanently from system database`} aria-label="Delete Puppy">
+                <Icon name="bin" class="card-icon"/>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<style lang="scss">
+  .recent-puppy-card {
+    width: 100%;
+    height: 7.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1.25rem;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 1rem;
+    border: 2px solid var(--colour-dark);
+    padding: 0.75rem;
+    box-sizing: border-box;
+    align-items: center;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      border-color: var(--colour-light);
+      transform: translateY(-1px);
+    }
+  }
+
+  .puppy-image-wrapper {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .puppy-data-row {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    height: 100%;
+  }
+
+  .puppy-info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    justify-content: center;
+  }
+
+  .title-gender-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .puppy-name {
+    font-family: var(--font-primary);
+    font-size: 1.8rem;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    color: var(--colour-white);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .gender-icon {
+    width: 2rem;
+    height: 2rem;
+    opacity: 0.9;
+
+    &.male {
+      color: #3f80bc; /* Soft dashboard blue */
+    }
+    &.female {
+      color: #d872bd; /* Soft dashboard pink */
+    }
+  }
+
+  .puppy-metadata {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-secondary, sans-serif);
+    font-size: 0.95rem;
+    color: var(--colour-light);
+    opacity: 0.85;
+  }
+
+  .metadata-divider {
+    opacity: 0.5;
+    color: var(--colour-light);
+  }
+
+  .puppy-actions-tray {
+    display: flex;
+    flex-direction: row; /* Horizontal layout runs cleaner on modern dashboard strips */
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+
+    .card-icon {
+      width: 1.2rem;
+      height: 1.2rem;
+      transition: transform 0.2s ease;
+    }
+
+    &.edit-btn {
+      color: var(--colour-light);
+      &:hover {
+        background-color: var(--colour-dark);
+        color: white;
+        border-color: var(--colour-dark);
+        .card-icon { transform: scale(1.1); }
+      }
+    }
+
+    &.delete-btn {
+      color: #f87e7e;
+      &:hover {
+        background-color: #ef4444;
+        color: white;
+        border-color: #ef4444;
+        .card-icon { transform: scale(1.1) rotate(4deg); }
+      }
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+</style>
+
+
+<script>
+    function setupCardInteractions() {
+        // Edit
+        document.body.addEventListener("click", (event) => {
+            const btn = (event.target as HTMLElement).closest(".edit-btn");
+            if (!btn) return;
+
+            const parentCard = btn.closest(".recent-puppy-card") as HTMLElement;
+            if (!parentCard) return;
+
+            const dogId = parentCard.dataset.id;
+            const dogType = parentCard.dataset.type;
+
+            if (dogId && dogType) {
+                window.location.href = `/${dogType}/add?edit=true&id=${dogId}`;
+            }
+        });
+
+        // Delete
+        document.body.addEventListener("click", (event) => {
+            const btn = (event.target as HTMLElement).closest(".delete-btn");
+            if (!btn) return;
+
+            const parentCard = btn.closest(".recent-puppy-card") as HTMLElement;
+            if (!parentCard) return;
+
+            // Bundle up data attributes into a clean custom event payload
+            const deleteIntentEvent = new CustomEvent("dog:delete-intent", {
+                bubbles: true,
+                detail: {
+                    id: parentCard.dataset.id,
+                    type: parentCard.dataset.type,
+                    name: parentCard.dataset.name,
+                    element: parentCard
+                }
+            });
+
+            parentCard.dispatchEvent(deleteIntentEvent);
+        });
+    }
+
+    setupCardInteractions();
+    document.addEventListener("astro:page-load", setupCardInteractions);
+</script>
