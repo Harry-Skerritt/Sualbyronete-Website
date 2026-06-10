@@ -34,3 +34,5 @@ migrations/
 .env.local
 .dev.vars
 
+wrangler.jsonc
+
