@@ -1,0 +1,10 @@
+# User-agent: * means these rules apply to all search engines (Google, Bing, etc.)
+User-agent: *
+Allow: /
+
+# Keep search engines out of your private admin dashboard and API nodes
+Disallow: /admin/
+Disallow: /api/
+
+# Link directly to your sitemap so bots can find your pages instantly
+Sitemap: https://sualbyronete.co.uk/sitemap-index.xml
