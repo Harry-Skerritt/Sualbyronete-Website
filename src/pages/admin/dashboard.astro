@@ -88,39 +88,10 @@ const latestPuppies = [...allPuppies]
             <AdminEditButton id="photo-edit-btn" icon="edit" text="Edit Home Page Photos"/>
             <AdminEditButton id="bio-edit-btn" icon="edit" text="Edit Default Puppy Bios"/>
             <AdminEditButton id="puppy-pack-edit-btn" icon="edit" text="Edit Puppy Pack Info"/>
-            <AdminEditButton id="open-password-modal-btn" icon="edit" text="Change Admin Password"/>
+            <AdminEditButton id="change-password-btn" icon="edit" text="Change Admin Password"/>
         </section>
 
     </main>
-
-    <Modal id="password-change-modal" header="Change Password">
-        <div class="modal-form-wrapper">
-            <p class="modal-sub">Verify identity credentials to overwrite database token entries.</p>
-
-            <div id="modal-error-banner" class="modal-error"></div>
-            <div id="modal-success-banner" class="modal-success">Password changed successfully!</div>
-
-            <form id="change-password-form">
-                <div class="form-group">
-                    <label for="pwd-identifier">Username or Email Address</label>
-                    <input type="text" id="pwd-identifier" required placeholder="Username" />
-                </div>
-                <div class="form-group">
-                    <label for="pwd-current">Current Password</label>
-                    <input type="password" id="pwd-current" required />
-                </div>
-                <div class="form-group">
-                    <label for="pwd-new">New Password</label>
-                    <input type="password" id="pwd-new" required />
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="modal-btn cancel" data-modal-close>Cancel</button>
-                    <button type="submit" class="modal-btn save">Update Password</button>
-                </div>
-            </form>
-        </div>
-    </Modal>
 
     <Modal id="delete-confirm-modal" header="Delete Profile?">
         <div class="modal-form-wrapper">
@@ -382,7 +353,7 @@ const latestPuppies = [...allPuppies]
 
         document.addEventListener("dog:delete-intent", (event: Event) => {
             const customEvent = event as CustomEvent;
-            const { id, type, name, element } = customEvent.detail;
+            const {id, type, name, element} = customEvent.detail;
 
             if (!deleteModal) return;
 
@@ -408,8 +379,8 @@ const latestPuppies = [...allPuppies]
             try {
                 const response = await fetch(`/api/delete-dog`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: targetedCardId, type: targetedCardType })
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({id: targetedCardId, type: targetedCardType})
                 });
 
                 const result = await response.json() as { success: boolean; message?: string };
@@ -456,88 +427,43 @@ const latestPuppies = [...allPuppies]
         });
 
         /* Puppy Navigation Handlers */
-        document.getElementById("puppy-add-btn")?.addEventListener("click", () => { window.location.href = "/puppy/add"; });
+        document.getElementById("puppy-add-btn")?.addEventListener("click", () => {
+            window.location.href = "/admin/puppy/add";
+        });
         document.getElementById("puppy-edit-btn")?.addEventListener("click", () => {
-            const targetURL = new URL("/edit", window.location.origin);
+            const targetURL = new URL("/admin/edit", window.location.origin);
             targetURL.searchParams.set('type', 'puppies');
             window.location.href = targetURL.toString();
         });
 
         /* Adult Navigation Handlers */
-        document.getElementById("adult-add-btn")?.addEventListener("click", () => { window.location.href = "/adult/add"; });
+        document.getElementById("adult-add-btn")?.addEventListener("click", () => {
+            window.location.href = "/admin/adult/add";
+        });
         document.getElementById("adult-edit-btn")?.addEventListener("click", () => {
-            const targetURL = new URL("/edit", window.location.origin);
+            const targetURL = new URL("/admin/edit", window.location.origin);
             targetURL.searchParams.set('type', 'adults');
             window.location.href = targetURL.toString();
         });
 
         /* Home Page Photos */
-        document.getElementById("photo-edit-btn")?.addEventListener("click", () => { window.location.href = "/system/editPhotos"; });
+        document.getElementById("photo-edit-btn")?.addEventListener("click", () => {
+            window.location.href = "/admin/system/edit-photos";
+        });
 
         /* Default Bios */
-        document.getElementById("bio-edit-btn")?.addEventListener("click", () => { window.location.href = "/system/editBios"; });
+        document.getElementById("bio-edit-btn")?.addEventListener("click", () => {
+            window.location.href = "/admin/system/edit-bios";
+        });
 
         /* Include Lists */
-        document.getElementById("puppy-pack-edit-btn")?.addEventListener("click", () => { window.location.href = "/system/editPuppyPack"; });
+        document.getElementById("puppy-pack-edit-btn")?.addEventListener("click", () => {
+            window.location.href = "/admin/system/edit-puppy-pack";
+        });
 
         /* Password Modal Management */
-        const pwdModalEl = document.getElementById("password-change-modal");
-        const form = document.getElementById("change-password-form") as HTMLFormElement;
-        const errBanner = document.getElementById("modal-error-banner");
-        const successBanner = document.getElementById("modal-success-banner");
-
-        document.getElementById("open-password-modal-btn")?.addEventListener("click", () => {
-            if (pwdModalEl) {
-                pwdModalEl.classList.add("is-active");
-                pwdModalEl.removeAttribute("aria-hidden");
-            }
-        });
-
-        const hidePwdModalAndReset = () => {
-            if (pwdModalEl) {
-                pwdModalEl.classList.remove("is-active");
-                pwdModalEl.setAttribute("aria-hidden", "true");
-            }
-            if (form) form.reset();
-            if (errBanner) errBanner.style.display = "none";
-            if (successBanner) successBanner.style.display = "none";
-        };
-
-        pwdModalEl?.querySelectorAll('[data-modal-close]').forEach(btn => {
-            btn.addEventListener('click', hidePwdModalAndReset);
-        });
-
-        form?.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            if (errBanner) errBanner.style.display = "none";
-            if (successBanner) successBanner.style.display = "none";
-
-            const identifier = (document.getElementById("pwd-identifier") as HTMLInputElement).value;
-            const currentPassword = (document.getElementById("pwd-current") as HTMLInputElement).value;
-            const newPassword = (document.getElementById("pwd-new") as HTMLInputElement).value;
-
-            try {
-                const response = await fetch('/admin/auth/change-password-submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ identifier, currentPassword, newPassword })
-                });
-
-                const data = await response.json() as { success: boolean; message?: string };
-
-                if (response.ok && data.success) {
-                    if (successBanner) successBanner.style.display = "block";
-                    form.reset();
-                    setTimeout(hidePwdModalAndReset, 1500);
-                } else {
-                    throw new Error(data.message || "Credential matching execution verified incorrect status");
-                }
-            } catch (err: any) {
-                if (errBanner) {
-                    errBanner.textContent = err.message;
-                    errBanner.style.display = "block";
-                }
-            }
+        document.getElementById("change-password-btn")?.addEventListener("click", () => {
+            window.location.href = "/admin/system/change-password?from=dashboard";
         });
     });
 </script>

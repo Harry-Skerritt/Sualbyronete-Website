@@ -25,6 +25,18 @@ import Modal from "../../components/Modal.astro"
                 </div>
 
                 <form method="POST" class="login-form" id="login-form">
+                    <div class="field-group-hp" aria-hidden="true">
+                        <label for="middle-name">Middle Name</label>
+                        <input
+                                type="text"
+                                id="middle-name"
+                                name="middle_name"
+                                tabindex="-1"
+                                autocomplete="off"
+                                placeholder="Middle name..."
+                        />
+                    </div>
+
                     <div class="field-group">
                         <label for="uname">Username:</label>
                         <input
@@ -284,6 +296,19 @@ import Modal from "../../components/Modal.astro"
     &:active {
       transform: scale(0.99);
     }
+  }
+
+  /* Honey Pot */
+  .field-group-hp {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
   }
 
   /* Error Notification */

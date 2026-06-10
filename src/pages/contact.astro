@@ -81,7 +81,18 @@ const errorCode = searchParams.get('error');
 
                 <form class="visual-form" action="/send-email" method="POST">
 
-                    <input type="text" name="honeypot" style="display:none" tabindex="-1" autocomplete="off" /> <!-- Make this work once deployed -->
+                    <div class="field-group-hp" aria-hidden="true">
+                        <label for="middle-name">Middle Name</label>
+                        <input
+                                type="text"
+                                id="middle-name"
+                                name="middle_name"
+                                tabindex="-1"
+                                autocomplete="off"
+                                placeholder="Middle name..."
+                        />
+                    </div>
+                    <!-- Make this work once deployed -->
 
                     <div class="field">
                         <label for="name">Name <span class="required-marker">*</span> </label>
@@ -376,6 +387,19 @@ const errorCode = searchParams.get('error');
         filter: none;
         box-shadow: none;
       }
+    }
+
+    /* Honey Pot */
+    .field-group-hp {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 0;
+      width: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
     }
 
     .send-btn {
