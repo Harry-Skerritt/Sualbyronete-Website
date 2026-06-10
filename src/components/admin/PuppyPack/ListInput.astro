@@ -45,6 +45,7 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
 <style lang="scss">
     .comp-list-item {
       width: 100%;
+      max-width: 100%;
       padding: 0.75rem;
       background-color: var(--colour-dark);
       border: 1.5px solid rgba(255, 255, 255, 0.05);
@@ -149,5 +150,53 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
     .btn-icon {
       width: 1.2rem;
       height: 1.2rem;
+    }
+
+    /* Mobile Styling */
+    @media (#{$mobile}) {
+      .comp-list-item {
+        padding: 0.5rem;
+        gap: 0.4rem;
+      }
+
+      .drag-handle-btn {
+        width: 2.2rem;
+        height: 3rem;
+
+        &:active {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .drag-icon {
+          width: 1.6rem;
+          height: 1.6rem;
+          opacity: 0.8;
+        }
+      }
+
+      .comp-input {
+        height: 3rem;
+        font-size: 1.05rem;
+        padding: 0 0.6rem;
+        border-radius: 0.4rem;
+        width: 10rem;
+        max-width: 15rem;
+
+        &::placeholder {
+          font-size: 0.95rem;
+        }
+      }
+
+      .comp-delete-btn {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.4rem;
+        background-color: rgba(239, 68, 68, 0.25);
+
+        .btn-icon {
+          width: 1.4rem;
+          height: 1.4rem;
+        }
+      }
     }
 </style>

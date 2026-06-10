@@ -90,9 +90,19 @@ const totalCount = itemsList.length;
 
 
 <style lang="scss">
+  @import "../../styles/variables.scss";
+
+  :root {
+    --max-display-width: 110rem;
+
+    @media (#{$small-desktop}) {
+      --max-display-width: 110rem;
+    }
+  }
+
   .edit-container {
     min-height: calc(100vh - var(--header-height));
-    max-width: 100rem;
+    max-width: var(--max-display-width);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -129,8 +139,12 @@ const totalCount = itemsList.length;
     grid-template-rows: repeat(2, 1fr);
     margin-top: 2rem;
     margin-bottom: 2rem;
-    gap: 1.5rem;
-    width: 100%;
+    gap: 2rem 5rem;
+    max-width: var(--max-display-width);
+
+    @media (#{$small-desktop}) {
+      gap: 2rem;
+    }
   }
 
   /* Modal Styling */
