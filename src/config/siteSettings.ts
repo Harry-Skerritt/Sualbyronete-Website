@@ -20,21 +20,19 @@ export const BREEDER_IMAGE = {
 // --- Contact Details ---
 export const CONTACT_NUMBER = "07701043475";
 export const INSTAGRAM_LINK = "https://www.instagram.com/suefrancis55/";
-export const FACEBOOK_LINK = "https://facebook.com/susan.francis.3158";
+export const FACEBOOK_LINK = "https://www.facebook.com/groups/720742637731158";
 export const WHATSAPP_LINK = "https://wa.me/447701043475?text=Hi%20Sue,%20I%20saw%20your%20website%20and%20wanted%20to%20reach%20out!";
 export const MESSENGER_LINK = "https://m.me/susan.francis.3158";
 
 
 // --- Puppy Info ---
-export const RESERVATION_COST = "£100";
-export const RESERVATION_LENGTH = "10 Days";
+export const RESERVATION_COST = "£200";
+export const RESERVATION_LENGTH = "";
 
 export const PUPPY_COLOURS = [
     { value: "black-tan",        label: "Black & Tan",          breed: "Yorkie" },
     { value: "steel-blue-tan",   label: "Steel Blue & Tan",     breed: "Yorkie" },
-    { value: "black",            label: "Black",                breed: "Biewer" },
-    { value: "black-tan",        label: "Black & Tan",          breed: "Biewer" },
-    { value: "white-tan",        label: "White & Tan",          breed: "Biewer" },
+    { value: "white-black-tan",  label: "White, Black & Tan",   breed: "Biewer" },
 
 ]
 
@@ -89,4 +87,4 @@ export const ABOUT_SECTIONS = [
 
 
 // --- Cloudflare Keys ---
-export const TURNSTYLE_SITE_KEY = "1x00000000000000000000AA"
+export const TURNSTYLE_SITE_KEY = "0x4AAAAAADiGATZxyjS9-Hh3"

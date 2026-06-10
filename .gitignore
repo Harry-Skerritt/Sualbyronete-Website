@@ -32,4 +32,5 @@ migrations/
 # Secrets and Creds
 .env
 .env.local
+.dev.vars
 
