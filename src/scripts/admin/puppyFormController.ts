@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const fatherSelect = document.getElementById("father-select") as unknown as HTMLSelectElement;
     const pupRefInput = document.getElementById("pup-ref") as unknown as HTMLInputElement;
 
+    const fbCheckbox = document.getElementById('post-to-facebook') as HTMLInputElement | null;
+
     // validation barrier
     if (
         !contextEl || !fileInput || !imgPreview || !breedSelect || !colourSelect || !formEl ||
@@ -191,6 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("availableFrom", pupAvailableInput.value);
         formData.append("colour", colourSelect.value);
 
+        if (fbCheckbox) {
+            formData.append("postToFacebook", fbCheckbox.checked ? "true" : "false");
+        } else {
+            formData.append("postToFacebook", "false");
+        }
+
         const regIdVal = pupRefInput.value;
         formData.append("regID", regIdVal.trim() ? regIdVal : "#0000");
 
@@ -210,7 +218,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: formData
             });
 
-            const result = await response.json() as { success: boolean; generatedId?: string; message?: string };
+            const result = await response.json() as {
+                success: boolean;
+                generatedId?: string;
+                imageUrl?: string;
+                message?: string;
+            };
 
             if (response.ok && result.success) {
                 const toastMessage = mode === "edit"
@@ -219,9 +232,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 window.showToast(toastMessage, false);
 
+                const postToFacebook = formData.get('postToFacebook') === 'true';
+                if (mode === "add" && postToFacebook) {
+                    if (submitBtn) submitBtn.textContent = "Posting to Facebook...";
+
+                    const facebookPayload = {
+                        name: pupNameInput.value,
+                        breed: breedSelect.options[breedSelect.selectedIndex]?.text || breedSelect.value,
+                        dogID: result.generatedId || pupRefInput.value || "unknown",
+                        imageUrl: result.imageUrl
+                    };
+
+                    try {
+                        console.log("Filing cross-post sequence payload...", facebookPayload);
+
+                        const fbResponse = await fetch("/admin/api/facebookPost", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(facebookPayload)
+                        });
+
+                        const fbResult = await fbResponse.json() as { success: boolean; };
+
+                        if (!fbResponse.ok || !fbResult.success) {
+                            window.showToast("Database saved! But Facebook cross-post failed.", true);
+                        } else {
+                            window.showToast("Social update published to your Page timeline!", false);
+                        }
+                    } catch (fbErr: any) {
+                        console.error("❌ Failed to reach /api/facebookPost route: ", fbErr.message);
+                    }
+                }
+
                 setTimeout(() => {
                     window.location.href = "/admin/dashboard";
-                }, 1000);
+                }, 10000);
             } else {
                 throw new Error(result.message || "Failed to save data record mapping entries");
             }

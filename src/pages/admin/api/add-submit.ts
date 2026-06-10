@@ -115,7 +115,16 @@ export const POST: APIRoute = async ({ request, params }) => {
         console.log(`[R2 Storage] Added fresh resource key entry: ${r2ObjectKey}`);
 
         invalidateCachedData();
-        return new Response(JSON.stringify({ success: true, generatedId: calculatedSystemId }), { status: 200 });
+
+        const r2PublicDomain = "https://sualbyronete.co.uk/";
+        const absoluteImageUrl = `${r2PublicDomain}${r2ObjectKey}`;
+
+        return new Response(JSON.stringify({
+            success: true,
+            generatedId: calculatedSystemId,
+            imageUrl: absoluteImageUrl,
+        }),
+            { status: 200, headers: { "Content-Type": "application/json" } });
 
     } catch (error: any) {
         console.error("Unified API management loop failure:", error);

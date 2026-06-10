@@ -20,7 +20,7 @@ export const BREEDER_IMAGE = {
 // --- Contact Details ---
 export const CONTACT_NUMBER = "07701043475";
 export const INSTAGRAM_LINK = "https://www.instagram.com/suefrancis55/";
-export const FACEBOOK_LINK = "https://www.facebook.com/groups/720742637731158";
+export const FACEBOOK_LINK = "https://www.facebook.com/profile.php?id=61590779248537";
 export const WHATSAPP_LINK = "https://wa.me/447701043475?text=Hi%20Sue,%20I%20saw%20your%20website%20and%20wanted%20to%20reach%20out!";
 export const MESSENGER_LINK = "https://m.me/susan.francis.3158";
 

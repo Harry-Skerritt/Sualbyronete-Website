@@ -259,6 +259,21 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
                         </div>
                     </div>
 
+                    {!isEditMode && (
+                            <div class="checkbox-container">
+                                <label for="post-to-facebook" class="checkbox-label">
+                                    <input
+                                            type="checkbox"
+                                            id="post-to-facebook"
+                                            name="postToFacebook"
+                                            value="true"
+                                            checked
+                                    />
+                                    <span>Add to Facebook Automatically</span>
+                                </label>
+                            </div>
+                    )}
+
                     <div class="action-buttons">
                         <button type="button" class="discard-btn" id="discard-trigger-btn">Discard Changes</button>
                         <button type="submit" class="submit-btn">{submitButtonLabel}</button>
@@ -595,6 +610,35 @@ const formattedAvailableDate = tenWeeksFromNowObj.toISOString().split("T")[0];
 
     &:hover {
       filter: brightness(1.06);
+    }
+  }
+
+  .checkbox-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-secondary);
+      font-size: 0.95rem;
+      color: var(--colour-dark);
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+
+      input[type="checkbox"] {
+        width: 1.15rem;
+        height: 1.15rem;
+        accent-color: #1877F2;
+        cursor: pointer;
+      }
+
+      &:hover input[type="checkbox"] {
+        filter: brightness(0.9);
+      }
     }
   }
 
