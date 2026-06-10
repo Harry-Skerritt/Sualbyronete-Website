@@ -66,6 +66,16 @@ const { text } = Astro.props;
         color: var(--colour-dark);
     }
 
+    /* Small Desktop Styling */
+    @media (#{$small-desktop}) {
+      .paw-line {
+        gap: 3rem;
+      }
+
+      .paw-icon:nth-child(n+7) {
+        display: none;
+      }
+    }
     /* Mobile Styling */
     @media (#{$mobile}) {
         .header-text {

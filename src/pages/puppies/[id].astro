@@ -167,16 +167,37 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
 </Layout>
 
 <style lang="scss">
+  @import "../../styles/variables.scss";
+
+  :root {
+    --max-display-width: 120rem;
+
+    @media (#{$small-desktop}) {
+      --max-display-width: 94rem;
+    }
+  }
 
   .puppy-info-container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    max-width: 120rem;
+    max-width: var(--max-display-width);
     margin: 0 auto;
     padding: 2rem 3rem;
     box-sizing: border-box;
     gap: 4rem;
+
+    @media (#{$small-desktop}) {
+      gap: 2.5rem;
+      padding: 2rem;
+    }
+
+    @media (#{$mobile}) {
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1.5rem;
+      gap: 2rem 0;
+    }
   }
 
   /* Left Content */
@@ -184,11 +205,30 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     flex: 0 0 37rem;
     display: flex;
     flex-direction: column;
+
+    @media (#{$small-desktop}) {
+      flex: 0 0 30rem;
+    }
+
+    @media (#{$mobile}) {
+      width: 100%;
+      flex: none;
+      display: contents;
+    }
   }
 
   /* Image */
   .puppy-image {
     width: 37rem;
+
+    @media (#{$small-desktop}) {
+      width: 30rem;
+    }
+
+    @media (#{$mobile}) {
+      width: 100%;
+      max-width: 45rem;
+    }
   }
 
   .puppy-status-badge {
@@ -200,6 +240,11 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     display: flex;
     justify-content: center;
     align-items: center;
+
+    @media (#{$small-desktop}) {
+      height: 3.5rem;
+      border-width: 0.3rem;
+    }
   }
 
   .puppy-status {
@@ -208,28 +253,18 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     font-size: 2rem;
     text-align: center;
     margin: 0;
+
+    @media (#{$small-desktop}) {
+      font-size: 1.6rem;
+    }
   }
 
   /* Status Styling */
-  .puppy-status-badge[data-status="new"] {
-    background-color: var(--puppy-new-colour);
-  }
-
-  .puppy-status-badge[data-status="available"] {
-    background-color: var(--puppy-available-colour);
-  }
-
-  .puppy-status-badge[data-status="reserved"] {
-    background-color: var(--puppy-reserved-colour);
-  }
-
-  .puppy-status-badge[data-status="sold"] {
-    background-color: var(--puppy-sold-colour);
-  }
-
-  .puppy-status-badge[data-status="not available"] {
-    background-color: var(--puppy-not-available-colour);
-  }
+  .puppy-status-badge[data-status="new"] { background-color: var(--puppy-new-colour); }
+  .puppy-status-badge[data-status="available"] { background-color: var(--puppy-available-colour); }
+  .puppy-status-badge[data-status="reserved"] { background-color: var(--puppy-reserved-colour); }
+  .puppy-status-badge[data-status="sold"] { background-color: var(--puppy-sold-colour); }
+  .puppy-status-badge[data-status="not available"] { background-color: var(--puppy-not-available-colour); }
 
   img {
     width: 100%;
@@ -240,6 +275,16 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     border: 0.4rem solid var(--colour-light);
     border-top: none;
     box-sizing: border-box;
+
+    @media (#{$small-desktop}) {
+      height: 30rem;
+      border-width: 0.3rem;
+    }
+
+    @media (#{$mobile}) {
+      height: auto;
+      aspect-ratio: 1 / 1;
+    }
   }
 
   /* Pricing */
@@ -248,17 +293,45 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     flex-direction: column;
     width: 100%;
     margin-top: 1.5rem;
-    gap: 0.5rem
+    gap: 0.5rem;
+
+    @media (#{$mobile}) {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-radius: 0.8rem;
+      border: 2px solid var(--colour-dark);
+      box-sizing: border-box;
+    }
   }
 
   .pricing-text {
     font-size: 1.8rem;
     color: var(--colour-white);
     font-weight: bold;
+
+    @media (#{$small-desktop}) {
+      font-size: 1.4rem;
+    }
+
+    @media (#{$mobile}) {
+      font-size: 1.4rem;
+      text-align: center;
+    }
   }
 
   .pricing-contact {
     color: var(--colour-dark);
+
+    @media(#{$mobile}) {
+      display: inline-block;
+      background-color: var(--colour-dark);
+      color: var(--colour-light);
+      padding: 0.3rem 0.8rem;
+      border-radius: 0.4rem;
+      margin-left: 0.3rem;
+      margin-top: 1rem;
+    }
   }
 
   .deposit-text {
@@ -266,6 +339,18 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     font-size: 1rem;
     color: var(--colour-white);
     margin: 0;
+
+    @media (#{$small-desktop}) {
+      font-size: 0.85rem;
+      line-height: 1.25rem;
+    }
+
+    @media (#{$mobile}) {
+      font-size: 0.95rem;
+      line-height: 1.3rem;
+      text-align: center;
+      margin-top: 0.4rem;
+    }
   }
 
   .accent {
@@ -282,6 +367,13 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     justify-content: flex-start;
     margin: 0;
     padding: 0;
+
+    @media (#{$mobile}) {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      order: 2;
+    }
   }
 
   .puppy-main-header {
@@ -298,6 +390,16 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     padding: 0;
     margin: 0;
     width: 100%;
+
+    @media (#{$small-desktop}) {
+      font-size: 3.2rem;
+      line-height: 3.6rem;
+    }
+
+    @media (#{$mobile}) {
+      font-size: 3rem;
+      line-height: 3.4rem;
+    }
   }
 
   .puppy-description {
@@ -308,6 +410,18 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     height: 5rem;
     margin-top: 0.6rem;
     font-size: 1.2rem;
+
+    @media (#{$small-desktop}) {
+      font-size: 1.05rem;
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (#{$mobile}) {
+      width: 100%;
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
   }
 
   .horizontal-separator {
@@ -316,6 +430,10 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     background-color: var(--colour-dark);
     border-radius: 999px;
     margin: 1rem 0;
+
+    @media (#{$mobile}) {
+      display: none;
+    }
   }
 
   /* Info Lists */
@@ -325,6 +443,15 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     flex-direction: row;
     align-items: flex-start;
     gap: 3rem;
+
+    @media (#{$small-desktop}) {
+      gap: 1.5rem;
+    }
+
+    @media (#{$mobile}) {
+      flex-direction: column;
+      gap: 2.5rem;
+    }
   }
 
   /* Puppy Info */
@@ -334,6 +461,15 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     grid-template-columns: 12rem 1fr;
     gap: 0.5rem 0px;
     margin: 1rem 0;
+
+    @media (#{$small-desktop}) {
+      grid-template-columns: 10rem 1fr;
+    }
+
+    @media (#{$mobile}) {
+      width: 100%;
+      grid-template-columns: 11rem 1fr;
+    }
   }
 
   dt, dd {
@@ -342,6 +478,15 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     height: 2.5rem;
     font-size: 1.3rem;
     box-sizing: border-box;
+
+    @media (#{$small-desktop}) {
+      font-size: 1.15rem;
+      height: 2.2rem;
+    }
+
+    @media (#{$mobile}) {
+      font-size: 1.18rem;
+    }
   }
 
   dt {
@@ -382,6 +527,11 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     padding: 0.2rem 0.8rem;
     border-radius: 0.4rem;
     font-size: 1rem;
+
+    @media (#{$small-desktop}) {
+      font-size: 0.9rem;
+      padding: 0.15rem 0.6rem;
+    }
   }
 
   .vertical-separator {
@@ -391,12 +541,25 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     background-color: var(--colour-dark);
     border-radius: 999px;
     margin: 0;
+
+    @media (#{$mobile}) {
+      display: none;
+    }
   }
 
   /* Included Info */
   .included-info {
     flex: 1;
     padding-left: 1rem;
+
+    @media (#{$small-desktop}) {
+      padding-left: 0.5rem;
+    }
+
+    @media (#{$mobile}) {
+      width: 100%;
+      padding-left: 0;
+    }
   }
 
   .included-header {
@@ -404,7 +567,12 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     font-family: var(--font-primary);
     font-size: 1.8rem;
     font-weight: 900;
+    font-weight: 900;
     margin: 0 0 1rem 0;
+
+    @media (#{$small-desktop}) {
+      font-size: 1.45rem;
+    }
   }
 
   .included-list {
@@ -415,113 +583,16 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
       font-family: var(--font-secondary);
       font-size: 1.2rem;
       margin-bottom: 0.4rem;
+
+      @media (#{$small-desktop}) {
+        font-size: 1.05rem;
+      }
     }
   }
 
   .puppy-pack-list {
     margin-top: 0.3rem;
     padding-left: 1.2rem;
-  }
-
-  /* Mobile Styling */
-  @media ($mobile) {
-    .puppy-info-container {
-      display: flex;
-      flex-direction: column;
-      padding: 1.5rem 1.5rem;
-      gap: 2rem 0;
-    }
-
-    /* Left (Top) Content */
-    .left-content {
-      width: 100%;
-      flex: none;
-      display: contents;
-    }
-
-    .puppy-image {
-      width: 100%;
-      max-width: 45rem;
-    }
-
-    img {
-      height: auto;
-      aspect-ratio: 1 / 1;
-    }
-
-    .puppy-name {
-      font-size: 3rem;
-      line-height: 3.4rem;
-    }
-
-    .puppy-description {
-      width: 100%;
-      height: auto;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Pricing */
-    .pricing-section {
-      margin-top: 1.5rem;
-      padding: 1.5rem;
-      background-color: rgba(0, 0, 0, 0.15);
-      border-radius: 0.8rem;
-      border: 2px solid var(--colour-dark);
-      box-sizing: border-box;
-    }
-
-    .pricing-text {
-      font-size: 1.4rem;
-      text-align: center;
-    }
-
-    .pricing-contact {
-      display: inline-block;
-      background-color: var(--colour-dark);
-      color: var(--colour-light);
-      padding: 0.3rem 0.8rem;
-      border-radius: 0.4rem;
-      margin-left: 0.3rem;
-      margin-top: 1rem;
-    }
-
-    .deposit-text {
-      font-size: 0.95rem;
-      line-height: 1.3rem;
-      text-align: center;
-      margin-top: 0.4rem;
-    }
-
-    /* Right (Bottom) Content */
-    .right-content {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      order: 2;
-    }
-
-    .info-lists {
-      flex-direction: column;
-      gap: 2.5rem;
-    }
-
-    dd, dt {
-      font-size: 1.18rem;
-    }
-
-    .vertical-separator, .horizontal-separator {
-      display: none;
-    }
-
-    .puppy-specs-list {
-      width: 100%;
-      grid-template-columns: 11rem 1fr;
-    }
-
-    .included-info {
-      width: 100%;
-      padding-left: 0;
-    }
   }
 
 </style>

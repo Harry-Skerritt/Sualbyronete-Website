@@ -182,8 +182,8 @@ import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyCo
       position: absolute;
       top: 0.8rem;
       right: 1rem;
-      width: 12rem;
-      height: 4rem;
+      width: 11rem;
+      height: 3.3rem;
       background-color: var(--colour-dark);
       border-radius: 1rem;
       display: flex;
@@ -201,6 +201,80 @@ import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyCo
 
     .hidden {
       display: none;
+    }
+
+    /* Small Desktop Styling */
+    @media(#{$small-desktop}) {
+      .parent-card {
+        width: 43rem;
+        height: 18rem;
+        margin: 0.5rem;
+        border-width: 4px;
+        gap: 1rem;
+      }
+
+      .parent-image {
+        width: 15rem;
+      }
+
+      img {
+        height: 14rem;
+        margin-left: 1rem;
+        border-width: 4px;
+      }
+
+      .parent-info {
+        height: 14rem;
+        padding-right: 0.5rem;
+        gap: 0.1rem;
+      }
+
+      .parent-name {
+        font-size: 2.2rem;
+        line-height: 2.5rem;
+      }
+
+      .parent-colour {
+        font-size: 1.2rem;
+      }
+
+      .parent-bio {
+        font-size: 0.95rem;
+        margin-top: 0.4rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .buttons {
+        width: 95%;
+        gap: 0.8rem;
+        min-height: auto;
+      }
+
+      .button {
+        width: 100%;
+        height: 2.4rem;
+        font-size: 0.9rem;
+      }
+
+      .adult-more {
+        border-width: 3px;
+      }
+
+      .for-sale-banner {
+        top: 0.6rem;
+        right: 0.6rem;
+        width: 8.5rem;
+        height: 2.5rem;
+        border-radius: 0.6rem;
+      }
+
+      .for-sale-text {
+        font-size: 1.1rem;
+      }
     }
 
     /* Mobile Styling */

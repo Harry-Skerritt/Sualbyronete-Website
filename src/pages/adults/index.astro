@@ -83,10 +83,23 @@ const { parents } = await getCachedData();
 
 
 <style lang="scss">
+  @import "../../styles/variables.scss";
+
+  :root {
+    --max-display-width: 117rem;
+
+    @media (#{$small-desktop}) {
+      --max-display-width: 92rem;
+    }
+  }
 
   .filter-parent {
-    max-width: 117rem;
+    max-width: var(--max-display-width);
     margin: 0 auto;
+
+    @media (#{$small-desktop}) {
+      padding: 0 1rem;
+    }
   }
 
   /* Tab Filters */
@@ -100,7 +113,7 @@ const { parents } = await getCachedData();
 
   .parent-grid {
     border: 2px solid var(--colour-dark);
-    max-width: 117rem;
+    max-width: var(--max-display-width);
     margin: 0 auto 2rem;
     border-radius: 0.6rem;
     padding: 2rem;
@@ -111,6 +124,11 @@ const { parents } = await getCachedData();
 
     justify-items: center;
     justify-content: center;
+
+    @media (#{$small-desktop}) {
+      padding: 1.5rem;
+      gap: 0.6rem;
+    }
   }
 
   :global(.no-results) {
