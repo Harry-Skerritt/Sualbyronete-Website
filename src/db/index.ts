@@ -21,17 +21,19 @@ export function getDB() {
         return _db;
     }
 
-    const isDevScript = process.env.NODE_ENV === 'development' || !process.env.CF_PAGES;
-    if (isDevScript) {
-        const { createClient } = require('@libsql/client');
-        const { drizzle: libsqlDrizzle } = require('drizzle-orm/libsql');
-
-        const client = createClient({
-            url: 'file:local.db',
-        });
-        _db = libsqlDrizzle(client, { schema });
-        return _db;
-    }
-
     throw new Error("Database environment could not be determined.");
+}
+
+export async function getLocalDevDB() {
+    if (_db) return _db;
+
+    const { createClient } = await import('@libsql/client');
+    const { drizzle: libsqlDrizzle } = await import('drizzle-orm/libsql');
+
+    const client = createClient({
+        url: 'file:local.db',
+    });
+
+    _db = libsqlDrizzle(client, { schema });
+    return _db;
 }

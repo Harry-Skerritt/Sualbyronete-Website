@@ -65,8 +65,13 @@ export const HOME_PAGE_ABOUT = " " +
 export const ABOUT_SECTIONS = [
     {
         title: "",
-        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent fringilla sagittis dolor, eu blandit arcu volutpat ut. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam id nulla non diam tincidunt maximus vitae a dui. Donec tempor enim purus, vel condimentum lorem ultrices nec. Donec auctor tortor lacus, eu auctor risus tempor in. Phasellus quis erat nec diam ornare feugiat sit amet non turpis. Curabitur aliquam lectus ut odio commodo, et hendrerit lorem rutrum. Donec elementum egestas diam et tincidunt. Proin tempus urna at vehicula lacinia."
-    },
+        body: "I have bred Yorkshire Terriers for over 30 years, and my journey began with my first beloved pet, Zoey.\n" +
+            "My love for the breed grew with Xena and Zara, whose puppies made it even stronger.\n" +
+            "After losing them, I became interested in showing Yorkshire Terriers and was proud to own successful dogs such as Bella and Byron, who qualified for Crufts for life.\n" +
+            "Grace, Byron’s daughter, has always held a special place in my heart and remains part of my logo.\n" +
+            "I later discovered a passion for Biewer Terriers, and today I continue breeding both with dedication, care, and high standards"
+    }
+    /*
     {
         title: "How I Got Into Dog Breeding",
         body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent fringilla sagittis dolor, eu blandit arcu volutpat ut. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam id nulla non diam tincidunt maximus vitae a dui. Donec tempor enim purus, vel condimentum lorem ultrices nec. Donec auctor tortor lacus, eu auctor risus tempor in. Phasellus quis erat nec diam ornare feugiat sit amet non turpis. Curabitur aliquam lectus ut odio commodo, et hendrerit lorem rutrum. Donec elementum egestas diam et tincidunt. Proin tempus urna at vehicula lacinia."
@@ -83,6 +88,7 @@ export const ABOUT_SECTIONS = [
         title: "Closing Statement",
         body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent fringilla sagittis dolor, eu blandit arcu volutpat ut. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam id nulla non diam tincidunt maximus vitae a dui. Donec tempor enim purus, vel condimentum lorem ultrices nec. Donec auctor tortor lacus, eu auctor risus tempor in. Phasellus quis erat nec diam ornare feugiat sit amet non turpis. Curabitur aliquam lectus ut odio commodo, et hendrerit lorem rutrum. Donec elementum egestas diam et tincidunt. Proin tempus urna at vehicula lacinia."
     }
+    */
 ];
 
 

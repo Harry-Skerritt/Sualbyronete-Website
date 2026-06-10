@@ -69,4 +69,16 @@ const { title = SITE_NAME } = Astro.props;
     background-color: var(--colour-dark);
     border-radius: 999px;
   }
+
+  @media (#{$mobile}) {
+    .policy-container {
+      max-width: 23rem;
+    }
+
+    .policy-header {
+      text-align: center;
+      font-size: 1.2rem;
+      padding: 1rem;
+    }
+  }
 </style>

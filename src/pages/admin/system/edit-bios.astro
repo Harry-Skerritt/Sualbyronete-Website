@@ -260,11 +260,11 @@ const { defaultBios } = await getCachedData();
         try {
             const response = await fetch('/admin/api/save-bios', {
                method: 'POST',
-               header: { 'Content-Type': 'application/json' },
+               headers: { 'Content-Type': 'application/json' },
                body: JSON.stringify({ yorkieBio, biewerBio })
             });
 
-            const data = await response.json();
+            const data = await response.json() as { success: boolean };
             if (response.ok && data.success) {
                 window.showToast("Default bios updated successfully!");
 

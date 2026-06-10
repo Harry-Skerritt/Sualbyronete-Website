@@ -9,7 +9,7 @@ interface Props {
     icon?: string;
 }
 
-const { id, text, icon } = Astro.props;
+const { id, text, icon = "edit" } = Astro.props;
 ---
 
 <button type="button" id={id} class="button-container">

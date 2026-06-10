@@ -5,11 +5,7 @@ import Layout from "../../layouts/Layout.astro"
 import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
 import {
-    DEFAULT_BIEWER_BIO,
-    DEFAULT_YORKIE_BIO,
-    PUPPY_INCLUSIONS,
     RESERVATION_COST,
-    RESERVATION_LENGTH,
     SITE_NAME
 } from "../../config/siteSettings";
 import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
@@ -167,8 +163,6 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
 </Layout>
 
 <style lang="scss">
-  @import "../../styles/variables.scss";
-
   :root {
     --max-display-width: 120rem;
 

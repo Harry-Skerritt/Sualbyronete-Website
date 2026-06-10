@@ -539,7 +539,7 @@ const errorCode = searchParams.get('error');
 
     if (form && btn && btnText) {
         form.addEventListener('submit', (e) => {
-            const turnstileResponse = form.querySelector('[name="cf-turnstile-response"]')?.value;
+            const turnstileResponse = (form.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
 
             // Check if Turnstile is completed
             if (!turnstileResponse) {
