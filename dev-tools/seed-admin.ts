@@ -2,8 +2,9 @@
 import { createClient } from '@libsql/client';
 import crypto from 'crypto';
 import readline from 'readline/promises';
-import { fileURLToPath } from 'url';
+import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 
 function hashPassword(password: string) {
@@ -16,59 +17,46 @@ async function main() {
     const currentFilePath: string = fileURLToPath(import.meta.url);
     const customDirname: string = path.dirname(currentFilePath);
 
-    const client = createClient({
-        url: `file:${path.resolve(customDirname, '../local.db')}`,
-    });
+    const seedFilePath = path.resolve(customDirname, './temp-admin-seed.sql');
 
     const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
-    });
+        output: process.stdout,
+    })
 
     console.log(`\x1b[36m========== Sualbyronete Admin Provisioner Tool ==========\x1b[0m\n`);
 
+    let sqlStatements = '';
     let addingUsers = true;
 
     while (addingUsers) {
-        try {
-            const name = await rl.question('Enter Admin Full Name: ');
-            if (!name.trim()) {
-                console.log('\x1b[33mName cannot be blank.\x1b[0m\n');
-                continue;
-            }
-
-            const username = await rl.question('Enter Username: ');
-            const email = await rl.question('Enter Email Address: ');
-
-            // 👇 Clean and simple plain text collection
-            const rawPassword = await rl.question('Enter Password: ');
-
-            if (!rawPassword.trim()) {
-                console.log('\x1b[33mPassword cannot be empty. User skipped.\x1b[0m\n');
-                continue;
-            }
-
-            console.log(`Syncing database records for ${name}...`);
-
-            const userId = crypto.randomUUID();
-            const passwordHash = hashPassword(rawPassword);
-
-            await client.execute({
-                sql: `INSERT INTO admin_users (id, name, username, email, password_hash, role, is_active)
-                      VALUES (?, ?, ?, ?, ?, 'admin', 1)`,
-                args: [userId, name.trim(), username.trim().toLowerCase(), email.trim().toLowerCase(), passwordHash]
-            });
-
-            console.log(`\x1b[32m✔ Success! User "${name}" successfully written to local.db!\x1b[0m\n`);
-
-        } catch (error: any) {
-            console.log();
-            if (error.message.includes('UNIQUE constraint failed')) {
-                console.error(`\x1b[31mError: That username or email address already exists.\x1b[0m\n`);
-            } else {
-                console.error("Database Insertion Failed:", error, "\n");
-            }
+        const name = await rl.question('Enter Admin Full Name: ');
+        if (!name.trim()) {
+            console.log('\x1b[33mName cannot be blank.\x1b[0m\n');
+            continue;
         }
+
+        const username = await rl.question('Enter Username: ');
+        const email = await rl.question('Enter Email Address: ');
+        const rawPassword = await rl.question('Enter Password: ');
+
+
+        if (!rawPassword.trim()) {
+            console.log('\x1b[33mPassword cannot be empty. User skipped.\x1b[0m\n');
+            continue;
+        }
+
+
+        const userId = crypto.randomUUID();
+        const passwordHash = hashPassword(rawPassword);
+
+        const safeName = name.trim().replace(/'/g, "''");
+        const safeUsername = username.trim().toLowerCase().replace(/'/g, "''");
+        const safeEmail = email.trim().toLowerCase().replace(/'/g, "''");
+
+        sqlStatements += `INSERT INTO admin_users (id, name, username, email, password_hash, role, is_active) VALUES ('${userId}', '${safeName}', '${safeUsername}', '${safeEmail}', '${passwordHash}', 'admin', 1);\n`;
+
+        console.log(`\x1b[32m✔ User queued for generation!\x1b[0m\n`);
 
         const answer = await rl.question('Would you like to add another user? (y/N): ');
         if (answer.trim().toLowerCase() !== 'y') {
@@ -77,7 +65,11 @@ async function main() {
         console.log();
     }
 
-    console.log(`\x1b[35mConfiguration closed. Terminal session ended safely.\x1b[0m`);
+    if (sqlStatements) {
+        fs.writeFileSync(seedFilePath, sqlStatements);
+        console.log(`\x1b[35m✔ Temporary SQL generation complete.\x1b[0m`);
+    }
+
     rl.close();
 }
 

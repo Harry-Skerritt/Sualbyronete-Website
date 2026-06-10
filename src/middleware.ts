@@ -4,6 +4,18 @@ import { defineMiddleware } from "astro/middleware";
 export const onRequest = defineMiddleware(async (context, next) => {
     const url = new URL(context.request.url);
     const hostname = url.hostname.toLowerCase();
+    const pathname = url.pathname.toLowerCase();
+
+    const isImageRequest =
+        pathname.includes('/images/') ||
+        pathname.endsWith('.jpg') ||
+        pathname.endsWith('.jpeg') ||
+        pathname.endsWith('.png') ||
+        pathname.endsWith('.webp');
+
+    if (isImageRequest) {
+        return next();
+    }
 
     const isHandlingAdminHost =
         hostname.startsWith("admin.");

@@ -1,7 +1,7 @@
 ---
 // src/pages/admin/adult/add.astro
 import AdminLayout from "../../../layouts/AdminLayout.astro";
-import { Icon } from 'astro-icon/components'
+import Icon from "../../../components/Icon.astro"
 
 import { getCachedData } from "../../../scripts/databaseCache";
 import Modal from "../../../components/Modal.astro";
@@ -115,7 +115,7 @@ const formattedToday = todayDateObj.toISOString().split("T")[0];
                         <div class="field-group">
                             <label for="breed-select" class="dropdown-label">Breed: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
-                                <select id="breed-select" name="breed" required>
+                                <select id="breed-select" name="breed" required disabled={isEditMode}>
                                     <option value="" selected={!existingParent}>Choose Breed</option>
                                     <option value="yorkie" selected={existingParent?.breed.toLowerCase() === "yorkie"}>Yorkshire Terrier</option>
                                     <option value="biewer" selected={existingParent?.breed.toLowerCase() === "biewer"}>Biewer Terrier</option>
@@ -158,7 +158,7 @@ const formattedToday = todayDateObj.toISOString().split("T")[0];
                         <div class="field-group">
                             <label for="gender-select" class="dropdown-label">Gender: <span class="required-accent">*</span></label>
                             <div class="select-wrapper">
-                                <select id="gender-select" name="gender" required>
+                                <select id="gender-select" name="gender" required disabled={isEditMode}>
                                     <option value="" selected={!existingParent}>Choose Gender</option>
                                     <option value="female" selected={existingParent?.gender.toLowerCase() === "female"}>Female</option>
                                     <option value="male" selected={existingParent?.gender.toLowerCase() === "male"}>Male</option>

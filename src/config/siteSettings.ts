@@ -2,6 +2,7 @@
 
 // --- Essentials ---
 export const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
+export const mediaURL = "";
 
 // --- Head Names ---
 export const SITE_NAME = "Sualbyronete";

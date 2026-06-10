@@ -4,8 +4,8 @@ import Layout from "../../layouts/Layout.astro";
 import PawHeader from "../../components/PawHeader.astro";
 import TabbedFilter from "../../components/TabbedFilter.astro";
 import PuppyCard from "../../components/PuppyCard.astro";
+import Icon from "../../components/Icon.astro";
 
-import {Icon} from "astro-icon/components";
 import { getCachedData } from "../../scripts/databaseCache";
 import { SITE_NAME, PUPPY_COLOURS } from "../../config/siteSettings";
 
@@ -110,7 +110,7 @@ const { allPuppies } = await getCachedData();
                         <PuppyCard
                                 puppyName={pup.name}
                                 puppyGender={pup.gender}
-                                puppyImage={pup.image}
+                                puppyImage={`${pup.image}`}
                                 puppyStatus={pup.status}
                                 puppyBreed={pup.breed}
                                 puppyColour={pup.colour}

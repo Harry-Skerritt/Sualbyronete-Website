@@ -5,7 +5,7 @@ import AdminEditButton from "../../components/admin/AdminEditButton.astro";
 import DataCounter from "../../components/admin/DataCounter.astro";
 import Modal from "../../components/Modal.astro";
 import { getCachedData } from "../../scripts/databaseCache";
-import {ADMIN_SITE_NAME, SITE_NAME} from "../../config/siteSettings";
+import {ADMIN_SITE_NAME, mediaURL, SITE_NAME} from "../../config/siteSettings";
 import RecentPuppyCard from "../../components/admin/RecentPuppyCard.astro";
 import {formatGender} from "../../config/puppyConstants";
 
@@ -43,7 +43,7 @@ const latestPuppies = [...allPuppies]
                             puppyName={pup.name}
                             puppyAddDate={pup.dateAdded}
                             puppyID={pup.id}
-                            puppyImage={`/images/puppies/${pup.image}`}
+                            puppyImage={`${mediaURL}/images/puppies/${pup.image}`}
                             puppyBreed={pup.breed}
                             puppyGender={pup.gender}
                             type="puppy"

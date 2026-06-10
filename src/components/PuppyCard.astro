@@ -1,7 +1,7 @@
 ---
 // src/components/PuppyCard.astro
 
-import {Icon} from "astro-icon/components";
+import Icon from "../components/Icon.astro"
 
 interface Props {
     puppyName: string;
@@ -17,6 +17,7 @@ const { puppyName, puppyGender, puppyImage, puppyStatus, puppyBreed, puppyColour
 const statusKey = puppyStatus.toLowerCase();
 
 import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyConstants";
+import {mediaURL} from "../config/siteSettings";
 ---
 
 <div class="puppy-card">
@@ -26,7 +27,7 @@ import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyCo
 
     <div class="puppy-image">
         <img
-                src={`/images/puppies/${puppyImage}`}
+                src={`${mediaURL}/images/puppies/${puppyImage}`}
                 alt={`${getFormattedBreed(puppyBreed)} Puppy`}
         />
     </div>

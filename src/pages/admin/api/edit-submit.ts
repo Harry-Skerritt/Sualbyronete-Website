@@ -3,8 +3,7 @@ import type { APIRoute } from 'astro';
 import { getDB } from '../../../db';
 import { puppies, adults } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
-import fs from 'fs/promises';
-import path from 'path';
+import { env } from 'cloudflare:workers';
 import { invalidateCachedData } from "../../../scripts/databaseCache.ts";
 
 export const prerender = false;
@@ -21,6 +20,15 @@ export const POST: APIRoute = async ({ request, params }) => {
         const formData = await request.formData();
         const db = await getDB();
 
+        // Get Bucket
+        // @ts-ignore
+        const astroRuntime = globalThis[Symbol.for('astro.cloudflare.runtime')] || globalThis.__ASTRO_CLOUDFLARE_RUNTIME__;
+        const bucket = env?.SUALBYRONETE_MEDIA || astroRuntime?.env?.SUALBYRONETE_MEDIA;
+
+        if (!bucket) {
+            return new Response(JSON.stringify({ success: false, message: "R2 Storage connection unlinked." }), { status: 500 });
+        }
+
         // --- Core ID Extraction ---
         const oldId = formData.get("id")?.toString()?.trim();
         if (!oldId) {
@@ -36,12 +44,11 @@ export const POST: APIRoute = async ({ request, params }) => {
         const regID = formData.get("regID")?.toString() || "#0000";
         const bio = formData.get("bio")?.toString() || "No bio specified";
 
-        let targetDirectory = "";
+        let bucketPrefix = "";
         let uniqueFileName = "";
         let imageFile: File | null = null;
-
         let oldImageName: string | undefined = undefined;
-        let finalGeneratedId = oldId; // Defaults to old ID unless modified
+        let finalGeneratedId = "";
 
         // BRANCH A: PUPPY LOOP
         if (type === "puppy") {
@@ -60,10 +67,6 @@ export const POST: APIRoute = async ({ request, params }) => {
                 oldImageName = preUpdateRecords[0].image;
             }
 
-            const numericSuffix = oldId.replace(/^[a-zA-Z]+/, "");
-            const prefix = breed.toLowerCase() === 'yorkie' ? 'YT' : 'BT';
-            finalGeneratedId = `${prefix}${numericSuffix}`;
-
             await db.update(puppies)
                 .set({
                     name,
@@ -80,14 +83,14 @@ export const POST: APIRoute = async ({ request, params }) => {
                 })
                 .where(eq(puppies.id, oldId));
 
+            const [postUpdateRecord] = await db.select({ id: puppies.id }).from(puppies).where(eq(puppies.name, name));
+            finalGeneratedId = postUpdateRecord?.id || oldId;
 
-            targetDirectory = path.join(process.cwd(), 'public', 'images', 'puppies');
+            bucketPrefix = "images/puppies";
+            const rawFileName = imageFile?.name || oldImageName || '.jpg';
+            const fileExtension = rawFileName.includes('.') ? rawFileName.substring(rawFileName.lastIndexOf('.')) : '.jpg';
+            uniqueFileName = `${finalGeneratedId}${fileExtension.toLowerCase()}`;
 
-            const fileExtension = (imageFile && imageFile.size > 0)
-                ? path.extname(imageFile.name)
-                : (oldImageName ? path.extname(oldImageName) : '.jpg');
-
-            uniqueFileName = `${finalGeneratedId}${fileExtension}`;
             await db.update(puppies).set({ image: uniqueFileName }).where(eq(puppies.id, finalGeneratedId));
         }
 
@@ -103,13 +106,12 @@ export const POST: APIRoute = async ({ request, params }) => {
             const isForSale = forSaleStr === "true" || forSaleStr === "1";
 
             const preUpdateRecords = await db.select().from(adults).where(eq(adults.id, oldId));
-            if (preUpdateRecords.length > 0) {
-                oldImageName = preUpdateRecords[0].image;
+            if (preUpdateRecords.length === 0) {
+                return new Response(JSON.stringify({ success: false, message: "Adult profile not found." }), { status: 404 });
             }
 
-            const numericSuffix = oldId.replace(/^[a-zA-Z]+/, "");
-            const prefix = breed.toLowerCase() === 'yorkie' ? 'YT' : 'BT';
-            finalGeneratedId = `${prefix}${numericSuffix}`;
+            const targetSeqId = preUpdateRecords[0].seqId;
+            oldImageName = preUpdateRecords[0].image;
 
             await db.update(adults)
                 .set({
@@ -125,41 +127,55 @@ export const POST: APIRoute = async ({ request, params }) => {
                 .where(eq(adults.id, oldId));
 
 
-            targetDirectory = path.join(process.cwd(), 'public', 'images', 'adults');
+            const [postUpdateRecord] = await db.select({ id: adults.id }).from(adults).where(eq(adults.seqId, targetSeqId));
+            finalGeneratedId = postUpdateRecord.id;
 
-            const fileExtension = (imageFile && imageFile.size > 0)
-                ? path.extname(imageFile.name)
-                : (oldImageName ? path.extname(oldImageName) : '.jpg');
+            bucketPrefix = "images/adults";
+            const rawFileName = imageFile?.name || oldImageName || '.jpg';
+            const fileExtension = rawFileName.includes('.') ? rawFileName.substring(rawFileName.lastIndexOf('.')) : '.jpg';
+            uniqueFileName = `${finalGeneratedId}${fileExtension.toLowerCase()}`;
 
-            uniqueFileName = `${finalGeneratedId}${fileExtension}`;
             await db.update(adults).set({ image: uniqueFileName }).where(eq(adults.id, finalGeneratedId));
         }
 
         // UNIFIED IMAGE FS IO STREAM WRITE WRAPPER
-        if (targetDirectory && uniqueFileName) {
-            await fs.mkdir(targetDirectory, { recursive: true });
+        if (bucketPrefix && uniqueFileName) {
+            const oldObjectKey = oldImageName ? `${bucketPrefix}/${oldImageName}` : "";
+            const newObjectKey = `${bucketPrefix}/${uniqueFileName}`;
 
-            const oldFilePath = oldImageName ? path.join(targetDirectory, oldImageName) : "";
-            const newFilePath = path.join(targetDirectory, uniqueFileName);
-
+            // Case 1: Fresh image file uploaded via the edit form
             if (imageFile && imageFile.size > 0) {
-                if (oldFilePath && oldFilePath !== newFilePath) {
+                // Remove old image
+                if (oldObjectKey && oldObjectKey !== newObjectKey && oldImageName !== "default.jpg") {
                     try {
-                        await fs.access(oldFilePath);
-                        await fs.unlink(oldFilePath);
+                        await bucket.delete(oldObjectKey);
                     } catch {}
                 }
-                const fileArrayBuffer = await imageFile.arrayBuffer();
-                await fs.writeFile(newFilePath, Buffer.from(fileArrayBuffer));
-                console.log(`[Storage IO] Wrote uploaded photo file down: ${uniqueFileName}`);
+
+                // Convert file data to absolute local binary array
+                const arrayBuffer = await imageFile.arrayBuffer();
+                const binaryBuffer = new Uint8Array(arrayBuffer);
+
+                await bucket.put(newObjectKey, binaryBuffer, {
+                    httpMetadata: { contentType: imageFile.type || 'image/jpeg' }
+                });
+                console.log(`[R2 Storage] Overwrote image file target: ${newObjectKey}`);
             }
-            else if (oldFilePath && oldFilePath !== newFilePath) {
+            else if (oldObjectKey && oldObjectKey !== newObjectKey && oldImageName !== "default.jpg") {
                 try {
-                    await fs.access(oldFilePath);
-                    await fs.copyFile(oldFilePath, newFilePath);
-                    await fs.unlink(oldFilePath);
+                    const existingObject = await bucket.get(oldObjectKey);
+                    if (existingObject) {
+                        const objectDataBuffer = await existingObject.arrayBuffer();
+
+                        await bucket.put(newObjectKey, new Uint8Array(objectDataBuffer), {
+                            httpMetadata: { contentType: 'image/jpeg' }
+                        });
+
+                        await bucket.delete(oldObjectKey);
+                        console.log(`[R2 Storage] Synced profile key shift from ${oldObjectKey} to ${newObjectKey}`);
+                    }
                 } catch (err) {
-                    console.error("[Storage Error] Physical identity file sync lifecycle failed:", err);
+                    console.error("[R2 Storage Error] Image identity synchronization failed:", err);
                 }
             }
         }

@@ -3,9 +3,8 @@ import type { APIRoute } from 'astro';
 import { getDB } from '../../../db';
 import { puppies, adults } from '../../../db/schema';
 import { eq, desc } from 'drizzle-orm';
-import fs from 'fs/promises';
-import path from 'path';
 import { invalidateCachedData } from "../../../scripts/databaseCache.ts";
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
@@ -21,6 +20,15 @@ export const POST: APIRoute = async ({ request, params }) => {
         const formData = await request.formData();
         const db = await getDB();
 
+        // Locate Bucket
+        // @ts-ignore
+        const astroRuntime = globalThis[Symbol.for('astro.cloudflare.runtime')] || globalThis.__ASTRO_CLOUDFLARE_RUNTIME__;
+        const bucket = env?.SUALBYRONETE_MEDIA || astroRuntime?.env?.SUALBYRONETE_MEDIA;
+
+        if (!bucket) {
+            throw new Error("Cloudflare R2 Bucket binding 'SUALBYRONETE_MEDIA' could not be resolved.");
+        }
+
         // --- Common Global Form Extractions ---
         const name = formData.get("name")?.toString();
         const breed = formData.get("breed")?.toString();
@@ -32,8 +40,7 @@ export const POST: APIRoute = async ({ request, params }) => {
 
         let calculatedSystemId: string;
         let imageFile: File | null = null;
-        let targetDirectory = "";
-        let uniqueFileName = "";
+        let r2ObjectKey = "";
 
         // BRANCH A: PUPPY LOOP
         if (type === "puppy") {
@@ -61,13 +68,11 @@ export const POST: APIRoute = async ({ request, params }) => {
 
             calculatedSystemId = savedPuppy.id;
 
-            targetDirectory = path.join(process.cwd(), 'public', 'images', 'puppies');
+            const fileExtension = imageFile.name.substring(imageFile.name.lastIndexOf('.')) || '.jpg';
+            r2ObjectKey = `images/puppies/${calculatedSystemId}${fileExtension}`;
 
-            const fileExtension = path.extname(imageFile.name) || '.jpg';
-            uniqueFileName = `${calculatedSystemId}${fileExtension}`;
-
-            // Update database image string field
-            await db.update(puppies).set({ image: uniqueFileName }).where(eq(puppies.seqID, savedPuppy.seqID));
+            // Update database image string field with the clean file name or key path
+            await db.update(puppies).set({ image: `${calculatedSystemId}${fileExtension}` }).where(eq(puppies.seqID, savedPuppy.seqID));
         }
 
         // BRANCH B: ADULT LOOP
@@ -93,19 +98,21 @@ export const POST: APIRoute = async ({ request, params }) => {
             if (!savedParent) throw new Error("Synchronization mismatch on adult parent fetch return loop");
 
             calculatedSystemId = savedParent.id;
-            targetDirectory = path.join(process.cwd(), 'public', 'images', 'adults');
-
-            const fileExtension = path.extname(imageFile.name) || '.jpg';
-            uniqueFileName = `${calculatedSystemId}${fileExtension}`;
+            const fileExtension = imageFile.name.substring(imageFile.name.lastIndexOf('.')) || '.jpg';
+            r2ObjectKey = `images/adults/${calculatedSystemId}${fileExtension}`;
 
             // Update database image string field
-            await db.update(adults).set({ image: uniqueFileName }).where(eq(adults.seqId, savedParent.seqId));
-        }
+            await db.update(adults).set({ image: `${calculatedSystemId}${fileExtension}` }).where(eq(adults.seqId, savedParent.seqId));}
 
-        // UNIFIED IMAGE FS IO STREAM WRITE WRAPPER
-        await fs.mkdir(targetDirectory, { recursive: true });
-        const fileArrayBuffer = await imageFile.arrayBuffer();
-        await fs.writeFile(path.join(targetDirectory, uniqueFileName), Buffer.from(fileArrayBuffer));
+        const arrayBuffer = await imageFile.arrayBuffer();
+        const binaryBuffer = new Uint8Array(arrayBuffer);
+
+        await bucket.put(r2ObjectKey, binaryBuffer, {
+            httpMetadata: {
+                contentType: imageFile.type || 'image/jpeg'
+            }
+        });
+        console.log(`[R2 Storage] Added fresh resource key entry: ${r2ObjectKey}`);
 
         invalidateCachedData();
         return new Response(JSON.stringify({ success: true, generatedId: calculatedSystemId }), { status: 200 });

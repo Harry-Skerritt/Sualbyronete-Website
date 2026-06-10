@@ -2,7 +2,7 @@
 // src/components/Header.astro
 
 import '../styles/global.css'
-import { Icon } from 'astro-icon/components'
+import Icon from "../components/Icon.astro"
 import {SITE_NAME} from "../config/siteSettings";
 
 const { pathname } = Astro.url;
@@ -59,6 +59,7 @@ const isActive = (href: string) => {
 
                             <!-- Desktop Divider -->
                             {index < links.length - 1 && <Icon name="paw-print" class="nav-divider"/>}
+
                         </li>
                 ))}
             </ul>

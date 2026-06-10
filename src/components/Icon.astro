@@ -1,0 +1,43 @@
+---
+// src/components/Icon.astro
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<'svg'> {
+    name: string;
+    size?: number | string;
+}
+
+const { name, size, width, height, ...attributes } = Astro.props;
+
+const files = import.meta.glob('/src/icons/**/*.svg', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+});
+
+const filePath = `/src/icons/${name}.svg`;
+const rawSvgString = files[filePath] as string;
+
+if (!rawSvgString) {
+    throw new Error(`Icon "${name}" not found in path "src/icons/".`);
+}
+
+const viewBoxMatch = rawSvgString.match(/viewBox=["']([^"']+)["']/);
+const originalViewBox = viewBoxMatch ? viewBoxMatch[1] : '0 0 24 24';
+
+const svgContent = rawSvgString
+    .replace(/<svg[^>]*>/, '')
+    .replace(/<\/svg>/, '');
+
+const finalWidth = size ?? width ?? "24";
+const finalHeight = size ?? height ?? "24";
+---
+
+<svg
+    viewBox={originalViewBox}
+    width={finalWidth}
+    height={finalHeight}
+    fill="currentColor"
+    {...attributes}
+    set:html={svgContent}
+/>

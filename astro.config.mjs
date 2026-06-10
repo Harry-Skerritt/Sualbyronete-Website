@@ -1,10 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import icon from 'astro-icon';
 import path from 'path';
-
 import cloudflare from '@astrojs/cloudflare';
-import node from '@astrojs/node';
 
 const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('dev');
 
@@ -12,10 +9,9 @@ const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('d
 export default defineConfig({
     trailingSlash: 'never',
     output: 'server',
-    adapter: isDev ? node({ mode: 'standalone' }) : cloudflare(),
-    integrations: [
-        icon()
-    ],
+    adapter: cloudflare({
+        imageService: 'passthrough'
+    }),
     base: '',
     vite: {
         css: {
@@ -25,8 +21,5 @@ export default defineConfig({
                 }
             }
         },
-        ssr: {
-            noExternal: isDev ? ['astro-icon'] : []
-        }
     },
 });

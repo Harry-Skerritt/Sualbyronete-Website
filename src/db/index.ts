@@ -1,18 +1,31 @@
 // src/db/index.ts
 import { drizzle as d1Drizzle } from 'drizzle-orm/d1';
-import { drizzle as libsqlDrizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
 import * as schema from './schema.ts';
-
+import { env } from 'cloudflare:workers';
 
 let _db: any = null;
 
 export function getDB() {
     if (_db) return _db;
 
-    const isDev = process.env.NODE_ENV === 'development' || !process.env.CF_PAGES;
+    if (typeof env !== 'undefined' && env?.DB) {
+        _db = d1Drizzle(env.DB, { schema });
+        return _db;
+    }
 
-    if (isDev) {
+    // @ts-ignore
+    const astroRuntime = globalThis[Symbol.for('astro.cloudflare.runtime')] || globalThis.__ASTRO_CLOUDFLARE_RUNTIME__;
+
+    if (astroRuntime?.env?.DB) {
+        _db = d1Drizzle(astroRuntime.env.DB, { schema });
+        return _db;
+    }
+
+    const isDevScript = process.env.NODE_ENV === 'development' || !process.env.CF_PAGES;
+    if (isDevScript) {
+        const { createClient } = require('@libsql/client');
+        const { drizzle: libsqlDrizzle } = require('drizzle-orm/libsql');
+
         const client = createClient({
             url: 'file:local.db',
         });
@@ -20,17 +33,5 @@ export function getDB() {
         return _db;
     }
 
-    try {
-        // @ts-ignore
-        const { env } = import.meta.compileTime === undefined ? require('cloudflare:workers') : {};
-
-        if (env?.DB) {
-            _db = d1Drizzle(env.DB, { schema });
-            return _db;
-        }
-    } catch (e) {
-        // Fallback catch block
-    }
-
-    throw new Error("Database environment could not be determined");
+    throw new Error("Database environment could not be determined.");
 }
