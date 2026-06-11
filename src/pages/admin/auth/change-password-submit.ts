@@ -23,20 +23,21 @@ function hashPassword(password: string): string {
 
 export const POST: APIRoute = async ({ request, cookies }) => {
     try {
-        const { identifier, currentPassword, newPassword } = (await request.json()) as {
+        const { identifier, currentPassword, newPassword, token } = (await request.json()) as {
             identifier?: string;
             currentPassword?: string;
             newPassword?: string;
+            token?: string;
         };
 
-        if (!identifier || !currentPassword || !newPassword) {
+        if (!identifier || !newPassword) {
             return new Response(JSON.stringify({ success: false, message: "All fields are required" }), { status: 400 });
         }
 
         const db = await getDB();
+        const cleanIdentifier = identifier.trim().toLowerCase();
 
         // Find user
-        const cleanIdentifier = identifier.trim().toLowerCase();
         const users = await db.select()
             .from(adminUsers)
             .where(
@@ -53,16 +54,35 @@ export const POST: APIRoute = async ({ request, cookies }) => {
             return new Response(JSON.stringify({ success: false, message: "Account not found or inactive" }), { status: 404 });
         }
 
-        // Cryptographic check of current credentials
-        const isPasswordValid = verifyPassword(currentPassword, user.passwordHash);
-        if (!isPasswordValid) {
-            return new Response(JSON.stringify({ success: false, message: "Current password is incorrect" }), { status: 401 });
+        if (token) {
+            const isTokenValid = user.resetTokenHash === token && user.resetTokenExpires && user.resetTokenExpires > Date.now();
+
+            if (!isTokenValid) {
+                return new Response(JSON.stringify({
+                    success: false, message: "Your password reset session link has expired or is invalid." }), { status: 403 });
+            }
+        } else {
+            if (!currentPassword) {
+                return new Response(JSON.stringify({ success: false, message: "Current password is required" }), { status: 400 });
+            }
+
+            // Cryptographic check of current credentials
+            const isPasswordValid = verifyPassword(currentPassword, user.passwordHash);
+            if (!isPasswordValid) {
+                return new Response(JSON.stringify({ success: false, message: "Current password is incorrect" }), { status: 401 });
+            }
         }
 
         // Encrypt new password and update record
         const newPasswordHash = hashPassword(newPassword);
+
+
         await db.update(adminUsers)
-            .set({ passwordHash: newPasswordHash })
+            .set({
+                passwordHash: newPasswordHash,
+                resetTokenHash: null,
+                resetTokenExpires: null,
+            })
             .where(eq(adminUsers.id, user.id));
 
         // Update the active session name cookie context to match the modified user profile

@@ -39,6 +39,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const isLoginEndpoint =
         url.pathname === "/admin" ||
         url.pathname === "/admin/" ||
+        url.pathname === "/admin/system/change-password" ||
+        url.pathname === "/admin/auth/forgot-password-request" ||
         url.pathname === "/admin/auth/login-submit" ||
         url.pathname === "/admin/auth/change-password-submit" ||
         url.pathname === "/admin/puppy/add-submit" ||

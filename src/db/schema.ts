@@ -70,4 +70,6 @@ export const adminUsers = sqliteTable('admin_users',{
     lastLogin: text('last_login'),
     isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
     dateCreated: text('date_created').notNull().default(sql`CURRENT_TIMESTAMP`),
+    resetTokenHash: text('reset_token_hash'),
+    resetTokenExpires: integer('reset_token_expires'),
 });

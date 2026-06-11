@@ -529,15 +529,41 @@ import Modal from "../../components/Modal.astro"
             }
         });
 
-        forgotForm?.addEventListener('submit', (e) => {
+        forgotForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const emailVal = (document.getElementById('email-entry') as HTMLInputElement).value;
+            const emailInput = document.getElementById('email-entry') as HTMLInputElement;
+            const submitBtn = forgotForm.querySelector('.send-btn') as HTMLButtonElement;
+            const originalBtnText = submitBtn ? submitBtn.textContent : "Send Link";
 
-            alert(`Reset email sent to: ${emailVal}`);
+            if (!emailInput) return;
 
-            if (targetModal) {
-                targetModal.classList.remove('is-active');
-                targetModal.setAttribute('aria-hidden', 'true');
+            try {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = "Sending...";
+                }
+
+                const response = await fetch('admin/auth/forgot-password-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: emailInput.value })
+                });
+
+                if (targetModal) {
+                    targetModal.classList.remove('is-active');
+                    targetModal.setAttribute('aria-hidden', 'true');
+                }
+
+                window.showToast("If an account matches that email address, a secure reset link has been sent!");
+                (forgotForm as HTMLFormElement).reset();
+            } catch (err: any) {
+                console.error("Forgot password request failure:", err);
+                window.showToast("An error occurred processing your request. Please try again later!", true);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = originalBtnText;
+                }
             }
         });
     }

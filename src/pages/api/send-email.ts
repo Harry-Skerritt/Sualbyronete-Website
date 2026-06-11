@@ -121,11 +121,12 @@ export const POST: APIRoute = async (context) => {
 
                             </div>
 
-                            <div style="background-color: #f8fafc; padding: 15px 25px; border-top: 1px solid #e2e8f0; text-align: center;">
-                                <small style="color: #94a3b8; font-size: 11px;">
-                                Sent automatically via backend runtime route routing on ${DOMAIN_NAME}
-                                </small>
-                            </div>
+                             <div style="background-color: #f1f5f9; padding: 24px 35px; text-align: center; border-top: 1px solid #e2e8f0;">
+                                    <p style="color: #94a3b8; font-size: 12px; line-height: 1.5; margin: 0;">
+                                        This is an automated confirmation from <strong>${DOMAIN_NAME}</strong>.<br />
+                                        Please do not reply directly to this email message.
+                                    </p>
+                             </div>
                         </div>
                     </div>
                 `}),
