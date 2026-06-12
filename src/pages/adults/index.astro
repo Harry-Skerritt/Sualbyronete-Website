@@ -12,7 +12,7 @@ const { parents } = await getCachedData();
 ---
 
 <Layout title=`Adults | ${SITE_NAME}`>
-    <main>
+    <main class="adult-container">
 
         <PawHeader text="Parent Dogs"/>
 
@@ -89,6 +89,10 @@ const { parents } = await getCachedData();
     @media (#{$small-desktop}) {
       --max-display-width: 92rem;
     }
+  }
+
+  .adult-container {
+    min-height: calc(100vh - var(--header-height));
   }
 
   .filter-parent {

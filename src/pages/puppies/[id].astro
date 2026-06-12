@@ -131,7 +131,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
                     <dd><a href={`/adults/${puppy.father}`}>{fatherName}</a></dd>
 
                     <dt>Reg #:</dt>
-                    <dd>#{puppy.regID}</dd>
+                    <dd>{puppy.regID === "#0000" ? "No registration number" : puppy.regID}</dd>
                 </dl>
 
                 <div class="vertical-separator"/>

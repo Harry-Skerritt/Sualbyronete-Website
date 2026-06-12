@@ -90,7 +90,7 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
                     <dd><a href={`/puppies/litterView?parent=${parent.id}&name=${parent.name}`}>View Puppies</a></dd>
 
                     <dt>Reg #:</dt>
-                    <dd>#{parent.regID}</dd>
+                    <dd>{parent.regID === "#0000" ? "No registration number" : parent.regID}</dd>
                 </dl>
             </div>
 

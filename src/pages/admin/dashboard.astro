@@ -9,6 +9,11 @@ import {ADMIN_SITE_NAME, mediaURL, SITE_NAME} from "../../config/siteSettings";
 import RecentPuppyCard from "../../components/admin/RecentPuppyCard.astro";
 import {formatGender} from "../../config/puppyConstants";
 
+// FORCES the page to rebuild dynamically and tells the browser not to cache it
+Astro.response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+Astro.response.headers.set('Pragma', 'no-cache');
+Astro.response.headers.set('Expires', '0');
+
 // Name from Cookie
 const nameCookie = Astro.cookies.get('admin_user_name');
 const currentAdminName = nameCookie ? nameCookie.value : "Admin User";
@@ -24,6 +29,8 @@ const totalParents = parents.length;
 const latestPuppies = [...allPuppies]
     .sort((a,b) => b.seqID - a.seqID)
     .slice(0, 3);
+
+
 ---
 
 <AdminLayout title=`${ADMIN_SITE_NAME} | ${SITE_NAME}`>
@@ -113,6 +120,7 @@ const latestPuppies = [...allPuppies]
     flex-direction: column;
     gap: 3rem;
     box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height));
   }
 
   /* Header */

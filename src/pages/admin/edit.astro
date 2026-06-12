@@ -9,6 +9,11 @@ import {count, desc} from "drizzle-orm";
 import {ADMIN_SITE_NAME} from "../../config/siteSettings";
 import RecentPuppyCard from "../../components/admin/RecentPuppyCard.astro";
 
+// FORCES the page to rebuild dynamically and tells the browser not to cache it
+Astro.response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+Astro.response.headers.set('Pragma', 'no-cache');
+Astro.response.headers.set('Expires', '0');
+
 export const prerender = false;
 // Get URL Param
 const { searchParams } = Astro.url;

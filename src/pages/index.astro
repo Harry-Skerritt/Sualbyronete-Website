@@ -200,11 +200,11 @@ const petGallery = await getCarouselGallery();
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 4rem 2rem 2rem 2rem;
+    padding: 2rem 2rem 2rem 2rem;
     gap: 2rem;
 
     @media (#{$small-desktop}) {
-      padding: 2rem;
+      padding: 1rem 2rem;
       gap: 2rem;
     }
 
@@ -225,7 +225,7 @@ const petGallery = await getCarouselGallery();
     margin: 0;
 
     @media (#{$small-desktop}) {
-      height: 75vh;
+      height: 77vh;
     }
 
     @media (#{$mobile}) {
@@ -270,17 +270,17 @@ const petGallery = await getCarouselGallery();
   .about-body {
     color: var(--colour-white);
     font-family: var(--font-secondary);
-    font-size: 1.9rem;
+    font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.9rem);
     line-height: 1.6;
     margin: 0;
 
     @media (#{$small-desktop}) {
       font-size: 1.4rem;
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     @media (#{$mobile}) {
-      font-size: 1.4rem;
+      //font-size: 1.4rem;
       line-height: 1.5;
       padding: 0 1rem 0 1rem;
     }
