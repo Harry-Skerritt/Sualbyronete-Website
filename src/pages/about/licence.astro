@@ -1,0 +1,185 @@
+---
+// src/pages/about/licence.astro
+
+import { baseURL, LICENCE_FILE_NAME, SITE_NAME, prodURL } from "../../config/siteSettings";
+import Layout from "../../layouts/Layout.astro";
+
+const absolutePdfPath = `${prodURL}/certs/${LICENCE_FILE_NAME}`;
+const googleViewerSrc = `https://docs.google.com/gview?url=${encodeURIComponent(absolutePdfPath)}&embedded=true`;
+---
+
+<Layout title=`Breeder Licence | ${SITE_NAME}`>
+    <main class="main-container">
+        <header class="page-header">
+            <h1>Council Breeding Licence</h1>
+        </header>
+
+        <div class="document-wrapper desktop-only">
+            <div class="secure-image-container">
+                <div class="click-shield"></div> <img
+                    src={`${baseURL}/certs/${LICENCE_FILE_NAME}`}
+                    alt="Breeding Licence"
+                    class="licence-image"
+                    draggable="false"
+            />
+            </div>
+        </div>
+
+        <div class="document-wrapper mobile-only">
+            <div class="secure-image-container">
+                <div class="click-shield"></div> <img
+                    src={`${baseURL}/certs/${LICENCE_FILE_NAME}`}
+                    alt="Breeding Licence"
+                    class="licence-image"
+                    loading="lazy"
+                    draggable="false"
+            />
+            </div>
+        </div>
+
+    </main>
+</Layout>
+
+<style lang="scss">
+    .main-container {
+      min-height: calc(100vh - var(--header-height));
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: transparent;
+      box-sizing: border-box;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+
+      h1 {
+        font-family: var(--font-primary);
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--colour-dark);
+        margin: 0 0 0.5rem 0;
+      }
+
+      p {
+        font-family: var(--font-secondary);
+        font-size: 1.1rem;
+        color: var(--colour-dark);
+        margin: 0;
+      }
+    }
+
+    .mobile-only {
+      display: none !important;
+    }
+
+    .desktop-only {
+      display: block !important;
+    }
+
+    .secure-image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .click-shield {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0);
+      z-index: 5;
+      -webkit-touch-callout: none;
+    }
+
+    .document-wrapper {
+      width: 100%;
+      max-width: 50rem;
+      height: 110vh;
+      background-color: transparent;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      display: flex;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .licence-image {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+
+    /* Small Desktop */
+    @media (#{$small-desktop}) {
+      .main-container {
+        padding: 3rem 2rem;
+      }
+
+      .page-header {
+        h1 {
+          font-size: 2.5rem;
+        }
+      }
+
+      .document-wrapper {
+        max-width: 55rem;
+        height: 70vh;
+      }
+    }
+
+    /* Mobile */
+    @media (#{$mobile}) {
+      .desktop-only {
+        display: none !important;
+      }
+
+      .mobile-only {
+        display: block !important;
+      }
+
+      .main-container {
+        padding: 2rem 1rem;
+      }
+
+      .page-header {
+        margin-bottom: 1.5rem;
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+
+      .document-wrapper.mobile-only {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        border-radius: 0.8rem;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+    }
+
+</style>

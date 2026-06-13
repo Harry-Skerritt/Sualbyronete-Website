@@ -10,7 +10,7 @@ import {
     HOME_PAGE_ABOUT,
     SITE_NAME,
     baseURL,
-    SITE_DESCRIPTION
+    SITE_DESCRIPTION, PUPPY_NAV_IMAGE, ADULT_NAV_IMAGE, HOMEPAGE_SECOND_PHOTO
 } from "../config/siteSettings";
 
 const petGallery = await getCarouselGallery();
@@ -46,7 +46,7 @@ const petGallery = await getCarouselGallery();
             </div>
 
             <div class="secondary-image">
-                <img src={`${baseURL}/images/grace.png`} alt="Grace playing in a field">
+                <img src={`${baseURL}/${HOMEPAGE_SECOND_PHOTO.src}`} alt={HOMEPAGE_SECOND_PHOTO.alt}>
             </div>
         </section>
 
@@ -54,14 +54,14 @@ const petGallery = await getCarouselGallery();
         <!-- Section 3: Nav Section -->
         <section class="snap-section nav-section">
             <div class="nav-images-container">
-                <a href={`${baseURL}/puppies`} class="nav-image-wrapper">
-                    <img src={`${baseURL}/images/nav/puppyDog.jpg`} alt="A Yorkshire Terrier puppy"/>
+                <a href={`${baseURL}/puppies`} class="nav-image-wrapper">∂
+                    <img src={`${baseURL}/${PUPPY_NAV_IMAGE.src}`} alt={PUPPY_NAV_IMAGE.alt}/>
                     <h1 class="nav-image-header">Puppies</h1>
                     <p class="nav-image-subtext">See More</p>
                 </a>
 
                 <a href={`${baseURL}/adults`} class="nav-image-wrapper">
-                    <img src={`${baseURL}/images/nav/adultDog.png`} alt="An adult Yorkshire Terrier"/>
+                    <img src={`${baseURL}/${ADULT_NAV_IMAGE.src}`} alt={ADULT_NAV_IMAGE.alt}/>
                     <h1 class="nav-image-header">Adults</h1>
                     <p class="nav-image-subtext">See More</p>
                 </a>

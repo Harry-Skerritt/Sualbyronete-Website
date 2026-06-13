@@ -73,6 +73,13 @@ function renderPuppies() {
         countElement.textContent = `Puppies Available: ${visibleCount}`;
     }
 
+    // Hide past pup button
+    const pastPupEl = document.querySelector('.past-pup-button') as HTMLButtonElement;
+    if (pastPupEl) {
+        //pastPupEl.style.display = visibleCount === 0 ? 'none' : 'block';
+        pastPupEl.style.display = 'none';
+    }
+
     // Handle fallback display text visibility loops
     if (noResultsMsg) {
         noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';

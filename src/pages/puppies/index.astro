@@ -10,7 +10,6 @@ import { getCachedData } from "../../scripts/databaseCache";
 import { SITE_NAME, PUPPY_COLOURS } from "../../config/siteSettings";
 
 const { allPuppies } = await getCachedData();
-
 ---
 
 <Layout title=`Puppies | ${SITE_NAME}`>
@@ -123,6 +122,8 @@ const { allPuppies } = await getCachedData();
                 No puppies match your selected filter criteria.
             </div>
         </div>
+
+        <button type="button" class="past-pup-button" disabled>View Past Pups</button>
 
     </main>
 </Layout>
@@ -335,6 +336,44 @@ const { allPuppies } = await getCachedData();
     font-size: 1.2rem;
   }
 
+  .past-pup-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 3rem auto;
+
+    width: 18rem;
+    height: 4.2rem;
+    box-sizing: border-box;
+
+    background-color: var(--colour-dark);
+    color: var(--colour-white);
+    border: 2px solid transparent;
+    border-radius: 0.8rem;
+
+    font-family: var(--font-secondary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: var(--colour-primary);
+      border: 2px solid var(--colour-dark);
+      color: var(--colour-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+  }
     /* Mobile Styling */
     @media (#{$mobile}) {
         .filter-parent,
@@ -435,6 +474,12 @@ const { allPuppies } = await getCachedData();
             gap: 1.5rem;
         }
 
+      .past-pup-button {
+        width: calc(100% - 2rem);
+        margin: 2.5rem 1rem;
+        height: 4.5rem;
+        font-size: 1.3rem;
+      }
     }
 
 </style>

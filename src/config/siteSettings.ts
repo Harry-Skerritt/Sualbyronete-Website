@@ -3,6 +3,7 @@
 // --- Essentials ---
 export const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 export const mediaURL = "";
+export const prodURL = "https://sualbyronete.co.uk";
 
 // --- Head Names ---
 export const SITE_NAME = "Sualbyronete";
@@ -13,9 +14,37 @@ export const SITE_DESCRIPTION = "Breeder of Yorkshire and Biewer Terriers";
 export const BREEDER_NAME = "Susan Francis";
 export const BREEDER_NAME_SHORT = "Sue";
 export const BREEDER_IMAGE = {
-    "src": "images/susan.jpg",
+    "src": "images/susan.webp",
     "alt": "Susan Francis"
 };
+
+export const BREEDER_LICENCE_NO = "18/03111/AWDB";
+export const LICENCE_FILE_NAME = "licence.webp"; // In public/certs
+export const OTHER_CERTIFICATIONS = [
+    { title: "Kennel Name Grant",                   subtext: "",    uri: "kennel-name.webp" },
+    { title: "Microchip Certificate",               subtext: "",    uri: "microchip.webp" },
+    { title: "Canine Care, Behaviour and Welfare",  subtext: "",    uri: "canine-care.webp" },
+    { title: "Canine Nutrition",                    subtext: "",    uri: "canine-nutrition.webp" },
+    { title: "Breeding CPD",                        subtext: "",    uri: "cpd.webp" },
+    { title: "Ultrasonic Teeth Cleaning",           subtext: "",    uri: "teeth-cleaning.webp" },
+];
+
+// --- Nav Images ---
+export const PUPPY_NAV_IMAGE = {
+    "src": "images/nav/puppyDog.webp",
+    "alt": "Yorkshire Terrier and Biewer Terrier Puppies Sitting Together"
+};
+
+export const ADULT_NAV_IMAGE = {
+    "src": "images/nav/adultDog.webp",
+    "alt": "Yorkshire Terrier Walking in a Field"
+}
+
+// --- Homepage Second Image ---
+export const HOMEPAGE_SECOND_PHOTO = {
+    "src": "images/grace.webp",
+    "alt": "Grace Walking in a Field"
+}
 
 // --- Contact Details ---
 export const CONTACT_NUMBER = "07701043475";

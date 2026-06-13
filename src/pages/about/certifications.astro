@@ -1,0 +1,245 @@
+---
+// src/pages/about/certifications.astro
+
+import {baseURL, prodURL, SITE_NAME} from "../../config/siteSettings";
+import Layout from "../../layouts/Layout.astro";
+import { OTHER_CERTIFICATIONS } from "../../config/siteSettings";
+---
+
+<Layout title=`Other Certifications | ${SITE_NAME}`>
+    <main class="main-container">
+        <header class="page-header">
+            <h1>My Other Certifications</h1>
+            <p>My official certification documents</p>
+        </header>
+
+        <div class="list-wrapper">
+            {OTHER_CERTIFICATIONS.map((cert: any) => (
+                    <div class="cert-wrapper">
+                        <div class="cert-info">
+                            <h1 class="cert-header">{cert.title}</h1>
+                            <p class="cert-subtext">{cert.subtext}</p>
+                        </div>
+
+                        <div class="document-frame desktop-only">
+                            <div class="secure-image-container">
+                                <div class="click-shield"></div>
+                                <img
+                                        src={`${baseURL}/certs/${cert.uri}`}
+                                        alt={cert.title}
+                                        class="cert-image"
+                                        draggable="false"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="document-frame mobile-only">
+                            <div class="secure-image-container">
+                                <div class="click-shield"></div>
+                                <img
+                                        src={`${baseURL}/certs/${cert.uri}`}
+                                        alt={cert.title}
+                                        class="cert-image"
+                                        loading="lazy"
+                                        draggable="false"
+                                />
+                            </div>
+                        </div>
+                    </div>
+            ))}
+        </div>
+
+    </main>
+</Layout>
+
+<style lang="scss">
+  .main-container {
+    min-height: calc(100vh - var(--header-height));
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent;
+    box-sizing: border-box;
+    max-width: 110rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    width: 100%;
+
+    h1 {
+      font-family: var(--font-primary);
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--colour-dark);
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      font-family: var(--font-secondary);
+      font-size: 1.1rem;
+      color: var(--colour-dark);
+      margin: 0;
+    }
+  }
+
+  .mobile-only {
+    display: none !important;
+  }
+  .desktop-only {
+    display: block !important;
+  }
+
+  .list-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem;
+    max-width: 100rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .cert-wrapper {
+    background-color: var(--colour-light);
+    border-radius: 1.2rem;
+    padding: 1.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-sizing: border-box;
+  }
+
+  .cert-info {
+    width: 100%;
+
+    .cert-header {
+      font-family: var(--font-primary);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--colour-dark);
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .cert-subtext {
+      font-family: var(--font-secondary);
+      font-size: 0.95rem;
+      color: var(--colour-dark);
+      filter: brightness(1.1);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .secure-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .click-shield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0);
+    z-index: 5;
+    -webkit-touch-callout: none;
+  }
+
+  .document-frame {
+    width: 100%;
+    aspect-ratio: auto;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    background-color: #f8fafc;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+
+  .cert-image {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Small Desktop */
+  @media (#{$small-desktop}) {
+    .list-wrapper {
+      gap: 2rem;
+    }
+
+    .main-container {
+      padding: 3rem 1.5rem;
+    }
+  }
+
+  /* Mobile */
+  @media (#{$mobile}) {
+    .main-container {
+      padding: 2rem 1rem;
+    }
+
+    .desktop-only {
+      display: none !important;
+    }
+    .mobile-only {
+      display: block !important;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+      h1 { font-size: 2.2rem; }
+      p { font-size: 1rem; }
+    }
+
+    .list-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .cert-wrapper {
+      padding: 1.25rem;
+      gap: 1rem;
+      align-items: flex-start;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .document-frame.mobile-only {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: auto;
+      margin: 0 auto;
+      align-self: center;
+      border-radius: 0.6rem;
+    }
+
+    .document-frame.mobile-only .cert-image {
+      height: auto;
+      object-fit: contain;
+    }
+  }
+</style>
