@@ -34,3 +34,6 @@ migrations/
 .env.local
 .dev.vars
 
+# Dev Data
+live-data.sql
+
