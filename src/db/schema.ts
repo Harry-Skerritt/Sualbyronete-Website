@@ -1,6 +1,63 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
+interface GeneticCondition {
+    id: string;
+    dogEffects: string;
+}
+
+interface BreedGenetic {
+    breed: string;
+    value: string;
+}
+
+interface CoIHistory {
+    generations: string;
+    complete: string;
+}
+
+export const genetics = sqliteTable('genetics', {
+    seqId: integer('seq_id').primaryKey({ autoIncrement: true }),
+    adultId: text('adult_id')
+        .notNull()
+        .unique()
+        .references(() => adults.id, { onDelete: 'cascade' }),
+
+    // Summary
+    atRiskCount: integer('at_risk_count').notNull(),
+    carrierCount: integer('carrier_count').notNull(),
+    clearCount: integer('clear_count').notNull(),
+
+    // Details
+    atRiskDetails: text('at_risk_details', { mode: 'json' })
+        .$type<GeneticCondition[]>()
+        .notNull()
+        .default(sql`'[]'`),
+    carrierDetails: text('carrier_details', { mode: 'json' })
+        .$type<GeneticCondition[]>()
+        .notNull()
+        .default(sql`'[]'`),
+    clearDetails: text('clear_details', { mode: 'json' })
+        .$type<GeneticCondition[]>()
+        .notNull()
+        .default(sql`'[]'`),
+
+    // Breed Summary
+    breedGeneticsSummary: text('breed_genetics_summary', { mode: 'json' })
+        .$type<[BreedGenetic, BreedGenetic, BreedGenetic]>()
+        .notNull()
+        .default(sql`'[{"breed":"","value":""},{"breed":"","value":""},{"breed":"","value":""}]'`),
+
+    // CoI
+    dogCoI: text('dog_coi').notNull(),
+    breedAverage: text('breed_avg_average'),
+    coiHistory: text('coi_history', { mode: 'json' })
+        .$type<CoIHistory>()
+        .notNull()
+        .default(sql`'{"generations": "0", "complete": "0"}'`),
+
+});
+
 export const systemSettings = sqliteTable('system_settings', {
    key: text('key').primaryKey(),
    value: text('value').notNull(),
@@ -28,6 +85,11 @@ export const adults = sqliteTable('adults', {
     bio: text('bio').notNull().default("No bio specified"),
     puppies: text('puppies', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
     dateAdded: text('date_added').notNull().default(sql`CURRENT_TIMESTAMP`),
+
+    // Death
+    isDead: integer('is_dead', { mode: 'boolean'}).notNull().default(false),
+    deathDate: text('death_date'),
+    hasGenetics: integer('has_genetics', { mode: 'boolean' }).notNull().default(false),
 });
 
 export const puppies = sqliteTable('puppies', {

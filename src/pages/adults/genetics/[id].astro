@@ -1,0 +1,25 @@
+---
+// src/pages/adults/genetics/[id].astro
+
+import Layout from "../../../layouts/Layout.astro";
+import {SITE_NAME} from "../../../config/siteSettings";
+import { getCachedData } from "../../../scripts/databaseCache";
+
+const { id } = Astro.params;
+if (!id) {
+    return Astro.redirect('/404');
+}
+
+const { parents, geneticsData } = await getCachedData();
+
+const parent = parents.find((a: any) => a.id === id);
+const genes = geneticsData.find((a: any) => a.id === id);
+
+if (!parent /*|| !genetics*/) {
+    return Astro.redirect('/404');
+}
+---
+
+<Layout title=`${parent.name}'s Genetics | ${SITE_NAME}`>
+
+</Layout>

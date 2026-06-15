@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const parentRefInput = document.getElementById("parent-ref") as unknown as HTMLInputElement;
     const parentIdInput = document.getElementById("parent-id") as unknown as HTMLInputElement;
 
+    const parentDeadSelect = document.getElementById("parent-dead") as unknown as HTMLSelectElement;
+    const parentDodInput = document.getElementById("parent-dod") as unknown as HTMLInputElement;
+    const dodWrapper = document.getElementById("dod-wrapper") as unknown as HTMLElement;
+
     if (
         !contextEl || !fileInput || !imgPreview || !breedSelect || !colourSelect || !formEl ||
         !parentNameInput || !parentBioInput || !parentDobInput || !parentForSaleSelect ||
@@ -25,6 +29,34 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Failed to initialize parent form controller: Missing elements.");
         return;
     }
+
+    if (!parentDeadSelect || !parentDodInput || !dodWrapper) {
+        console.error("Missing elements for deceased layout tracking configuration.");
+        return;
+    }
+
+    // Death
+    const toggleDodState = () => {
+        const isDeceased = parentDeadSelect.value === "true";
+        if (isDeceased) {
+            dodWrapper.style.display = "flex";
+            parentDodInput.required = true;
+            parentDodInput.disabled = false;
+
+            if (!parentDodInput.value) {
+                const today = new Date().toISOString().split("T")[0];
+                parentDodInput.value = today;
+            }
+        } else {
+            dodWrapper.style.display = "none";
+            parentDodInput.required = false;
+            parentDodInput.disabled = true;
+            parentDodInput.value = "";
+        }
+    };
+
+    parentDeadSelect.addEventListener("change", toggleDodState);
+    toggleDodState();
 
     const cameraIcon = dropzone?.querySelector(".camera-icon") as HTMLElement | null;
     const uploadBtn = dropzone?.querySelector(".upload-button") as HTMLElement | null;
@@ -168,6 +200,9 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("forSale", parentForSaleSelect.value === "true" ? "true" : "false");
         formData.append("colour", colourSelect.value);
         formData.append("gender", genderSelect.value);
+
+        formData.append("isDead", parentDeadSelect.value === "true" ? "true" : "false");
+        formData.append("deathDate", parentDodInput.value || "");
 
         const regIdVal = parentRefInput.value;
         formData.append("regID", regIdVal.trim() ? regIdVal : "#0000");

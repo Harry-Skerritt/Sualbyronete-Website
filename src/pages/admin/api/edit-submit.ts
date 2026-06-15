@@ -97,13 +97,19 @@ export const POST: APIRoute = async ({ request, params }) => {
         // BRANCH B: ADULT LOOP
         else {
             const forSaleStr = formData.get("forSale")?.toString();
+
+            const isDeadStr = formData.get("isDead")?.toString();
+            const deathDateRaw = formData.get("deathDate")?.toString();
+
             imageFile = formData.get("parentImage") as File | null;
 
-            if (!name || !breed || !dob || !forSaleStr || !colour || !gender) {
+            if (!name || !breed || !dob || !forSaleStr || !colour || !gender || !isDeadStr) {
                 return new Response(JSON.stringify({ success: false, message: "Validation Error: Missing required adult fields" }), { status: 400 });
             }
 
             const isForSale = forSaleStr === "true" || forSaleStr === "1";
+            const isDead = isDeadStr === "true";
+            const deathDate = isDead && deathDateRaw?.trim() ? deathDateRaw.trim() : null;
 
             const preUpdateRecords = await db.select().from(adults).where(eq(adults.id, oldId));
             if (preUpdateRecords.length === 0) {
@@ -122,7 +128,9 @@ export const POST: APIRoute = async ({ request, params }) => {
                     dob,
                     regID,
                     forSale: isForSale,
-                    bio
+                    bio,
+                    isDead,
+                    deathDate,
                 })
                 .where(eq(adults.id, oldId));
 

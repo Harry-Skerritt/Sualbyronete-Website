@@ -1,4 +1,4 @@
-// seed-admin.ts
+// dev-tools/seed-admin.ts
 import { createClient } from '@libsql/client';
 import crypto from 'crypto';
 import readline from 'readline/promises';

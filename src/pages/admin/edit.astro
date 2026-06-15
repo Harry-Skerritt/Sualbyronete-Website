@@ -8,6 +8,7 @@ import { getColourLabel, formatGender } from "../../config/puppyConstants";
 import {count, desc} from "drizzle-orm";
 import {ADMIN_SITE_NAME} from "../../config/siteSettings";
 import RecentPuppyCard from "../../components/admin/RecentPuppyCard.astro";
+import {genetics} from "../../db/schema";
 
 // FORCES the page to rebuild dynamically and tells the browser not to cache it
 Astro.response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -48,7 +49,8 @@ if (isPuppyMode) {
             image: `/images/adults/${a.image}`,
             breed: a.breed.toLowerCase(),
             gender: formatGender(a.gender),
-            date: a.dateAdded
+            date: a.dateAdded,
+            genetics: a.hasGenetics
         }));
 }
 
@@ -70,6 +72,7 @@ const totalCount = itemsList.length;
                     puppyImage={dog.image}
                     puppyID={dog.id}
                     puppyAddDate={dog.date}
+                    hasGenetics={dog.genetics}
                     type={dogTypeAttr}
                 />
             ))}

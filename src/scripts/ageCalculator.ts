@@ -1,11 +1,11 @@
 // src/scripts/ageCalculator.ts
 
-export function calculateAge(dobString: string): string {
+export function calculateAge(dobString: string, endDateString?: string): string {
     const dob = new Date(dobString);
-    const now = new Date();
+    const now = endDateString ? new Date(endDateString) : new Date();
 
     // Safeguard against invalid dates or future dates
-    if (isNaN(dob.getTime()) || dob > now) {
+    if (isNaN(dob.getTime()) || isNaN(now.getTime()) || dob > now) {
         return "Newborn";
     }
 

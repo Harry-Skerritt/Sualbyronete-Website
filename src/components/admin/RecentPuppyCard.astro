@@ -10,14 +10,15 @@ interface Props {
     puppyImage: string;
     puppyBreed: string;
     puppyGender: string;
+    hasGenetics?: boolean | undefined;
     type?: string;
 }
 
-const { puppyName, puppyAddDate, puppyID, puppyImage, puppyBreed, puppyGender, type = "puppy" } = Astro.props;
+const { puppyName, puppyAddDate, puppyID, puppyImage, puppyBreed, puppyGender, hasGenetics = false, type = "puppy" } = Astro.props;
 const isFemale = puppyGender?.toLowerCase() === "female";
 ---
 
-<div class="recent-puppy-card" data-id={puppyID} data-type={type} data-name={puppyName}>
+<div class="recent-puppy-card" data-id={puppyID} data-type={type} data-name={puppyName} data-genes={hasGenetics}>
 
     <div class="puppy-image-wrapper">
         <img src={puppyImage} alt={`Photo of ${puppyName}`}/>
@@ -41,6 +42,11 @@ const isFemale = puppyGender?.toLowerCase() === "female";
         </div>
 
         <div class="puppy-actions-tray">
+            { type === 'adult' && (
+                    <button type="button" class="action-btn genetics-btn" title={`Add / Edit ${puppyName}'s genetic info`} aria-label="Add / Edit Genetics">
+                        <Icon name="gene" class="card-icon"/>
+                    </button>
+            )}
             <button type="button" class="action-btn edit-btn" title={`Edit ${puppyName}'s profile parameters`} aria-label="Edit Puppy">
                 <Icon name="edit" class="card-icon"/>
             </button>
@@ -260,6 +266,25 @@ const isFemale = puppyGender?.toLowerCase() === "female";
 
 <script>
     function setupCardInteractions() {
+        // Gene
+        document.body.addEventListener("click", (event) => {
+            const btn = (event.target as HTMLElement).closest(".genetics-btn");
+            if (!btn) return;
+
+            const parentCard = btn.closest(".recent-puppy-card") as HTMLElement;
+            if (!parentCard) return;
+
+            const dogId = parentCard.dataset.id;
+            const dogName = parentCard.dataset.name;
+            const hasGenetics = parentCard.dataset.genes === "true";
+
+            const mode = hasGenetics ? "edit" : "add";
+
+            if (dogId && dogName && mode) {
+                window.location.href = `/adult/genetics/add?dogId=${dogId}&name=${dogName}&mode=${mode}`;
+            }
+        });
+
         // Edit
         document.body.addEventListener("click", (event) => {
             const btn = (event.target as HTMLElement).closest(".edit-btn");

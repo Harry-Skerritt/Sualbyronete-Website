@@ -78,19 +78,28 @@ export const POST: APIRoute = async ({ request, params }) => {
         // BRANCH B: ADULT LOOP
         else {
             const forSaleStr = formData.get("forSale")?.toString();
+            const isDeadStr = formData.get("isDead")?.toString();
+            const deathDateRaw = formData.get("deathDate")?.toString();
+
             imageFile = formData.get("parentImage") as File | null;
 
-            if (!name || !breed || !dob || !forSaleStr || !colour || !gender || !imageFile) {
+            if (!name || !breed || !dob || !forSaleStr || !colour || !gender || !isDeadStr || !imageFile) {
                 return new Response(JSON.stringify({ success: false, message: "Validation Error: Missing required parent fields" }), { status: 400 });
             }
 
             const isForSale = forSaleStr === "true";
+            const isDead = isDeadStr === "true";
+            const deathDate = isDead && deathDateRaw?.trim() ? deathDateRaw.trim() : null;
 
             await db.insert(adults).values({
                 breed: breed as any,
                 gender, name, colour, dob, regID, bio,
                 forSale: isForSale,
-                image: "placeholder-pending.jpg"
+                image: "placeholder-pending.jpg",
+
+                isDead,
+                deathDate,
+                hasGenetics: false
             });
 
             const activeRows = await db.select().from(adults).orderBy(desc(adults.seqId)).limit(1);

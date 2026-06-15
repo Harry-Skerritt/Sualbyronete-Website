@@ -199,6 +199,27 @@ const formattedToday = todayDateObj.toISOString().split("T")[0];
                         </div>
                     </div>
 
+                    <div class="form-row-split">
+                        <div class="field-group">
+                            <label for="parent-dead">Is Deceased: <span class="required-accent">*</span></label>
+                            <select id="parent-dead" name="parentDead" required>
+                                <option value="true" selected={existingParent?.isDead === true}>Yes</option>
+                                <option value="false" selected={existingParent ? existingParent.isDead === false : true}>No</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group" id="dod-wrapper" style={existingParent?.isDead ? "display: flex;" : "display: none;"}>
+                            <label for="parent-dod">Date of Death: <span class="required-accent">*</span></label>
+                            <input
+                                    type="date"
+                                    id="parent-dod"
+                                    value={existingParent?.deathDate || formattedToday}
+                                    name="parent-dod"
+                                    disabled={existingParent ? !existingParent.isDead : true}
+                            />
+                        </div>
+                    </div>
+
                     <div class="action-buttons">
                         <button type="button" class="discard-btn" id="discard-trigger-btn">Discard Changes</button>
                         <button type="submit" class="submit-btn">{submitButtonLabel}</button>

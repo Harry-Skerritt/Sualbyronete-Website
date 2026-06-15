@@ -1,12 +1,13 @@
 // src/scripts/databaseCache.ts
 
 import { getDB } from "../db";
-import { puppies, adults, systemSettings } from "../db/schema.ts";
+import { puppies, adults, systemSettings, genetics } from "../db/schema.ts";
 import { PUPPY_INCLUSIONS, YORKIE_DEFAULT_BIO, BIEWER_DEFAULT_BIO } from "../config/siteSettings.ts";
 
 interface CachedData {
     allPuppies: any[];
     parents: any[];
+    geneticsData: any[];
     defaultBios: { yorkie: string; biewer: string };
     puppyPack: any[];
     lastFetched: number;
@@ -24,6 +25,7 @@ export async function getCachedData(forceRefresh = false) {
         return {
             allPuppies: databaseMemoryCache.allPuppies,
             parents: databaseMemoryCache.parents,
+            geneticsData: databaseMemoryCache.geneticsData,
             defaultBios: databaseMemoryCache.defaultBios,
             puppyPack: databaseMemoryCache.puppyPack,
             fromCache: true
@@ -35,6 +37,7 @@ export async function getCachedData(forceRefresh = false) {
     databaseMemoryCache = {
         allPuppies: freshData.allPuppies,
         parents: freshData.parents,
+        geneticsData: freshData.geneticsData,
         defaultBios: freshData.defaultBios,
         puppyPack: freshData.puppyPack,
         lastFetched: now
@@ -53,10 +56,11 @@ export function invalidateCachedData() {
 
 async function fetchFreshRows() {
     const db = await getDB();
-    const [puppyRows, adultRows, settingsRows] = await Promise.all([
+    const [puppyRows, adultRows, settingsRows, geneticsRows] = await Promise.all([
         db.select().from(puppies),
         db.select().from(adults),
         db.select().from(systemSettings),
+        db.select().from(genetics),
     ]);
 
     // Bios
@@ -80,6 +84,7 @@ async function fetchFreshRows() {
     return {
         allPuppies: puppyRows,
         parents: adultRows,
+        geneticsData: geneticsRows,
         defaultBios,
         puppyPack,
     };

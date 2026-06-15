@@ -1,0 +1,492 @@
+---
+// src/pages/admin/adult/genetics/add.astro
+
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import Icon from "../../../../components/Icon.astro";
+import { ADMIN_SITE_NAME } from "../../../../config/siteSettings";
+import { getCachedData } from "../../../../scripts/databaseCache";
+import { GENETIC_TESTS } from "../../../../config/geneticConfig";
+
+const { searchParams } = Astro.url;
+const dogName = searchParams.get("name") || "Adult Dog";
+const dogId = searchParams.get("dogId");
+const mode = searchParams.get("mode") || "add";
+
+const isEditMode = mode === "edit";
+const pageTitle = isEditMode ? `Edit ${dogName}'s Genetics` : `Add ${dogName}'s Genetics`;
+
+// Fetch Existing Genetics for Edit
+const { geneticsData = [] } = await getCachedData();
+const existingGenetics = isEditMode
+    ? geneticsData.find((g: any) => g.adultId === dogId)
+    : null;
+
+const atRiskArr = existingGenetics?.atRiskDetails || [];
+const carrierArr = existingGenetics?.carrierDetails || [];
+const clearArr = existingGenetics?.clearDetails || [];
+
+const breedSummary = existingGenetics?.breedGeneticsSummary || [
+    { breed: "", value: "" },
+    { breed: "", value: "" },
+    { breed: "", value: "" }
+];
+
+const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", complete: "0" };
+---
+
+
+<AdminLayout title={`${pageTitle} | ${ADMIN_SITE_NAME}`}>
+    <main class="genetics-form-view">
+        <header class="page-header">
+            <p class="title-text">{pageTitle}</p>
+
+            <nav class="genetics-tabs-nav" id="genetics-tab-navigation">
+                <button type="button" class="tab-trigger active" data-target="pane-summary">
+                    Genetic Summary
+                </button>
+
+                <button type="button" class="tab-trigger" data-target="pane-conditions">
+                    Genetic Conditions
+                </button>
+
+                <button type="button" class="tab-trigger" data-target="pane-coi">
+                    Inbreeding (CoI)
+                </button>
+
+                <button type="button" class="tab-trigger" data-target="pane-breed">
+                    Breed Breakdown
+                </button>
+            </nav>
+        </header>
+
+        <div id="master-conditions-registry" data-json={JSON.stringify(GENETIC_TESTS)} hidden/>
+
+        <form
+                class="genetics-info-form"
+                id="genetics-management-form"
+                data-mode={mode}
+                data-adult-id={dogId}
+        >
+            <div class="tabs-display-viewport">
+
+                <div class="tab-pane active" id="pane-summary">
+                    <fieldset class="form-section">
+                        <legend>Condition Summary Count</legend>
+                        <p class="section-helper-text">Enter the number of 'At Risk' and 'Carrier' conditions</p>
+
+                        <div class="form-row-split">
+                            <div class="field-group">
+                                <label for="at-risk-count">At Risk Count: <span class="required-accent">*</span></label>
+                                <input type="number" id="at-risk-count" name="atRiskCount" min="0" max={GENETIC_TESTS.length} value={existingGenetics?.atRiskCount ?? 0} required />
+                            </div>
+                            <div class="field-group">
+                                <label for="carrier-count">Carrier Count: <span class="required-accent">*</span></label>
+                                <input type="number" id="carrier-count" name="carrierCount" min="0" max={GENETIC_TESTS.length} value={existingGenetics?.carrierCount ?? 0} required />
+                            </div>
+                            <div class="field-group shadow-readonly">
+                                <label for="clear-count">Clear Count (Auto):</label>
+                                <input type="number" id="clear-count" name="clearCount" value={existingGenetics?.clearCount ?? GENETIC_TESTS.length} readonly />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="tab-pane" id="pane-conditions">
+                    <fieldset class="form-section">
+                        <legend>Genetic Condition Details</legend>
+                        <p class="section-helper-text">Choose the conditions state on the report and add the effects this will have on the dog</p>
+
+                        <div class="repeater-block-group" id="group-at-risk">
+                            <h3>At Risk Conditions</h3>
+                            <div class="slots-allocation-feedback" id="feedback-at-risk"></div>
+                            <div class="dynamic-slots-container" id="slots-container-at-risk" data-current-json={JSON.stringify(atRiskArr)}></div>
+                        </div>
+
+                        <div class="form-section-divider"></div>
+
+                        <div class="repeater-block-group" id="group-carrier">
+                            <h3>Carrier Conditions</h3>
+                            <div class="slots-allocation-feedback" id="feedback-carrier"></div>
+                            <div class="dynamic-slots-container" id="slots-container-carrier" data-current-json={JSON.stringify(carrierArr)}></div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="tab-pane" id="pane-coi">
+                    <fieldset class="form-section">
+                        <legend>Coefficient of Inbreeding (CoI)</legend>
+                        <div class="form-row-split">
+                            <div class="field-group">
+                                <label for="dog-coi">Dog CoI (%): <span class="required-accent">*</span></label>
+                                <input type="text" id="dog-coi" name="dogCoI" placeholder="e.g. 12.4%" value={existingGenetics?.dogCoI || ""} required />
+                            </div>
+                            <div class="field-group">
+                                <label for="breed-average">Breed Average (%):</label>
+                                <input type="text" id="breed-average" name="breedAverage" placeholder="e.g. 7.2%" value={existingGenetics?.breedAverage || ""} />
+                            </div>
+                        </div>
+                        <div class="form-row-split mt-4">
+                            <div class="field-group">
+                                <label for="coi-generations">CoI History Generations:</label>
+                                <input type="number" id="coi-generations" name="coiGenerations" min="0" value={coiHistoryObj.generations || "0"} required />
+                            </div>
+                            <div class="field-group">
+                                <label for="coi-complete">CoI History Complete:</label>
+                                <input type="text" id="coi-complete" name="coiComplete" placeholder="e.g. 4" value={coiHistoryObj.complete || "0"} required />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="tab-pane" id="pane-breed">
+                    <fieldset class="form-section">
+                        <legend>Breed Genetic Breakdown</legend>
+                        <p class="section-helper-text">All 3 breeds <strong>must</strong> be filled in, if there are not 3 just put 'None' and '0'</p>
+
+                        {breedSummary.map((item: any, idx: number) => (
+                                <div class="form-row-split tuple-row mb-4" data-index={idx}>
+                                    <div class="field-group">
+                                        <label>Breed {idx + 1} Name:</label>
+                                        <input type="text" class="tuple-breed" value={item.breed || ""} placeholder="e.g. Yorkshire Terrier" required />
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Breed {idx + 1} Percentage:</label>
+                                        <input type="text" class="tuple-value" value={item.value || ""} placeholder="e.g. 100%" required />
+                                    </div>
+                                </div>
+                        ))}
+                    </fieldset>
+                </div>
+            </div>
+
+
+            <div class="action-buttons">
+                <button type="button" class="discard-btn" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="submit-btn">{isEditMode ? "Save Genetic Records" : "Create Genetic Records"}</button>
+            </div>
+        </form>
+
+    </main>
+</AdminLayout>
+
+<style lang="scss">
+    /* Global Workspace */
+  .genetics-form-view {
+    max-width: 95rem;
+    margin: 0 auto;
+    padding: 2.5rem;
+    box-sizing: border-box;
+  }
+
+  .page-header {
+    width: 100%;
+    margin-bottom: 2rem;
+    border-bottom: 1.5px solid var(--colour-dark);
+    padding-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .title-text {
+    font-family: var(--font-primary);
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--colour-dark);
+    margin: 0;
+  }
+
+  .genetics-tabs-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+    margin-bottom: -0.6rem;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .tab-trigger {
+    font-family: var(--font-primary);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.8rem 1.4rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--colour-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--colour-dark);
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    &.active {
+      color: var(--colour-dark);
+      border-bottom-color: var(--colour-dark);
+      background-color: rgba(0, 0, 0, 0.04);
+      border-top-left-radius: 0.4rem;
+      border-top-right-radius: 0.4rem;
+    }
+
+    &[disabled], &.disabled-tab {
+      opacity: 0.4 !important;
+      cursor: not-allowed !important;
+      pointer-events: none;
+
+      &:hover {
+        background-color: transparent !important;
+        color: #64748b !important;
+      }
+    }
+  }
+
+  .tab-pane {
+    display: none;
+    width: 100%;
+
+    &.active {
+      display: block;
+      animation: tabPanFadeIn 0.25s ease-out;
+    }
+  }
+
+  .genetics-info-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1.2rem;
+  }
+
+  .form-section {
+    border: 1.5px solid var(--colour-dark);
+    border-radius: 0.8rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.02);
+    box-sizing: border-box;
+
+    legend {
+      font-family: var(--font-primary);
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--colour-dark);
+      padding: 0 0.75rem;
+    }
+  }
+
+  .section-helper-text {
+    font-family: var(--font-secondary);
+    font-size: 0.95rem;
+    color: var(--colour-dark);
+    margin: -0.5rem 0 1.5rem 0;
+    font-style: italic;
+  }
+
+  .form-row-split {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 1.5rem;
+  }
+
+  .field-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-family: var(--font-primary);
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--colour-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"], input[type="number"] {
+      font-family: var(--font-secondary);
+      background-color: rgba(0, 0, 0, 0.07);
+      color: var(--colour-white);
+      font-size: 1.2rem;
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid var(--colour-dark);
+      border-radius: 0.6rem;
+      outline: none;
+      width: 100%;
+
+      &:focus {
+        border-color: var(--colour-light);
+      }
+    }
+
+    &.shadow-readonly input {
+      background-color: rgba(0,0,0,0.03);
+      color: var(--colour-dark);
+      border: 1.5px dashed var(--colour-light);
+      cursor: not-allowed;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      -moz-appearance: textfield;
+    }
+
+
+  }
+
+  .slots-allocation-feedback {
+    font-family: var(--font-secondary);
+    font-size: 1rem; color: var(--colour-dark);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    background: var(--colour-light);
+    padding: 0.5rem 1rem;
+    border-radius: 0.4rem;
+    display: inline-block;
+  }
+
+  .repeater-block-group {
+    margin-bottom: 2rem;
+    background: rgba(0, 0, 0, 0.01);
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+
+    h3 {
+      font-family: var(--font-primary);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--colour-dark);
+      margin: 0 0 0.5rem 0;
+    }
+  }
+
+  /* Slot Cards */
+  .dynamic-slots-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  :global(.allocated-slot-card) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    background: var(--colour-primary) !important;
+    border: 1.5px solid var(--colour-dark) !important;
+    padding: 1.5rem;
+    border-radius: 0.6rem;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    position: relative;
+
+    &.allocated-at-risk {
+      border-left: 6px solid var(--at-risk-colour) !important;
+    }
+
+    &.allocated-carrier {
+      border-left: 6px solid var(--carrier-colour) !important;
+    }
+
+    & :global(.slot-dropdown-select) {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      font-size: 1.15rem;
+      font-family: inherit;
+      font-weight: 700;
+      border: 1.5px solid var(--colour-dark);
+      border-radius: 0.4rem;
+      background-color: var(--colour-light);
+      color: var(--colour-dark);
+      font-family: var(--font-secondary);
+      outline: none;
+      cursor: pointer;
+      &:focus {
+        filter: brightness(0.9);
+      }
+    }
+
+    & :global(.textarea-wrapper) {
+      width: 100%;
+      display: none;
+
+      &.active {
+        display: block;
+        animation: slotDrawerOpen 0.2s ease-out;
+      }
+    }
+
+    & :global(textarea) {
+      width: 100% !important;
+      min-height: 5rem;
+      padding: 0.8rem 1rem !important;
+      font-size: 1.1rem !important;
+      border: 1.5px solid var(--colour-dark) !important;
+      border-radius: 0.4rem !important;
+      background: var(--colour-light) !important;
+      color: var(--colour-dark) !important;
+      font-family: var(--font-secondary);
+      outline: none !important;
+      resize: vertical;
+      box-sizing: border-box !important;
+    }
+  }
+
+  .form-section-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.06);
+    margin: 2rem 0;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+    border-top: 1.5px solid rgba(0, 0, 0, 0.08);
+    padding-top: 1.5rem;
+    width: 100%;
+  }
+
+  .discard-btn, .submit-btn {
+    font-family: var(--font-secondary);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0.7rem 1.6rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+  }
+
+  .discard-btn {
+    background-color: transparent;
+    border: 1.5px solid var(--colour-dark);
+    color: var(--colour-dark);
+  }
+
+  .submit-btn {
+    background-color: var(--colour-dark);
+    border: none; color: var(--colour-white);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  @keyframes slotDrawerOpen { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes tabPanFadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<script>
+    import "../../../../scripts/admin/geneticsFormController.ts";
+</script>

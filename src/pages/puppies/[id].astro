@@ -5,10 +5,13 @@ import Layout from "../../layouts/Layout.astro"
 import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
 import {
+    baseURL,
     RESERVATION_COST,
     SITE_NAME
 } from "../../config/siteSettings";
 import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
+import { type adults } from '../../db/schema';
+type Adult = typeof adults.$inferSelect;
 
 const { id } = Astro.params;
 if (!id) {
@@ -25,10 +28,21 @@ if (!puppy) {
 
 
 // Parents
-const adultMap = new Map(parents.map((adult: any) => [adult.id, adult.name]));
-const motherName = adultMap.get(puppy.mother) || puppy.mother;
-const fatherName = adultMap.get(puppy.father) || puppy.father;
+const adultMap = new Map<string, Adult>(
+    parents.map((adult: Adult) => [adult.id, adult])
+);
+
+const mother = adultMap.get(puppy.mother);
+const father = adultMap.get(puppy.father);
+
+const motherName = mother ? mother.name : puppy.mother;
+const fatherName = father ? father.name : puppy.father;
+
+const motherHasGenetics = mother?.hasGenetics;
+const fatherHasGenetics = father?.hasGenetics;
+
 const dynamicAge = calculateAge(puppy.dob);
+
 
 // Bio
 const isBioEmpty = !puppy.bio || puppy.bio.trim() === "" || puppy.bio === "No bio specified";
@@ -82,7 +96,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
             <div class="pricing-section">
                 <span class="pricing-text">
                     For Pricing please
-                    <a href={`/contact?ref=${puppy.id}&name=${puppy.name}`} class="pricing-contact">Contact Me</a>
+                    <a href={`${baseURL}/contact?ref=${puppy.id}&name=${puppy.name}`} class="pricing-contact">Contact Me</a>
                 </span>
 
                 <span class="deposit-text">
@@ -125,10 +139,20 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
                     <dd>{puppy.availableFrom}</dd>
 
                     <dt>Mother:</dt>
-                    <dd><a href={`/adults/${puppy.mother}`}>{motherName}</a></dd>
+                    <dd>
+                        <a href={`${baseURL}/adults/${puppy.mother}`}>{motherName}</a>
+                        { motherHasGenetics && (
+                                <a href={`${baseURL}/adults/genetics/${puppy.mother}}`}>See {motherName}'s Genetics</a>
+                        )}
+                    </dd>
 
                     <dt>Father:</dt>
-                    <dd><a href={`/adults/${puppy.father}`}>{fatherName}</a></dd>
+                    <dd>
+                        <a href={`${baseURL}/adults/${puppy.father}`}>{fatherName}</a>
+                        { fatherHasGenetics && (
+                                <a href={`${baseURL}/adults/genetics/${puppy.father}}`}>See {fatherName}'s Genetics</a>
+                        )}
+                    </dd>
 
                     <dt>Reg #:</dt>
                     <dd>{puppy.regID === "#0000" ? "No registration number" : puppy.regID}</dd>

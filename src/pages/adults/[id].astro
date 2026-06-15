@@ -5,7 +5,8 @@ import Layout from "../../layouts/Layout.astro"
 
 import { getCachedData } from "../../scripts/databaseCache";
 import { calculateAge } from "../../scripts/ageCalculator";
-import { eq } from "drizzle-orm";
+import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
+import {baseURL, RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/siteSettings";
 
 const { id } = Astro.params;
 if (!id) {
@@ -20,9 +21,12 @@ if (!parent) {
     return Astro.redirect('/404');
 }
 
+const isDead = parent.isDead;
+const deathDate = isDead ? parent.deathDate : "";
+const ageAtDeath = calculateAge(parent.dob, deathDate);
 
-import {getColourLabel, formatGender, getFormattedBreed} from "../../config/puppyConstants";
-import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/siteSettings";
+const hasGenetics = parent.hasGenetics;
+
 ---
 
 <Layout title={`Meet ${parent.name} | ${SITE_NAME}`}>
@@ -75,10 +79,17 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
                     <dd>{getFormattedBreed(parent.breed)}</dd>
 
                     <dt>DoB:</dt>
-                    <dd>{parent.dob}</dd>
+                    <dd>
+                        {parent.dob}
+                        {isDead && (
+                                <p class="deceased-flag">Deceased</p>
+                        )}
+                    </dd>
 
                     <dt>Age:</dt>
-                    <dd>{calculateAge(parent.dob)}</dd>
+                    <dd>
+                        {isDead ? `${ageAtDeath} (at death)` : calculateAge(parent.dob)}}
+                    </dd>
 
                     <dt>Gender:</dt>
                     <dd>{formatGender(parent.gender)}</dd>
@@ -91,7 +102,16 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
 
                     <dt>Reg #:</dt>
                     <dd>{parent.regID === "#0000" ? "No registration number" : parent.regID}</dd>
+
+                    { hasGenetics && (
+                            <dt>Genetics:</dt>
+                            <dd>
+                                <a href={`${baseURL}/adults/genetics/${parent.id}`}>View Genetics</a>
+                            </dd>
+                    )}
                 </dl>
+
+
             </div>
 
         </div>
@@ -310,6 +330,14 @@ import {RESERVATION_COST, RESERVATION_LENGTH, SITE_NAME} from "../../config/site
     font-size: 1rem;
   }
 
+  .deceased-flag {
+    margin-left: 1rem;
+    display: inline-block;
+    background-color: var(--colour-dark);
+    padding: 0.2rem 0.8rem;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+  }
 
   /* Mobile Styling */
   @media ($mobile) {
