@@ -297,7 +297,7 @@ const isFemale = puppyGender?.toLowerCase() === "female";
             const dogType = parentCard.dataset.type;
 
             if (dogId && dogType) {
-                window.location.href = `admin/${dogType}/add?edit=true&id=${dogId}`;
+                window.location.href = `${dogType}/add?edit=true&id=${dogId}`;
             }
         });
 
