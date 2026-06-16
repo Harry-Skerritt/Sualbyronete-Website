@@ -39,3 +39,5 @@ live-data.sql
 
 /drizzle
 
+*.sql
+

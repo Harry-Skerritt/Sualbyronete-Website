@@ -132,7 +132,11 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
             e.preventDefault();
 
             const currentHost = window.location.hostname;
-            const baseHost = currentHost.replace(/^admin\./, '');
+
+            const baseHost = currentHost
+                .replace(/^admin\./i, '')
+                .replace(/^www\./i, '');
+
             const portString = window.location.port ? `:${window.location.port}` : '';
             window.location.href = `${window.location.protocol}//admin.${baseHost}${portString}/`;
         });
