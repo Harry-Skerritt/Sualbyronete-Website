@@ -5,6 +5,7 @@ import { getDB } from "../../../db";
 import { genetics, adults } from "../../../db/schema.ts";
 import { eq } from "drizzle-orm";
 import type { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import {invalidateCachedData} from "../../../scripts/databaseCache.ts";
 
 interface BreedGenetic {
     breed: string;
@@ -95,6 +96,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
         await db.batch([geneticsQuery, adultUpdateQuery]);
 
+        invalidateCachedData();
         return new Response(JSON.stringify({
             success: true,
             message: `Genetic dataset payload committed cleanly with streamlined formats for adult: ${adultId}.`

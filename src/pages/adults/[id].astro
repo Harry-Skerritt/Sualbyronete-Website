@@ -88,7 +88,7 @@ const hasGenetics = parent.hasGenetics;
 
                     <dt>Age:</dt>
                     <dd>
-                        {isDead ? `${ageAtDeath} (at death)` : calculateAge(parent.dob)}}
+                        {isDead ? `${ageAtDeath} (at death)` : calculateAge(parent.dob)}
                     </dd>
 
                     <dt>Gender:</dt>
@@ -101,7 +101,7 @@ const hasGenetics = parent.hasGenetics;
                     <dd><a href={`/puppies/litterView?parent=${parent.id}&name=${parent.name}`}>View Puppies</a></dd>
 
                     <dt>Reg #:</dt>
-                    <dd>{parent.regID === "#0000" ? "No registration number" : parent.regID}</dd>
+                    <dd>{parent.regID === "#0000" ? "No registration" : parent.regID}</dd>
 
                     { hasGenetics && (
                             <dt>Genetics:</dt>
@@ -422,6 +422,7 @@ const hasGenetics = parent.hasGenetics;
     dt, dd {
       font-size: 1.15rem;
       height: 2.8rem;
+      text-overflow: ellipsis;
     }
 
     dd a {

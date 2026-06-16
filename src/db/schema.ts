@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 
 interface GeneticCondition {
     id: string;
-    dogEffects: string;
+    dogEffects?: string;
 }
 
 interface BreedGenetic {

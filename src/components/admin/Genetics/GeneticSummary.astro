@@ -1,0 +1,141 @@
+---
+// src/components/admin/Genetics/GeneticSummary.astro
+
+interface Props {
+    value?: string;
+    type?: number;
+}
+
+const { value = "0", type = 1 } = Astro.props;
+
+const title = (type === 1) ? "At Risk" : (type === 2) ? "Carrier" : "Clear";
+const typeClass = (type === 1) ? "at-risk" : (type === 2) ? "carrier" : "clear";
+---
+
+<div class='summary-container' data-type={typeClass}>
+    <div class={`summary-detail ${typeClass}`}>
+        <p class="title">{title}</p>
+        <p class="value">{value}</p>
+    </div>
+    <button type="button" class=`see-more-btn` data-target={type}>&gt;</button>
+</div>
+
+
+<style lang="scss">
+  .summary-container {
+    height: 4rem;
+    width: auto;
+    min-width: 20rem;
+    margin: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &[data-type="at-risk"] {
+      .summary-detail { background-color: var(--at-risk-colour); }
+      .see-more-btn { color: var(--at-risk-colour); }
+    }
+
+    &[data-type="carrier"] {
+      .summary-detail { background-color: var(--carrier-colour); }
+      .see-more-btn { color: var(--carrier-colour); }
+    }
+
+    &[data-type="clear"] {
+      .summary-detail { background-color: var(--clear-colour); }
+      .see-more-btn { color: var(--clear-colour); }
+    }
+  }
+
+  .summary-detail {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 0.8rem;
+    gap: 0.4rem;
+    padding: 0.4rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  .title {
+    font-family: var(--font-secondary);
+    flex: 1;
+    color: var(--colour-white);
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .value {
+    font-family: var(--font-secondary);
+    background-color: var(--colour-primary);
+    height: 100%;
+    width: 5rem;
+    border-radius: 0 0.4rem 0.4rem 0;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--colour-white);
+    font-size: 2.2rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .see-more-btn {
+    margin-left: 0.3rem;
+    width: 2rem;
+    height: 100%;
+    background: transparent;
+    border: none;
+
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+
+    transition: transform 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+      transform: scale(1.15);
+      filter: brightness(0.95);
+    }
+
+    &:active {
+      transform: rotateZ(90deg);
+      filter: brightness(0.9);
+    }
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .summary-container {
+      width: 100%;
+      min-width: 0;
+      margin: 0.5rem 0;
+      height: 3.5rem;
+    }
+
+    .title {
+      font-size: 1.5rem;
+    }
+
+    .value {
+      font-size: 1.8rem;
+      width: 4rem;
+    }
+
+    .see-more-btn {
+      font-size: 1.5rem;
+      margin-left: 0.5rem;
+    }
+  }
+</style>

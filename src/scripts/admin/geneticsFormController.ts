@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 return {
                     id: select ? select.value : "",
-                    details: textarea ? textarea.value : ""
+                    dogEffects: textarea ? textarea.value : ""
                 };
             });
         };
@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter(testItem => !activeSelectedIds.has(testItem.id))
             .map(testItem => ({
                 id: testItem.id,
-                details: testItem.about
+                dogEffects: ""
             }));
 
         const tupleRows = formEl.querySelectorAll(".tuple-row");

@@ -281,7 +281,7 @@ const isFemale = puppyGender?.toLowerCase() === "female";
             const mode = hasGenetics ? "edit" : "add";
 
             if (dogId && dogName && mode) {
-                window.location.href = `/adult/genetics/add?dogId=${dogId}&name=${dogName}&mode=${mode}`;
+                window.location.href = `adult/genetics/add?dogId=${dogId}&name=${dogName}&mode=${mode}`;
             }
         });
 
@@ -297,7 +297,7 @@ const isFemale = puppyGender?.toLowerCase() === "female";
             const dogType = parentCard.dataset.type;
 
             if (dogId && dogType) {
-                window.location.href = `/${dogType}/add?edit=true&id=${dogId}`;
+                window.location.href = `admin/${dogType}/add?edit=true&id=${dogId}`;
             }
         });
 

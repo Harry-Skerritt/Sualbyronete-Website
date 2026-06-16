@@ -2,8 +2,10 @@
 // src/pages/adults/genetics/[id].astro
 
 import Layout from "../../../layouts/Layout.astro";
-import {SITE_NAME} from "../../../config/siteSettings";
+import {baseURL, SITE_NAME} from "../../../config/siteSettings";
 import { getCachedData } from "../../../scripts/databaseCache";
+import GeneticSummary from "../../../components/admin/Genetics/GeneticSummary.astro";
+import GeneticsDetail from "../../../components/admin/Genetics/GeneticsDetail.astro";
 
 const { id } = Astro.params;
 if (!id) {
@@ -13,13 +15,350 @@ if (!id) {
 const { parents, geneticsData } = await getCachedData();
 
 const parent = parents.find((a: any) => a.id === id);
-const genes = geneticsData.find((a: any) => a.id === id);
+const genetics = geneticsData.find((a: any) => a.adultId === id);
 
-if (!parent /*|| !genetics*/) {
+if (!parent || !genetics) {
     return Astro.redirect('/404');
 }
+
+const parentName = parent.name;
+
+const defaultVisibleType = genetics.atRiskCount > 0 ? 1 : genetics.carrierCount > 0 ? 2 : 3;
 ---
 
 <Layout title=`${parent.name}'s Genetics | ${SITE_NAME}`>
 
+    <main class="genetic-container">
+
+        <header>
+            <h2 class="header-title">{parentName}'s DNA Results</h2>
+        </header>
+
+        <section class="genetic-summary">
+            <div class="section-header">
+                <div class="header-content">
+                    <h2 class="section-title">Genetic Conditions</h2>
+                    <p class="testing-read-more">
+                        *These results are from 30 different test.
+                        <a href=`${baseURL}/adults/genetics/whats-tested` class="read-more-link">Read More about what is tested</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="summary-container">
+                <GeneticSummary type={1} value={genetics.atRiskCount}/>
+                <GeneticSummary type={2} value={genetics.carrierCount}/>
+                <GeneticSummary type={3} value={genetics.clearCount}/>
+            </div>
+        </section>
+
+        <section class="genetic-details" data-active-type={defaultVisibleType}>
+            <div class="pane-wrapper" data-pane-type="1">
+                <GeneticsDetail type={1} value={genetics.atRiskDetails} visible={defaultVisibleType === 1} dogName={parentName}/>
+            </div>
+            <div class="pane-wrapper" data-pane-type="2">
+                <GeneticsDetail type={2} value={genetics.carrierDetails} visible={defaultVisibleType === 2} dogName={parentName}/>
+            </div>
+            <div class="pane-wrapper" data-pane-type="3">
+                <GeneticsDetail type={3} value={genetics.clearDetails} visible={defaultVisibleType === 3} dogName={parentName}/>
+            </div>
+        </section>
+
+        <section class="split-row">
+            <div class="breed container">
+                <div class="section-header">
+                    <h2 class="section-title">Genetic Makeup</h2>
+                </div>
+
+                <div class="makeup-container">
+                    <h2 class="makeup-title">Top 3 Breeds:</h2>
+
+                    <ul class="breed-list">
+                        {genetics.breedGeneticsSummary && genetics.breedGeneticsSummary.map((b: any) => (
+                                <li>{b.value}% {b.breed}</li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="coi container">
+                <div class="section-header">
+                    <h2 class="section-title">Inbreeding Coefficient</h2>
+                </div>
+
+                <div class="coi-content">
+                    <h2 class="makeup-title">CoI for {parentName}: {genetics.dogCoI}%</h2>
+                    <p class="breed-average">Breed Average CoI: {genetics.breedAverage}%</p>
+                    <p class="gen-history">{genetics.coiHistory.generations} Generations Available of which {genetics.coiHistory.complete} are complete</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
 </Layout>
+
+<style lang="scss">
+  .genetic-container {
+    max-width: 110rem;
+    margin: 0 auto;
+    min-height: calc(100vh - calc(var(--header-height) * 2));
+  }
+
+  :global(.see-more-btn.pane-active) {
+    transform: rotateZ(90deg) !important;
+  }
+
+  .pane-wrapper {
+    width: 100%;
+  }
+
+  .genetic-details {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-title {
+    font-family: var(--font-primary);
+    color: var(--colour-dark);
+    font-weight: 800;
+    letter-spacing: 1px;
+    width: 100%;
+    font-size: 3rem;
+    padding: 1rem 0rem;
+
+    &:after {
+      content: "";
+      display: block;
+      background-color: var(--colour-dark);
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      margin-top: 0.4rem;
+    }
+  }
+
+  .split-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 1rem;
+  }
+
+  /* Global */
+  .section-header {
+    width: 100%;
+
+    &:after {
+      content: "";
+      display: block;
+      background-color: var(--colour-dark);
+      width: 100%;
+      height: 2px;
+      border-radius: 999px;
+    }
+  }
+
+  .section-title {
+    font-family: var(--font-primary);
+    color: var(--colour-dark);
+    font-weight: 800;
+    letter-spacing: 1px;
+    width: 100%;
+    font-size: 2rem;
+    line-height: 1rem;
+    flex: 1;
+  }
+
+  .container {
+    width: 50%;
+  }
+
+  /* Genetic Summary */
+  .header-content{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .testing-read-more{
+    color: var(--colour-dark);
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+  }
+
+  .read-more-link{
+    color: var(--colour-light);
+    font-weight: 500;
+    text-underline-offset: 0.4rem;
+    font-size: 1rem;
+  }
+
+  .genetic-summary {
+    width: 100%;
+  }
+
+  .summary-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Makeup */
+  .makeup-title {
+    color: var(--colour-light);
+    font-family: var(--font-secondary);
+    margin: 0;
+    padding: 0.5rem 0 0 0;
+    font-size: 2rem;
+  }
+
+  .breed-list {
+    padding-bottom: 1rem;
+    margin: 0;
+  }
+
+  li {
+    color: var(--colour-white);
+    font-family: var(--font-secondary);
+    font-size: 1.8rem;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* COI */
+  .breed-average, .gen-history {
+    color: var(--colour-white);
+    font-family: var(--font-secondary);
+    font-size: 1.8rem;
+    padding: 0;
+    margin: 0;
+  }
+
+
+  @media (#{$mobile}) {
+    /* Global */
+    .genetic-container {
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin: 0;
+      padding: 0.8rem 0;
+    }
+
+    /* Genetic Summary */
+    .header-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+    }
+
+    .testing-read-more{
+      font-size: 0.85rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .read-more-link{
+      font-size: 0.85rem;
+    }
+
+    .header-title {
+      font-size: 2.2rem;
+    }
+    .summary-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .split-row {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .container {
+      padding-top: 2rem;
+      width: 100%;
+    }
+
+    .makeup-title {
+      font-size: 1.8rem;
+      padding-top: 0.4rem;
+    }
+
+    li, .breed-average, .gen-history {
+      font-size: 1.4rem;
+      line-height: 1.4;
+    }
+
+    .breed-list {
+      padding-bottom: 0.5rem;
+    }
+
+    .coi {
+      padding-bottom: 2rem;
+    }
+  }
+</style>
+
+<script>
+    function initSummaryTabs() {
+        const summaryButtons = document.querySelectorAll('button[data-target]');
+        const detailsContainer = document.querySelector('.genetic-details');
+
+        if (!detailsContainer) return;
+
+        const initialType = detailsContainer.getAttribute('data-active-type');
+        if (initialType) {
+            const activeBtn = document.querySelector(`button[data-target="${initialType}"]`);
+            if (activeBtn) activeBtn.classList.add('pane-active');
+        }
+
+        summaryButtons.forEach(btn => {
+            btn.removeEventListener('click', handleTabSwitch);
+            btn.addEventListener('click', handleTabSwitch);
+        });
+    }
+
+    function handleTabSwitch(e: Event) {
+        const clickedBtn = e.currentTarget as HTMLButtonElement;
+        const targetType = clickedBtn.getAttribute('data-target');
+        const detailsContainer = document.querySelector('.genetic-details');
+
+        if (!targetType || !detailsContainer) return;
+
+        document.querySelectorAll('button[data-target]').forEach(btn => {
+            btn.classList.remove('pane-active');
+        });
+
+        const panes = document.querySelectorAll('.pane-wrapper[data-pane-type]');
+        panes.forEach(pane => {
+            const paneType = pane.getAttribute('data-pane-type');
+            const innerDetailBlock = pane.querySelector('.genetic-pane');
+
+            if (paneType === targetType) {
+                innerDetailBlock?.classList.remove('hidden');
+                clickedBtn.classList.add('pane-active');
+            } else {
+                innerDetailBlock?.classList.add('hidden');
+            }
+        });
+
+        detailsContainer.setAttribute('data-active-type', targetType);
+    }
+
+    initSummaryTabs();
+    document.addEventListener('astro:page-load', initSummaryTabs);
+</script>

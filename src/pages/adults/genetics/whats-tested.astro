@@ -1,0 +1,259 @@
+---
+// src/pages/adults/genetics/whats-tested.astro
+
+import { SITE_NAME } from "../../../config/siteSettings";
+import { GENETIC_TESTS } from "../../../config/geneticConfig";
+import Layout from "../../../layouts/Layout.astro"
+---
+
+<Layout title={`What's Tested | ${SITE_NAME}`}>
+    <main class="testing-container">
+        <header class="page-header">
+            <h1 class="title-text">What's Tested?</h1>
+        </header>
+
+        <div class="tested-content">
+            <div class="intro-block">
+                <p class="tested-text large-intro">
+                    All DNA testing is done through
+                    <a class="inline-link" href="https://www.wisdompanel.com/en-gb/dog-dna-tests/essential" target="_blank" rel="noopener noreferrer">Wisdom Panel</a>
+                </p>
+                <p class="tested-text">
+                    Wisdom Panel provides DNA testing for 30 different genetic health conditions which help you learn more about your new puppy!
+                </p>
+                <p class="tested-text">
+                    In addition to these health condition screenings,
+                    they also uncover the genetic history of each adult dog, providing deep information about
+                    <strong>Breed Makeup</strong> and the <strong>Coefficient of Inbreeding</strong>
+                </p>
+            </div>
+
+            <div class="list-heading-block">
+                <p class="tested-text dynamic-label">
+                    The list of conditions Wisdom Panel tests for can be found below:
+                </p>
+            </div>
+
+            <ul class="test-grid-list">
+                {GENETIC_TESTS.map((t: any) => (
+                        <li class="test-grid-item">
+                            <div class="test-info">
+                                <span class="test-name">{t.name}</span>
+                            </div>
+                            <a class="action-link-btn" href={t.externalUri} target="_blank" rel="noopener noreferrer">
+                                Read More About {t.id}
+                            </a>
+                        </li>
+                ))}
+            </ul>
+        </div>
+    </main>
+</Layout>
+
+
+<style lang="scss">
+  .testing-container {
+    min-height: calc(100vh - var(--header-height));
+    max-width: 110rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  .page-header {
+    width: 100%;
+    margin-bottom: 2.5rem;
+    border-bottom: 1.5px solid var(--colour-dark);
+    padding-bottom: 1rem;
+  }
+
+  .title-text {
+    font-family: var(--font-primary);
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--colour-dark);
+    margin: 0;
+  }
+
+  /* Intro Content */
+  .tested-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .intro-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .tested-text {
+    font-family: var(--font-secondary);
+    font-size: 1.45rem;
+    font-weight: 400;
+    color: var(--colour-dark, #2d3748);
+    line-height: 1.55;
+    margin: 0;
+
+    strong {
+      font-weight: 700;
+    }
+  }
+
+  .large-intro {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  .inline-link {
+    color: var(--colour-light, #4a5568);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  /* Grid */
+  .list-heading-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid var(--colour-dark);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .dynamic-label {
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+  .test-counter {
+    font-family: var(--font-secondary);
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: var(--colour-dark, #1a202c);
+    color: var(--colour-white, #ffffff);
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* Row Items */
+  .test-grid-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .test-grid-item {
+    background-color: #8fa9ae;
+    padding: 1rem 1.5rem;
+    border-radius: 0.6rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      transform: translateX(4px);
+      filter: brightness(1.02);
+    }
+  }
+
+  .test-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .test-name {
+    font-family: var(--font-secondary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--colour-white);
+    line-height: 1.3;
+  }
+
+  .action-link-btn {
+    font-family: var(--font-secondary);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--colour-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .testing-container {
+      padding: 1.5rem 1rem;
+    }
+
+    .title-text {
+      font-size: 2.2rem;
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem;
+      border-width: 3px;
+    }
+
+    .large-intro {
+      font-size: 1.5rem;
+    }
+
+    .tested-text {
+      font-size: 1.25rem;
+    }
+
+    .list-heading-block {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .dynamic-label {
+      font-size: 1.3rem;
+    }
+
+    .test-grid-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 1rem;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    .test-name {
+      font-size: 1.25rem;
+    }
+
+    .action-link-btn {
+      font-size: 1.1rem;
+      padding-left: 1.2rem;
+    }
+  }
+</style>

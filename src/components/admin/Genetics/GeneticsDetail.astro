@@ -1,0 +1,353 @@
+---
+// src/components/admin/Genetics/GeneticsDetail.astro
+import { GENETIC_TESTS } from "../../../config/geneticConfig";
+
+interface ConditionDetails {
+    id?: string;
+    dogEffects?: string;
+}
+
+interface Props {
+    type?: number;
+    value?: ConditionDetails[];
+    visible?: boolean;
+    dogName?: string;
+}
+
+const { type = 1, value = [], visible = false, dogName = "Dog" } = Astro.props;
+
+const title = (type === 1) ? "At Risk" : (type === 2) ? "Carrier" : "Clear";
+const typeClass = (type === 1) ? "at-risk" : (type === 2) ? "carrier" : "clear";
+const visibilityClass = visible ? "" : "hidden";
+const effectsVisibility = (type === 3) ? "hidden" : "";
+---
+
+<div class={`genetic-pane ${visibilityClass}`} data-type={typeClass}>
+    <div class="gentic-pane-header">
+        <p class="pane-title">{title}</p>
+    </div>
+
+    <div class="conditions-list">
+        {value && value.length > 0 ? (
+            value.map((v, index) => {
+                const masterMatch = GENETIC_TESTS.find(test => test.id === v.id);
+                const fullTestName = masterMatch ? masterMatch.name : v.id;
+                const fullTestAbout = masterMatch ? masterMatch.about : "Unable to find details";
+                const fullTestURI = masterMatch ? masterMatch.externalUri : "/404";
+
+                const uniqueKey = `${typeClass}-cond-${index}`;
+
+                return (
+                        <div class="condition-item" data-id={v.id}>
+                            <div class="condition-title">
+                                <p class="condition-code">&bull; {fullTestName}</p>
+
+                                <a class="read-more" href={fullTestURI} target="_blank" rel="noopener noreferrer">
+                                    Read More About {v.id}
+                                </a>
+                            </div>
+
+                            <div class="condition-meta">
+                                <p class="condition-desc">
+                                    {fullTestAbout}
+                                </p>
+
+                                {v.dogEffects && (
+                                        <div class={`effects-drawer ${effectsVisibility}`} id={`drawer-${uniqueKey}`}>
+                                            <div class="drawer-content-inner">
+                                                <p class="effects-label">What '{v.id}' means for {dogName}:</p>
+                                                <p class="condition-desc dog-effects-text">{v.dogEffects}</p>
+                                            </div>
+                                        </div>
+                                )}
+
+                                <div class="actions-wrapper">
+                                    {v.dogEffects && (
+                                            <button
+                                                    type="button"
+                                                    class={`what-means-link ${effectsVisibility}`}
+                                                    data-toggle-target={`drawer-${uniqueKey}`}
+                                                    data-id={v.id}
+                                            >
+                                                What {v.id} Means for {dogName}
+                                            </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                );
+            })
+        ) : (
+                <p class="empty-state">No conditions reported</p>
+        )}
+    </div>
+</div>
+
+<style lang="scss">
+  .hidden {
+    display: none !important;
+  }
+
+  .genetic-pane {
+    width: 100%;
+    min-height: 2rem;
+    height: auto;
+    border: 5px solid transparent;
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+    background-color: #8fa9ae;
+
+    &[data-type="at-risk"] {
+      border-color: var(--at-risk-colour);
+      .pane-title { color: var(--at-risk-colour); }
+      .condition-item:after { background-color: var(--at-risk-colour); }
+    }
+
+    &[data-type="carrier"] {
+      border-color: var(--carrier-colour);
+      .pane-title { color: var(--carrier-colour); }
+      .condition-item:after { background-color: var(--carrier-colour); }
+    }
+
+    &[data-type="clear"] {
+      border-color: var(--clear-colour);
+      .pane-title { color: var(--clear-colour); }
+      .condition-item:after { background-color: var(--clear-colour); }
+    }
+  }
+
+  .pane-title {
+    font-family: var(--font-secondary);
+    font-size: 2.8rem;
+    line-height: 1;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  .conditions-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .condition-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0 0 0.4rem 0;
+    gap: 2rem;
+  }
+
+  .condition-code {
+    font-family: var(--font-secondary);
+    font-size: 1.5rem;
+    padding: 0;
+    margin: 0;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .read-more {
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--colour-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    white-space: nowrap;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .condition-meta {
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .condition-desc {
+    font-family: var(--font-secondary);
+    font-size: 1.45rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.45;
+  }
+
+  .effects-drawer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.4rem;
+    margin: 0.5rem 0 0.8rem 0;
+
+    &.is-open {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  .drawer-content-inner {
+    overflow: hidden;
+    padding: 0 1rem;
+
+    .effects-drawer.is-open {
+      padding: 1rem;
+    }
+  }
+
+  .effects-label {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin: 0.4rem 0 0.4rem 0;
+    letter-spacing: 0.5px;
+    color: var(--colour-white);
+  }
+
+  .dog-effects-text {
+    margin: 0;
+    font-weight: 500;
+    color: var(--colour-light);
+  }
+
+  .actions-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .what-means-link {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--colour-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+
+  .condition-item {
+    padding: 0 0 0.5rem 0;
+
+    &:after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 4px;
+      margin: 1.5rem auto 1rem auto;
+      opacity: 0.5;
+      border-radius: 999px;
+    }
+
+    &:last-child:after {
+      display: none;
+    }
+  }
+
+  .empty-state {
+    font-family: var(--font-secondary);
+    font-size: 1.45rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  /* Mobile Styling */
+  @media (#{$mobile}) {
+    .genetic-pane {
+      padding: 1rem;
+      border-width: 4px;
+    }
+
+    .pane-title {
+      font-size: 2.2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .condition-title {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+    }
+
+    .condition-code {
+      font-size: 1.35rem;
+    }
+
+    .read-more {
+      font-size: 1.15rem;
+      padding-left: 1.1rem;
+    }
+
+    .condition-meta {
+      padding-left: 0;
+      margin-top: 0.5rem;
+    }
+
+    .condition-desc {
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .effects-label {
+      font-size: 1.2rem;
+    }
+
+    .what-means-link {
+      font-size: 1.2rem;
+      margin-top: 0.25rem;
+    }
+  }
+</style>
+
+<script>
+    function setupGeneticToggles() {
+        const toggleButtons = document.querySelectorAll('button[data-toggle-target]');
+
+        toggleButtons.forEach(button => {
+            button.removeEventListener('click', handleToggle);
+            button.addEventListener('click', handleToggle)
+        });
+    }
+
+    function handleToggle(event: Event) {
+        event.preventDefault();
+        const button = event.target as HTMLButtonElement;
+        const targetId = button.getAttribute('data-toggle-target');
+        const conditionId = button.getAttribute('data-id') || 'this';
+
+        if (!targetId) return;
+
+        const drawer = document.getElementById(targetId);
+        if (!drawer) return;
+
+        const isOpen = drawer.classList.contains('is-open');
+
+        if (isOpen) {
+            drawer.classList.remove('is-open');
+            button.textContent = button.textContent?.replace(`Hide ${conditionId} Notes for`, `What ${conditionId} Means for`) || '';
+        } else {
+            drawer.classList.add('is-open');
+            button.textContent = button.textContent?.replace(`What ${conditionId} Means for`, `Hide ${conditionId} Notes for`) || '';
+        }
+    }
+
+    setupGeneticToggles();
+    document.addEventListener('astro:page-load', setupGeneticToggles);
+</script>
