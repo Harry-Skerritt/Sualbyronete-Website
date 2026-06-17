@@ -8,6 +8,8 @@ import { calculateAge } from "../scripts/ageCalculator";
 interface Props {
     parentName: string;
     parentDoB: string;
+    parentDod: string;
+    parentDead: boolean;
     parentImage: string;
     parentForSale: boolean;
     parentBreed: string;
@@ -19,6 +21,8 @@ interface Props {
 const {
     parentName = "Unknown Parent",
     parentDoB = "Unknown DoB",
+    parentDod = "",
+    parentDead = false,
     parentImage = "default.jpg",
     parentForSale = true,
     parentBreed = "Unknown Breed",
@@ -27,7 +31,11 @@ const {
     parentBio = "No bio specified",
 } = Astro.props;
 
-import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyConstants";
+
+const deathDate = parentDead ? parentDod : "";
+const ageAtDeath = calculateAge(parentDoB, deathDate);
+
+import {getColourLabel, getFormattedBreed} from "../config/puppyConstants";
 ---
 
 <div class="parent-card">
@@ -41,7 +49,7 @@ import {getColourLabel, formatGender, getFormattedBreed} from "../config/puppyCo
 
     <div class="parent-info" >
         <p class="parent-name">{parentName}</p>
-        <p class="parent-colour">{calculateAge(parentDoB)} | {getColourLabel(parentColour)}</p>
+        <p class="parent-colour">{parentDead ? `${ageAtDeath} (at death)` : calculateAge(parentDoB)} | {getColourLabel(parentColour)}</p>
 
         <p class="parent-bio">{parentBio}</p>
 
