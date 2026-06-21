@@ -10,6 +10,7 @@ export const prerender = false;
 interface PuppyPackInputItem {
     id: string;
     value: string;
+    content: string;
     sortOrder: number;
     isSubItem: boolean;
 }
@@ -29,6 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
         const sanitizedItems = items.map(item => ({
             id: item.id.startsWith('new_') ? randomUUID() : item.id,
             value: item.value.trim(),
+            content: item.content ? item.content.trim() : '',
             sortOrder: item.sortOrder,
             isSubItem: item.isSubItem
         }));

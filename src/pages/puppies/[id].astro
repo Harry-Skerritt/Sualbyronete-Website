@@ -140,17 +140,17 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
 
                     <dt>Mother:</dt>
                     <dd>
-                        <a href={`${baseURL}/adults/${puppy.mother}`}>{motherName}</a>
+                        <a href={`${baseURL}/adults/${puppy.mother}`} class="parent-link">{motherName}</a>
                         { motherHasGenetics && (
-                                <a href={`${baseURL}/adults/genetics/${puppy.mother}}`}>See {motherName}'s Genetics</a>
+                                <a href={`${baseURL}/adults/genetics/${puppy.mother}}`} class="parent-link">See {motherName}'s Genetics</a>
                         )}
                     </dd>
 
                     <dt>Father:</dt>
                     <dd>
-                        <a href={`${baseURL}/adults/${puppy.father}`}>{fatherName}</a>
+                        <a href={`${baseURL}/adults/${puppy.father}`} class="parent-link">{fatherName}</a>
                         { fatherHasGenetics && (
-                                <a href={`${baseURL}/adults/genetics/${puppy.father}}`}>See {fatherName}'s Genetics</a>
+                                <a href={`${baseURL}/adults/genetics/${puppy.father}}`} class="parent-link">See {fatherName}'s Genetics</a>
                         )}
                     </dd>
 
@@ -162,19 +162,24 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
 
                 <div class="included-info">
                     <h1 class="included-header">All Puppies come included with:</h1>
-                    <ul class="included-list">
-                        {formattedInclusions.map((item) => (
-                                <li>
-                                    {item.title}
 
-                                    {item.subItems && item.subItems.length > 0 && (
-                                            <ul class="puppy-pack-list">
-                                                {item.subItems.map((subItem) => (
-                                                        <li>{subItem}</li>
-                                                ))}
-                                            </ul>
-                                    )}
-                                </li>
+                    <ul class="included-list">
+                        {formattedInclusions.map((item: NormalItem, index: number) => (
+                                <a href=`${baseURL}/puppies/puppy-pack?ref=${index}` class="puppy-pack-link">
+                                    <li>
+                                        {item.title}
+
+                                        {item.subItems && item.subItems.length > 0 && (
+                                                <ul class="puppy-pack-list">
+                                                    {item.subItems.map((subItem: string, subIndex: number) => (
+                                                            <a href=`${baseURL}/puppies/puppy-pack?ref=${index}&sub=${subIndex}` class="puppy-pack-link">
+                                                                <li>{subItem}</li>
+                                                            </a>
+                                                    ))}
+                                                </ul>
+                                        )}
+                                    </li>
+                                </a>
                         ))}
                     </ul>
                 </div>
@@ -531,7 +536,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     white-space: nowrap;
   }
 
-  a {
+  .parent-link {
     color: var(--colour-white);
     text-decoration: none;
     font-weight: bold;
@@ -539,7 +544,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     &:hover { text-decoration: underline; }
   }
 
-  dd a {
+  dd .parent-link {
     display: inline-block;
     background-color: var(--colour-dark);
     padding: 0.2rem 0.8rem;
@@ -585,17 +590,25 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     font-family: var(--font-primary);
     font-size: 1.8rem;
     font-weight: 900;
-    font-weight: 900;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.5rem 0;
 
     @media (#{$small-desktop}) {
       font-size: 1.45rem;
     }
   }
 
+  .included-more-link {
+    color: var(--colour-dark);
+    font-family: var(--font-secondary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-top: 1rem;
+  }
+
   .included-list {
     margin: 0;
     padding-left: 1.5rem;
+    margin-bottom: 1rem;
     li {
       color: var(--colour-light);
       font-family: var(--font-secondary);
@@ -605,6 +618,16 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
       @media (#{$small-desktop}) {
         font-size: 1.05rem;
       }
+    }
+  }
+
+  .puppy-pack-link {
+    text-decoration: none;
+    text-underline-offset: 3px;
+    color: var(--colour-light);
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 

@@ -92,9 +92,11 @@ export function initPuppyPackEditor() {
 
         const innerCard = wrapper.querySelector('.comp-container') || wrapper.querySelector('.comp-list-item');
         const innerInput = wrapper.querySelector('.comp-input') as HTMLInputElement;
+        const innerTextarea = wrapper.querySelector('.comp-textarea') as HTMLTextAreaElement;
 
         if (innerCard) innerCard.setAttribute('data-id', uniqueId);
         if (innerInput) innerInput.value = '';
+        if (innerTextarea) innerTextarea.value = '';
 
         return wrapper;
     }
@@ -131,15 +133,25 @@ export function initPuppyPackEditor() {
         saveBtn.innerText = "Saving Changes...";
 
         const rowElements = listContainer.querySelectorAll('.item-row-wrapper');
-        const dataPayload: Array<{ id: string; value: string; sortOrder: number; isSubItem: boolean }> = [];
+
+        const dataPayload: Array<{
+            id: string;
+            value: string;
+            content: string;
+            sortOrder: number;
+            isSubItem: boolean
+        }> = [];
 
         rowElements.forEach((row, index) => {
             const inputElement = row.querySelector('.comp-input') as HTMLInputElement;
+            const textareaElement = row.querySelector('.comp-textarea') as HTMLTextAreaElement;
             const rowId = row.getAttribute('data-id');
+
             if (inputElement && rowId) {
                 dataPayload.push({
                     id: rowId,
                     value: inputElement.value.trim(),
+                    content: textareaElement ? textareaElement.value.trim() : '',
                     sortOrder: index,
                     isSubItem: row.classList.contains('is-sub-item')
                 });

@@ -32,7 +32,11 @@ const initialItems = puppyPack;
             <div id="list-sort-container" class="list-sort-container" role="list">
                 {initialItems.map((item: any) =>
                         <div class={`item-row-wrapper ${item.isSubItem ? 'is-sub-item' : ''}`} data-id={item.id}>
-                            <ListInput label={item.isSubItem ? "Enter sub-item parameter..." : "Enter list item text..."} value={item.value} id={item.id} />
+                            <ListInput
+                                    label={item.isSubItem ? "Enter sub-item parameter..." : "Enter list item text..."}
+                                    value={item.value}
+                                    contentValue={item.content}
+                                    id={item.id} />
                         </div>
                 )}
             </div>
@@ -49,13 +53,13 @@ const initialItems = puppyPack;
 
         <template id="row-template-item">
             <div class="item-row-wrapper">
-                <ListInput label="Enter list item text..." value="" id="blueprint-temp-id" />
+                <ListInput label="Enter list item text..." value="" contentValue="" id="blueprint-temp-id" />
             </div>
         </template>
 
         <template id="row-template-sub">
             <div class="item-row-wrapper is-sub-item">
-                <ListInput label="Enter sub-item parameter..." value="" id="blueprint-temp-sub-id" />
+                <ListInput label="Enter sub-item parameter..." value="" contentValue="" id="blueprint-temp-sub-id" />
             </div>
         </template>
 

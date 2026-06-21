@@ -4,10 +4,16 @@
 interface Props {
     label?: string;
     value?: string;
+    contentValue?: string;
     id?: string;
 }
 
-const { label = "Enter list item text...", value = "", id } = Astro.props;
+const {
+    label = "Enter list item text...",
+    value = "",
+    contentValue = "",
+    id
+} = Astro.props;
 ---
 
 <div class="comp-list-item" data-id={id} role="listitem">
@@ -21,13 +27,20 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
         <img src="/icons/drag.svg" class="drag-icon"/>
     </button>
 
-    <input
-            type="text"
-            class="comp-input"
-            placeholder={label}
-            value={value}
-            name="list-item-value"
-    />
+    <div class="input-group">
+        <input
+                type="text"
+                class="comp-input"
+                placeholder={label}
+                value={value}
+                name="list-item-value"
+        />
+
+        <textarea
+                class="comp-textarea"
+                name="list-item-content"
+                placeholder="Enter expanded content...">{contentValue}</textarea>
+    </div>
 
     <button
             type="button"
@@ -51,11 +64,18 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
       display: flex;
       flex-direction: row;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.85rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       box-sizing: border-box;
       transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .input-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .drag-handle-btn {
@@ -96,11 +116,9 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
     }
 
 
-    .comp-input {
-      flex: 1;
-      height: 2.6rem;
+    .comp-input, .comp-textarea {
+      width: 100%;
       border-radius: 0.5rem;
-      padding: 0 0.8rem;
       border: 2px solid rgba(255, 255, 255, 0.15);
       background-color: rgba(255, 255, 255, 0.07);
       color: var(--colour-white);
@@ -122,9 +140,22 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
       }
     }
 
+    .comp-input {
+      height: 2.6rem;
+      padding: 0 0.8rem;
+    }
+
+    .comp-textarea {
+      min-height: 5rem;
+      padding: 0.6rem 0.8rem;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
     .comp-delete-btn {
       width: 2.4rem;
       height: 2.4rem;
+      margin-top: 0.1rem;
       border-radius: 0.5rem;
       display: flex;
       align-items: center;
@@ -172,17 +203,25 @@ const { label = "Enter list item text...", value = "", id } = Astro.props;
         }
       }
 
+      .input-group {
+        width: 100%;
+      }
+
       .comp-input {
         height: 3rem;
         font-size: 1.05rem;
         padding: 0 0.6rem;
         border-radius: 0.4rem;
-        width: 10rem;
-        max-width: 15rem;
 
         &::placeholder {
           font-size: 0.95rem;
         }
+      }
+
+      .comp-textarea {
+        font-size: 1.05rem;
+        padding: 0.6rem;
+        border-radius: 0.4rem;
       }
 
       .comp-delete-btn {

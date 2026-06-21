@@ -1,0 +1,143 @@
+---
+// src/pages/puppies/puppy-pack.astro
+import {baseURL, SITE_NAME} from "../../config/siteSettings";
+import Layout from "../../layouts/Layout.astro";
+import { Accordion, AccordionItem, Tab, TabItem } from "free-astro-components";
+import { getCachedData } from "../../scripts/databaseCache";
+
+// Extracting Data
+const { puppyPack } = await getCachedData();
+
+interface SubItem {
+    title: string;
+    content: string;
+}
+
+interface NormalItem {
+    title: string;
+    content: string;
+    subItems: SubItem[];
+}
+
+const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, currentItem) => {
+    if (!currentItem.isSubItem) {
+        accumulator.push({
+            title: currentItem.value,
+            content: currentItem.content || "",
+            subItems: []
+        });
+    } else {
+        if (accumulator.length > 0) {
+            accumulator[accumulator.length - 1].subItems.push({
+                title: currentItem.value,
+                content: currentItem.content || ""
+            });
+        } else {
+            accumulator.push({
+                title: currentItem.value,
+                content: currentItem.content || "",
+                subItems: []
+            });
+        }
+    }
+    return accumulator;
+}, []);
+
+
+const { searchParams } = Astro.url;
+const ref = Number(searchParams.get("ref")) || 0;
+const subRef = Number(searchParams.get("sub")) || 0;
+---
+
+<Layout title={`Puppy Pack | ${SITE_NAME}`}>
+
+    <main class="puppy-pack-container">
+
+        <header class="litter-header">
+            <h1>More about the Puppy Pack</h1>
+            <p>Click the tabs below to read more about what each item is</p>
+        </header>
+
+        <Accordion>
+            {formattedInclusions.map((item: NormalItem, index: number) => {
+                const hasContent = !!item.content;
+                const hasSubItems = item.subItems && item.subItems.length > 0;
+                const isEmpty = !hasContent && !hasSubItems;
+
+                const sanitisedTitle = item.title.replace(/\w+\s*:/g, "").trim();
+
+                return (
+                        <AccordionItem title={sanitisedTitle} name="accordion-item" open={index === ref}>
+                            {hasContent && (
+                                    <p>{item.content}</p>
+                            )}
+
+                            {hasSubItems && (
+                                    <Tab
+                                            tabs={item.subItems.map((subItem: SubItem, subIndex: number) => ({
+                                                label: subItem.title, active: subIndex === subRef
+                                            }))}
+                                    >
+                                        {item.subItems.map((subItem: SubItem, subIndex: number) => {
+                                            const hasSubContent = !!subItem.content;
+                                            const isSubEmpty = !hasSubContent;
+
+                                            return (
+                                                    <TabItem active={subIndex === subRef}>
+                                                        {hasSubContent && (
+                                                                <p> {subItem.content} </p>
+                                                        )}
+
+                                                        {isSubEmpty && (
+                                                                <p class="empty-message" style="font-style: italic; opacity: 0.7;">
+                                                                    Nothing available right now.
+                                                                </p>
+                                                        )}
+                                                    </TabItem>
+                                            );
+                                        })}
+                                    </Tab>
+                            )}
+
+                            {isEmpty && (
+                                    <p class="empty-message" style="font-style: italic; opacity: 0.7;">
+                                        Nothing available right now.
+                                    </p>
+                            )}
+                        </AccordionItem>
+                );
+            })}
+        </Accordion>
+
+    </main>
+
+</Layout>
+
+
+
+<style lang="scss">
+
+  .puppy-pack-container {
+    max-width: 110rem;
+    min-height: calc(100vh - var(--header-height));
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .litter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--colour-dark);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-family: var(--font-primary);
+      color: var(--colour-dark);
+      margin: 0;
+      font-size: 2.2rem;
+    }
+  }
+
+</style>

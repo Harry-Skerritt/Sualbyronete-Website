@@ -24,6 +24,19 @@ if (!parent || !genetics) {
 const parentName = parent.name;
 
 const defaultVisibleType = genetics.atRiskCount > 0 ? 1 : genetics.carrierCount > 0 ? 2 : 3;
+
+// COI
+const hasDogCoI = genetics.dogCoI !== "0";
+const hasBreedAverage = genetics.breedAverage !== "0";
+const hasHistory = genetics.coiHistory.generations !== "0" && genetics.coiHistory.complete !== "0";
+const hasNoData = !hasDogCoI && !hasBreedAverage && !hasHistory;
+
+// Breeds
+const validBreeds = (genetics.breedGeneticsSummary || []).filter(
+    (b: any) => b.value !== "0" && b.breed !== ""
+);
+
+const hasBreeds = validBreeds.length > 0;
 ---
 
 <Layout title=`${parent.name}'s Genetics | ${SITE_NAME}`>
@@ -74,9 +87,17 @@ const defaultVisibleType = genetics.atRiskCount > 0 ? 1 : genetics.carrierCount 
                     <h2 class="makeup-title">Top 3 Breeds:</h2>
 
                     <ul class="breed-list">
-                        {genetics.breedGeneticsSummary && genetics.breedGeneticsSummary.map((b: any) => (
-                                <li>{b.value}% {b.breed}</li>
-                        ))}
+                        {hasBreeds ? (
+                                <ul class="breed-list">
+                                    {validBreeds.map((b: any, index: number) => (
+                                            <li>{b.value}% {b.breed}</li>
+                                    ))}
+                                </ul>
+                        ) : (
+                                <p class="empty-message">
+                                    No breed genetics data currently available for {parentName}
+                                </p>
+                        )}
                     </ul>
                 </div>
             </div>
@@ -87,9 +108,23 @@ const defaultVisibleType = genetics.atRiskCount > 0 ? 1 : genetics.carrierCount 
                 </div>
 
                 <div class="coi-content">
-                    <h2 class="makeup-title">CoI for {parentName}: {genetics.dogCoI}%</h2>
-                    <p class="breed-average">Breed Average CoI: {genetics.breedAverage}%</p>
-                    <p class="gen-history">{genetics.coiHistory.generations} Generations Available of which {genetics.coiHistory.complete} are complete</p>
+                    {hasDogCoI && (
+                            <h2 class="makeup-title">CoI for {parentName}: {genetics.dogCoI}%</h2>
+                    )}
+
+                    {hasBreedAverage && (
+                            <p class="breed-average">Breed Average CoI: {genetics.breedAverage}%</p>
+                    )}
+
+                    {hasHistory && (
+                            <p class="gen-history">{genetics.coiHistory.generations} Generations Available of which {genetics.coiHistory.complete} are complete</p>
+                    )}
+
+                    {hasNoData && (
+                            <p class="empty-message">
+                                No CoI data currently available for {parentName}
+                            </p>
+                    )}
                 </div>
             </div>
         </section>
@@ -176,6 +211,13 @@ const defaultVisibleType = genetics.atRiskCount > 0 ? 1 : genetics.carrierCount 
 
   .container {
     width: 50%;
+  }
+
+  .empty-message {
+    font-size: 1.1rem;
+    font-family: var(--font-secondary);
+    font-style: italic;
+    opacity: 0.7;
   }
 
   /* Genetic Summary */
