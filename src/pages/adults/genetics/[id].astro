@@ -33,10 +33,13 @@ const hasNoData = !hasDogCoI && !hasBreedAverage && !hasHistory;
 
 // Breeds
 const validBreeds = (genetics.breedGeneticsSummary || []).filter(
-    (b: any) => b.value !== "0" && b.breed !== ""
+    (b: any) => b.value !== "0" && (b.breed !== "" && b.breed !== "0" && b.breed.toLowerCase() !== "none")
 );
 
 const hasBreeds = validBreeds.length > 0;
+
+// Genetics
+const hasGenetics = (genetics.atRiskCount > 0 || genetics.carrierCount > 0 || genetics.clearCount > 0);
 ---
 
 <Layout title=`${parent.name}'s Genetics | ${SITE_NAME}`>
@@ -52,30 +55,44 @@ const hasBreeds = validBreeds.length > 0;
                 <div class="header-content">
                     <h2 class="section-title">Genetic Conditions</h2>
                     <p class="testing-read-more">
-                        *These results are from 30 different test.
+                        *These results are from 30 different tests.
                         <a href=`${baseURL}/adults/genetics/whats-tested` class="read-more-link">Read More about what is tested</a>
                     </p>
                 </div>
             </div>
 
-            <div class="summary-container">
-                <GeneticSummary type={1} value={genetics.atRiskCount}/>
-                <GeneticSummary type={2} value={genetics.carrierCount}/>
-                <GeneticSummary type={3} value={genetics.clearCount}/>
-            </div>
+            {hasGenetics && (
+                    <div class="summary-container">
+                        <GeneticSummary type={1} value={genetics.atRiskCount}/>
+                        <GeneticSummary type={2} value={genetics.carrierCount}/>
+                        <GeneticSummary type={3} value={genetics.clearCount}/>
+                    </div>
+            )}
+
         </section>
 
-        <section class="genetic-details" data-active-type={defaultVisibleType}>
-            <div class="pane-wrapper" data-pane-type="1">
-                <GeneticsDetail type={1} value={genetics.atRiskDetails} visible={defaultVisibleType === 1} dogName={parentName}/>
-            </div>
-            <div class="pane-wrapper" data-pane-type="2">
-                <GeneticsDetail type={2} value={genetics.carrierDetails} visible={defaultVisibleType === 2} dogName={parentName}/>
-            </div>
-            <div class="pane-wrapper" data-pane-type="3">
-                <GeneticsDetail type={3} value={genetics.clearDetails} visible={defaultVisibleType === 3} dogName={parentName}/>
-            </div>
-        </section>
+        { hasGenetics && (
+                <section class="genetic-details" data-active-type={defaultVisibleType}>
+                    <div class="pane-wrapper" data-pane-type="1">
+                        <GeneticsDetail type={1} value={genetics.atRiskDetails} visible={defaultVisibleType === 1} dogName={parentName}/>
+                    </div>
+                    <div class="pane-wrapper" data-pane-type="2">
+                        <GeneticsDetail type={2} value={genetics.carrierDetails} visible={defaultVisibleType === 2} dogName={parentName}/>
+                    </div>
+                    <div class="pane-wrapper" data-pane-type="3">
+                        <GeneticsDetail type={3} value={genetics.clearDetails} visible={defaultVisibleType === 3} dogName={parentName}/>
+                    </div>
+                </section>
+        )}
+
+        {!hasGenetics && (
+                <section class="genetic-details">
+                    <p class="empty-message">
+                        No genetic data currently available for {parentName}
+                    </p>
+                </section>
+        )}
+
 
         <section class="split-row">
             <div class="breed container">
@@ -84,21 +101,21 @@ const hasBreeds = validBreeds.length > 0;
                 </div>
 
                 <div class="makeup-container">
-                    <h2 class="makeup-title">Top 3 Breeds:</h2>
+                    {hasBreeds ? (
+                            <>
+                                <h2 class="makeup-title">Top 3 Breeds:</h2>
 
-                    <ul class="breed-list">
-                        {hasBreeds ? (
                                 <ul class="breed-list">
                                     {validBreeds.map((b: any, index: number) => (
                                             <li>{b.value}% {b.breed}</li>
                                     ))}
                                 </ul>
-                        ) : (
-                                <p class="empty-message">
-                                    No breed genetics data currently available for {parentName}
-                                </p>
-                        )}
-                    </ul>
+                            </>
+                    ) : (
+                            <p class="empty-message">
+                                No breed genetics data currently available for {parentName}
+                            </p>
+                    )}
                 </div>
             </div>
 
@@ -138,6 +155,7 @@ const hasBreeds = validBreeds.length > 0;
     max-width: 110rem;
     margin: 0 auto;
     min-height: calc(100vh - calc(var(--header-height) * 2));
+    height: auto;
   }
 
   :global(.see-more-btn.pane-active) {

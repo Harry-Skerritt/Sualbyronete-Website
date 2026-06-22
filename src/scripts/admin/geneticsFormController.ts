@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const atRiskInput = document.getElementById("at-risk-count") as HTMLInputElement;
     const carrierInput = document.getElementById("carrier-count") as HTMLInputElement;
     const clearInput = document.getElementById("clear-count") as HTMLInputElement;
+    const noGeneticsCheck = document.getElementById("no-genetics") as HTMLInputElement;
 
     // --- Tab Switching ---
     const tabNav = document.getElementById("genetics-tab-navigation");
@@ -48,10 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const carrierNum = parseInt(carrierInput.value, 10) || 0;
         const totalActiveConditions = atRiskNum + carrierNum;
 
+        const isNoGeneticsActive = noGeneticsCheck ? noGeneticsCheck.checked : false;
+
         const conditionTabButton = tabNav.querySelector('[data-target="pane-conditions"]') as HTMLButtonElement || null;
         if (!conditionTabButton) return;
 
-        if (totalActiveConditions < 1) {
+        if (totalActiveConditions < 1 || isNoGeneticsActive) {
             conditionTabButton.classList.add("disabled-tab");
             conditionTabButton.setAttribute("disabled", "true");
 
@@ -164,14 +167,66 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
+    // No Genetics
+    const handleNoGeneticsToggle = () => {
+        if (!noGeneticsCheck) return;
+
+        const isNoGenetics = noGeneticsCheck.checked;
+        const summaryFieldRow = document.querySelector("#pane-summary .form-row-split");
+
+        if (isNoGenetics) {
+            if (atRiskInput) {
+                atRiskInput.value = "0";
+                atRiskInput.disabled = true;
+            }
+
+            if (carrierInput) {
+                carrierInput.value = "0";
+                carrierInput.disabled = true;
+            }
+
+            if (clearInput) {
+                clearInput.value = "0";
+            }
+
+            if (summaryFieldRow) summaryFieldRow.classList.add("disabled-summary-fields");
+
+            const atRiskContainer = document.getElementById("slots-container-at-risk");
+            const carrierContainer = document.getElementById("slots-container-carrier");
+            const atRiskFeedback = document.getElementById("feedback-at-risk");
+            const carrierFeedback = document.getElementById("feedback-carrier");
+
+            if (atRiskContainer) atRiskContainer.innerHTML = "";
+            if (carrierContainer) carrierContainer.innerHTML = "";
+            if (atRiskFeedback) atRiskFeedback.innerText = "Allocated Conditions: 0";
+            if (carrierFeedback) carrierFeedback.innerText = "Allocated Conditions: 0";
+
+            evaluateGeneticConditionTab();
+        } else {
+            if (atRiskInput) atRiskInput.disabled = false;
+            if (carrierInput) carrierInput.disabled = false;
+
+            if (summaryFieldRow) summaryFieldRow.classList.remove("disabled-summary-fields");
+
+            syncCalcsAndSlots('at-risk');
+            syncCalcsAndSlots('carrier');
+        }
+    }
+
+    if (noGeneticsCheck) {
+        noGeneticsCheck.addEventListener("change", handleNoGeneticsToggle);
+    }
+
     // --- Bind Event Listeners ---
     if (atRiskInput && carrierInput) {
         ['input', 'change', 'keyup'].forEach(ev => {
             atRiskInput.addEventListener(ev, () =>  {
+                if (noGeneticsCheck?.checked) return;
                 syncCalcsAndSlots('at-risk');
                 evaluateGeneticConditionTab();
             });
             carrierInput.addEventListener(ev, () => {
+                if (noGeneticsCheck?.checked) return;
                 syncCalcsAndSlots('carrier');
                 evaluateGeneticConditionTab();
             });
@@ -190,6 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     syncCalcsAndSlots('at-risk', loadedAtRisk);
     syncCalcsAndSlots('carrier', loadedCarrier);
+
+    handleNoGeneticsToggle();
     evaluateGeneticConditionTab();
 
     // --- Submission ---
@@ -220,8 +277,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
 
-        const atRiskDetails = harvestAllocatedSlotData("slots-container-at-risk");
-        const carrierDetails = harvestAllocatedSlotData("slots-container-carrier");
+        const isNoGeneticsActive = noGeneticsCheck ? noGeneticsCheck.checked : false;
+        const atRiskDetails = isNoGeneticsActive ? [] : harvestAllocatedSlotData("slots-container-at-risk");
+        const carrierDetails = isNoGeneticsActive ? [] : harvestAllocatedSlotData("slots-container-carrier");
 
         if (slotValidationError) {
             window.showToast("⚠️ Allocation Warning: You have empty condition's! Please assign conditions to all available slots before saving.");
@@ -234,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ...carrierDetails.map(item => item.id)
         ]);
 
-        const clearDetails = masterTests
+        const clearDetails = isNoGeneticsActive ? [] : masterTests
             .filter(testItem => !activeSelectedIds.has(testItem.id))
             .map(testItem => ({
                 id: testItem.id,
@@ -249,9 +307,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const payload = {
             adultId,
-            atRiskCount: atRiskDetails.length,
-            carrierCount: carrierDetails.length,
-            clearCount: clearDetails.length,
+            atRiskCount: isNoGeneticsActive ? 0 : atRiskDetails.length,
+            carrierCount: isNoGeneticsActive ? 0 : carrierDetails.length,
+            clearCount: isNoGeneticsActive ? 0 : clearDetails.length,
             dogCoI: (document.getElementById("dog-coi") as HTMLInputElement).value,
             breedAverage: (document.getElementById("breed-average") as HTMLInputElement).value || null,
             coiHistory: {

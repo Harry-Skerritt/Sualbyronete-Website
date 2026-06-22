@@ -142,7 +142,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
                     <dd>
                         <a href={`${baseURL}/adults/${puppy.mother}`} class="parent-link">{motherName}</a>
                         { motherHasGenetics && (
-                                <a href={`${baseURL}/adults/genetics/${puppy.mother}}`} class="parent-link">See {motherName}'s Genetics</a>
+                                <a href={`${baseURL}/adults/genetics/${puppy.mother}`} class="parent-link genetic-link">See {motherName}'s Genetics</a>
                         )}
                     </dd>
 
@@ -150,7 +150,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
                     <dd>
                         <a href={`${baseURL}/adults/${puppy.father}`} class="parent-link">{fatherName}</a>
                         { fatherHasGenetics && (
-                                <a href={`${baseURL}/adults/genetics/${puppy.father}}`} class="parent-link">See {fatherName}'s Genetics</a>
+                                <a href={`${baseURL}/adults/genetics/${puppy.father}`} class="parent-link genetic-link">See {fatherName}'s Genetics</a>
                         )}
                     </dd>
 
@@ -542,6 +542,7 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     font-weight: bold;
     transition: all 0.3s ease;
     &:hover { text-decoration: underline; }
+    margin-right: 0.6rem;
   }
 
   dd .parent-link {
@@ -636,4 +637,9 @@ const formattedInclusions = puppyPack.reduce<NormalItem[]>((accumulator, current
     padding-left: 1.2rem;
   }
 
+  .genetic-link {
+    @media (#{$mobile}) {
+      display: none !important;
+    }
+  }
 </style>

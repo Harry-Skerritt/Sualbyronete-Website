@@ -72,7 +72,16 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
                 <div class="tab-pane active" id="pane-summary">
                     <fieldset class="form-section">
                         <legend>Condition Summary Count</legend>
-                        <p class="section-helper-text">Enter the number of 'At Risk' and 'Carrier' conditions</p>
+
+                        <div class="genetics-subheader">
+                            <p class="section-helper-text">Enter the number of 'At Risk' and 'Carrier' conditions</p>
+
+                            <div class="no-field-group">
+                                <label for="no-genetics">No Genetics Available?</label>
+                                <input type="checkbox" class="no-genetics-check" id="no-genetics" name="no-genetics"/>
+                            </div>
+                        </div>
+
 
                         <div class="form-row-split">
                             <div class="field-group">
@@ -245,7 +254,6 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
   }
 
     .tab-pane {
-      // WebKit Safe-Mode Setup: We hide the container without letting Safari collapse its internal geometry
       display: block !important;
       width: 100% !important;
       max-width: 100% !important;
@@ -256,16 +264,15 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
       visibility: hidden;
       opacity: 0;
       pointer-events: none;
-      position: absolute; // Takes inactive fields completely out of the visual flow so they don't block taps
+      position: absolute;
 
       &.active {
-        // Restore structural defaults smoothly when active
         height: auto;
         overflow: visible;
         visibility: visible;
         opacity: 1;
         pointer-events: auto;
-        position: relative; // Places it back into standard page rendering order
+        position: relative;
         animation: tabPanFadeIn 0.25s ease-out;
       }
     }
@@ -307,8 +314,29 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
     font-family: var(--font-secondary);
     font-size: 0.95rem;
     color: var(--colour-dark);
-    margin: -0.5rem 0 1.5rem 0;
+    margin: 0;
     font-style: italic;
+  }
+
+  .genetics-subheader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: -0.5rem 0 1.5rem 0;
+
+    .no-field-group {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+
+      label {
+        font-family: var(--font-secondary);
+        color: var(--colour-dark);
+      }
+    }
   }
 
   .form-row-split {
@@ -358,11 +386,8 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
         -webkit-appearance: none;
         margin: 0;
       }
-
       -moz-appearance: textfield;
     }
-
-
   }
 
   .slots-allocation-feedback {
@@ -535,7 +560,6 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
       line-height: 1.2;
     }
 
-    // Configures horizontal tab options to behave like a fluid slider on phones
     .genetics-tabs-nav {
       padding-bottom: 0.4rem;
       -webkit-overflow-scrolling: touch;
@@ -557,6 +581,15 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
       font-size: 1.05rem;
     }
 
+    .genetics-subheader {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .no-field-group {
+        gap: 0.3rem;
+      }
+    }
+
     .form-section {
       padding: 1.2rem;
       margin-bottom: 1rem;
@@ -571,13 +604,11 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
       margin-bottom: 1.2rem;
     }
 
-    // Forces inputs from sitting horizontally to cleanly stacking up vertically
     .form-row-split {
       flex-direction: column;
       gap: 1rem;
     }
 
-    // Clean space overrides for dynamic row setups
     .mobile-mt-0 {
       margin-top: 0 !important;
     }
@@ -622,14 +653,14 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
     }
 
     .action-buttons {
-      flex-direction: column-reverse; // Puts the Submit action on top for mobile accessibility
+      flex-direction: column-reverse;
       gap: 0.75rem;
       margin-top: 1rem;
       padding-top: 1rem;
     }
 
     .discard-btn, .submit-btn {
-      width: 100%; // Spans full width for tap accuracy on small devices
+      width: 100%;
       text-align: center;
       font-size: 1.1rem;
       padding: 0.75rem 1rem;
