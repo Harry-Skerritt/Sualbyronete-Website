@@ -106,7 +106,7 @@ export const ABOUT_SECTIONS = [
 
     {
         title: "A Bit More About Me",
-        body: "Many years I go I worked in an office for an Engineering company, alongside my father. Following this I moved on to working for Whitworths typing invoiced and general office work. However, before long I moved to the Bookkeeping company Collets. Collets served as an introduction to Bookkeeping and I started working freelance for a local company using the Kalamazoo system to maintain books."
+        body: "Many years I go I worked in an office for an Engineering company, alongside my father. Following this I moved on to working for Whitworths typing invoices and general office work. However, before long I moved to the Bookkeeping company Collets. Collets served as an introduction to Bookkeeping and I started working freelance for a local company using the Kalamazoo system to maintain books."
     },
     {
         title: "",
