@@ -25,7 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const atRiskInput = document.getElementById("at-risk-count") as HTMLInputElement;
     const carrierInput = document.getElementById("carrier-count") as HTMLInputElement;
     const clearInput = document.getElementById("clear-count") as HTMLInputElement;
+
     const noGeneticsCheck = document.getElementById("no-genetics") as HTMLInputElement;
+    const noBreedCheck = document.getElementById("no-breed") as HTMLInputElement;
+    const noCoICheck = document.getElementById("no-coi") as HTMLInputElement;
 
     // --- Tab Switching ---
     const tabNav = document.getElementById("genetics-tab-navigation");
@@ -217,6 +220,81 @@ document.addEventListener("DOMContentLoaded", () => {
         noGeneticsCheck.addEventListener("change", handleNoGeneticsToggle);
     }
 
+    // No Breed
+    const handleNoBreedToggle = () => {
+        if (!noBreedCheck) return;
+
+        const isNoBreed = noBreedCheck.checked;
+        const breedRows = document.querySelectorAll("#pane-breed .tuple-row");
+
+        breedRows.forEach((row) => {
+            const breedInput = row.querySelector(".tuple-breed") as HTMLInputElement;
+            const valueInput = row.querySelector(".tuple-value") as HTMLInputElement;
+
+            if (isNoBreed) {
+                if (breedInput) {
+                    breedInput.value = "None";
+                    breedInput.disabled = true;
+                }
+                if (valueInput) {
+                    valueInput.value = "0";
+                    valueInput.disabled = true;
+                }
+
+                row.classList.add("disabled-summary-fields");
+            } else {
+                if (breedInput) {
+                    if (breedInput.value === "None") breedInput.value = "";
+                    breedInput.disabled = false;
+                }
+                if (valueInput) {
+                    if (valueInput.value === "0") valueInput.value = "";
+                    valueInput.disabled = false;
+                }
+                row.classList.remove("disabled-summary-fields");
+            }
+        });
+    }
+
+    if (noBreedCheck) {
+        noBreedCheck.addEventListener("change", handleNoBreedToggle);
+    }
+
+    // No CoI
+    const handleNoCoIToggle = () => {
+        if (!noCoICheck) return;
+
+        const isNoCoI = noCoICheck.checked;
+        const coiPane = document.getElementById("pane-coi");
+        if (!coiPane) return;
+
+        const dogCoiInput = coiPane.querySelector("#dog-coi") as HTMLInputElement;
+        const breedAvgInput = coiPane.querySelector("#breed-average") as HTMLInputElement;
+        const coiGenInput = coiPane.querySelector("#coi-generations") as HTMLInputElement;
+        const coiCompInput = coiPane.querySelector("#coi-complete") as HTMLInputElement;
+        const rowContainers = coiPane.querySelectorAll(".form-row-split");
+
+        if (isNoCoI) {
+            if (dogCoiInput) { dogCoiInput.value = "0%"; dogCoiInput.disabled = true; }
+            if (breedAvgInput) { breedAvgInput.value = "0%"; breedAvgInput.disabled = true; }
+            if (coiGenInput) { coiGenInput.value = "0"; coiGenInput.disabled = true; }
+            if (coiCompInput) { coiCompInput.value = "0"; coiCompInput.disabled = true; }
+
+            rowContainers.forEach(row => row.classList.add("disabled-summary-fields"));
+        } else {
+            if (dogCoiInput) { if (dogCoiInput.value === "0%") dogCoiInput.value = ""; dogCoiInput.disabled = false; }
+            if (breedAvgInput) { if (breedAvgInput.value === "0%") breedAvgInput.value = ""; breedAvgInput.disabled = false; }
+            if (coiGenInput) { if (coiGenInput.value === "0") coiGenInput.value = "0"; coiGenInput.disabled = false; }
+            if (coiCompInput) { if (coiCompInput.value === "0") coiCompInput.value = "0"; coiCompInput.disabled = false; }
+
+            rowContainers.forEach(row => row.classList.remove("disabled-summary-fields"));
+        }
+    }
+
+    if (noCoICheck) {
+        noCoICheck.addEventListener("change", handleNoCoIToggle);
+    }
+
     // --- Bind Event Listeners ---
     if (atRiskInput && carrierInput) {
         ['input', 'change', 'keyup'].forEach(ev => {
@@ -247,6 +325,8 @@ document.addEventListener("DOMContentLoaded", () => {
     syncCalcsAndSlots('carrier', loadedCarrier);
 
     handleNoGeneticsToggle();
+    handleNoBreedToggle();
+    handleNoCoIToggle();
     evaluateGeneticConditionTab();
 
     // --- Submission ---
@@ -282,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const carrierDetails = isNoGeneticsActive ? [] : harvestAllocatedSlotData("slots-container-carrier");
 
         if (slotValidationError) {
-            window.showToast("⚠️ Allocation Warning: You have empty condition's! Please assign conditions to all available slots before saving.");
+            window.showToast("⚠️ Allocation Warning: You have empty conditions! Please assign conditions to all available slots before saving.");
             switchTab("pane-conditions");
             return;
         }
@@ -300,21 +380,29 @@ document.addEventListener("DOMContentLoaded", () => {
             }));
 
         const tupleRows = formEl.querySelectorAll(".tuple-row");
-        const breedGeneticsSummary = Array.from(tupleRows).map(row => ({
-            breed: (row.querySelector(".tuple-breed") as HTMLInputElement).value,
-            value: (row.querySelector(".tuple-value") as HTMLInputElement).value,
-        }));
+        const isNoBreedActive = noBreedCheck ? noBreedCheck.checked : false;
+        const breedGeneticsSummary = Array.from(tupleRows).map(row => {
+            const breedInput = row.querySelector(".tuple-breed") as HTMLInputElement;
+            const valueInput = row.querySelector(".tuple-value") as HTMLInputElement;
+
+            return {
+                breed: isNoBreedActive ? "None" : (breedInput?.value || ""),
+                value: isNoBreedActive ? "0" : (valueInput?.value || ""),
+            };
+        });
+
+        const isNoCoIActive = noCoICheck ? noCoICheck.checked : false;
 
         const payload = {
             adultId,
             atRiskCount: isNoGeneticsActive ? 0 : atRiskDetails.length,
             carrierCount: isNoGeneticsActive ? 0 : carrierDetails.length,
             clearCount: isNoGeneticsActive ? 0 : clearDetails.length,
-            dogCoI: (document.getElementById("dog-coi") as HTMLInputElement).value,
-            breedAverage: (document.getElementById("breed-average") as HTMLInputElement).value || null,
+            dogCoI: isNoCoIActive ? "0" : (document.getElementById("dog-coi") as HTMLInputElement).value,
+            breedAverage: isNoCoIActive ? "0" : (document.getElementById("breed-average") as HTMLInputElement).value || null,
             coiHistory: {
-                generations: (document.getElementById("coi-generations") as HTMLInputElement).value,
-                complete: (document.getElementById("coi-complete") as HTMLInputElement).value,
+                generations: isNoCoIActive ? "0" : (document.getElementById("coi-generations") as HTMLInputElement).value,
+                complete: isNoCoIActive ? "0" : (document.getElementById("coi-complete") as HTMLInputElement).value,
             },
             atRiskDetails,
             carrierDetails,

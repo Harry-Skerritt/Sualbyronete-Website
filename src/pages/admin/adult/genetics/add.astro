@@ -78,7 +78,13 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
 
                             <div class="no-field-group">
                                 <label for="no-genetics">No Genetics Available?</label>
-                                <input type="checkbox" class="no-genetics-check" id="no-genetics" name="no-genetics"/>
+                                <input
+                                        type="checkbox"
+                                        class="no-genetics-check"
+                                        id="no-genetics"
+                                        name="no-genetics"
+                                        checked={existingGenetics && existingGenetics.atRiskCount === 0 && existingGenetics.carrierCount === 0 && existingGenetics.clearCount === 0}
+                                />
                             </div>
                         </div>
 
@@ -124,6 +130,22 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
                 <div class="tab-pane" id="pane-coi">
                     <fieldset class="form-section">
                         <legend>Coefficient of Inbreeding (CoI)</legend>
+
+                        <div class="genetics-subheader">
+                            <p class="section-helper-text">Enter the CoI data here. All fields <strong>must</strong> be a number!</p>
+
+                            <div class="no-field-group">
+                                <label for="no-coi">No CoI Data?</label>
+                                <input
+                                        type="checkbox"
+                                        class="no-genetics-check"
+                                        id="no-coi"
+                                        name="no-coi"
+                                        checked={existingGenetics && (existingGenetics.dogCoI === "0" || coiHistoryObj.generations === "0")}
+                                />
+                            </div>
+                        </div>
+
                         <div class="form-row-split">
                             <div class="field-group">
                                 <label for="dog-coi">Dog CoI (%): <span class="required-accent">*</span></label>
@@ -150,7 +172,21 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
                 <div class="tab-pane" id="pane-breed">
                     <fieldset class="form-section">
                         <legend>Breed Genetic Breakdown</legend>
-                        <p class="section-helper-text">All 3 breeds <strong>must</strong> be filled in, if there are not 3 just put 'None' and '0'</p>
+
+                        <div class="genetics-subheader">
+                            <p class="section-helper-text">All 3 breeds <strong>must</strong> be filled in, if there are not 3 just put 'None' and '0'</p>
+
+                            <div class="no-field-group">
+                                <label for="no-breed">No Breed Data?</label>
+                                <input
+                                        type="checkbox"
+                                        class="no-genetics-check"
+                                        id="no-breed"
+                                        name="no-breed"
+                                        checked={existingGenetics && breedSummary[0]?.breed === "None"}
+                                />
+                            </div>
+                        </div>
 
                         {breedSummary.map((item: any, idx: number) => (
                                 <div class="form-row-split tuple-row mb-4" data-index={idx}>
@@ -250,6 +286,17 @@ const coiHistoryObj = existingGenetics?.coiHistory || { generations: "0", comple
         background-color: transparent !important;
         color: #64748b !important;
       }
+    }
+  }
+
+  .disabled-summary-fields {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+
+    &:hover {
+      background-color: transparent !important;
+      color: #64748b !important;
     }
   }
 
