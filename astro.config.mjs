@@ -4,6 +4,7 @@ import path from 'path';
 import cloudflare from '@astrojs/cloudflare';
 
 import sitemap from '@astrojs/sitemap';
+import securityTxt from "astro-securitytxt";
 
 // https://astro.build/config
 export default defineConfig({
@@ -29,5 +30,12 @@ export default defineConfig({
       },
   },
 
-  integrations: [sitemap()],
+  integrations: [
+      sitemap(),
+      securityTxt({
+          contact: "mailto:security@sualbyronete.com",
+          expires: "2027-06-30T00:00:00.000Z",
+          placement: "both"
+      }),
+  ],
 });

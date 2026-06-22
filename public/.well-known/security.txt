@@ -1,5 +1,0 @@
-# Security Contact Information for our site
-Contact: mailto:security@sualbyronete.co.uk
-Contact: https://sualbyronete.co.uk/contact
-Expires: 2027-06-30T00:00:00.000Z
-Preferred-Languages: en
