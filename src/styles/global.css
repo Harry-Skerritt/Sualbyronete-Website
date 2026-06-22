@@ -6,9 +6,16 @@
 
 :root {
     --colour-primary: #95B6BB;
+    --colour-primary-rgb: 148, 182, 187;
+
     --colour-dark: #407078;
+    --colour-dark-rgb: 64, 112, 120;
+
     --colour-light: #D9F4F8;
+    --colour-light-rgb: 217, 244, 248;
+
     --colour-white: #F0F9FF;
+    --colour-white-rgb: 240, 249, 255;
 
     --puppy-new-colour: #8041be;
     --puppy-reserved-colour: #7fbe41;

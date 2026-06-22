@@ -69,16 +69,16 @@ export const PUPPY_COLOURS = [
 ]
 
 export const PUPPY_INCLUSIONS = [
-    { id: "inc_1", value: "Pedigree", sortOrder: 0, isSubItem: false },
-    { id: "inc_2", value: "Vaccinations", sortOrder: 1, isSubItem: false },
-    { id: "inc_3", value: "Health Record", sortOrder: 2, isSubItem: false },
-    { id: "inc_4", value: "Microchipped", sortOrder: 3, isSubItem: false },
-    { id: "inc_5", value: "Insured", sortOrder: 4, isSubItem: false },
-    { id: "inc_6", value: "Socialised with other dogs", sortOrder: 5, isSubItem: false },
-    { id: "inc_7", value: "Puppy Pack Including:", sortOrder: 6, isSubItem: false },
-    { id: "inc_8", value: "Owners Contract", sortOrder: 7, isSubItem: true },
-    { id: "inc_9", value: "Feeding Instructions", sortOrder: 8, isSubItem: true },
-    { id: "inc_10", value: "History from Birth to when they join your family", sortOrder: 9, isSubItem: true }
+    { id: "inc_1", value: "Pedigree", content: "", sortOrder: 0, isSubItem: false },
+    { id: "inc_2", value: "Vaccinations", content: "", sortOrder: 1, isSubItem: false },
+    { id: "inc_3", value: "Health Record", content: "", sortOrder: 2, isSubItem: false },
+    { id: "inc_4", value: "Microchipped", content: "", sortOrder: 3, isSubItem: false },
+    { id: "inc_5", value: "Insured", content: "", sortOrder: 4, isSubItem: false },
+    { id: "inc_6", value: "Socialised with other dogs", content: "", sortOrder: 5, isSubItem: false },
+    { id: "inc_7", value: "Puppy Pack Including:", content: "", sortOrder: 6, isSubItem: false },
+    { id: "inc_8", value: "Owners Contract", content: "", sortOrder: 7, isSubItem: true },
+    { id: "inc_9", value: "Feeding Instructions", content: "", sortOrder: 8, isSubItem: true },
+    { id: "inc_10", value: "History from Birth to when they join your family", content: "", sortOrder: 9, isSubItem: true }
 ];
 
 // --- Bios ---

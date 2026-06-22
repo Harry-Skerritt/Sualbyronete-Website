@@ -53,61 +53,66 @@ const subRef = Number(searchParams.get("sub")) || 0;
 
     <main class="puppy-pack-container">
 
-        <header class="litter-header">
+        <header class="puppy-pack-header">
             <h1>More about the Puppy Pack</h1>
             <p>Click the tabs below to read more about what each item is</p>
         </header>
 
-        <Accordion>
-            {formattedInclusions.map((item: NormalItem, index: number) => {
-                const hasContent = !!item.content;
-                const hasSubItems = item.subItems && item.subItems.length > 0;
-                const isEmpty = !hasContent && !hasSubItems;
+        <div class="accordion-wrapper">
+            <Accordion>
+                {formattedInclusions.map((item: NormalItem, index: number) => {
+                    const hasContent = !!item.content;
+                    const hasSubItems = item.subItems && item.subItems.length > 0;
+                    const isEmpty = !hasContent && !hasSubItems;
 
-                const sanitisedTitle = item.title.replace(/\w+\s*:/g, "").trim();
+                    const sanitisedTitle = item.title.replace(/\w+\s*:/g, "").trim();
 
-                return (
-                        <AccordionItem title={sanitisedTitle} name="accordion-item" open={index === ref}>
-                            {hasContent && (
-                                    <p>{item.content}</p>
-                            )}
+                    return (
+                            <AccordionItem title={sanitisedTitle} name="accordion-item" open={index === ref} class="main-item">
+                                {hasContent && (
+                                        <div class="accordion-content">
+                                            <p>{item.content}</p>
+                                        </div>
+                                )}
 
-                            {hasSubItems && (
-                                    <Tab
-                                            tabs={item.subItems.map((subItem: SubItem, subIndex: number) => ({
-                                                label: subItem.title, active: subIndex === subRef
-                                            }))}
-                                    >
-                                        {item.subItems.map((subItem: SubItem, subIndex: number) => {
-                                            const hasSubContent = !!subItem.content;
-                                            const isSubEmpty = !hasSubContent;
+                                {hasSubItems && (
+                                        <Tab
+                                                tabs={item.subItems.map((subItem: SubItem, subIndex: number) => ({
+                                                    label: subItem.title, active: subIndex === subRef
+                                                }))}
+                                        >
+                                            {item.subItems.map((subItem: SubItem, subIndex: number) => {
+                                                const hasSubContent = !!subItem.content;
+                                                const isSubEmpty = !hasSubContent;
 
-                                            return (
-                                                    <TabItem active={subIndex === subRef}>
-                                                        {hasSubContent && (
-                                                                <p> {subItem.content} </p>
-                                                        )}
+                                                return (
+                                                        <TabItem active={subIndex === subRef}>
+                                                            {hasSubContent && (
+                                                                    <p> {subItem.content} </p>
+                                                            )}
 
-                                                        {isSubEmpty && (
-                                                                <p class="empty-message" style="font-style: italic; opacity: 0.7;">
-                                                                    Nothing available right now.
-                                                                </p>
-                                                        )}
-                                                    </TabItem>
-                                            );
-                                        })}
-                                    </Tab>
-                            )}
+                                                            {isSubEmpty && (
+                                                                    <p class="empty-message" style="font-style: italic; opacity: 0.7;">
+                                                                        Nothing available right now.
+                                                                    </p>
+                                                            )}
+                                                        </TabItem>
+                                                );
+                                            })}
+                                        </Tab>
+                                )}
 
-                            {isEmpty && (
-                                    <p class="empty-message" style="font-style: italic; opacity: 0.7;">
-                                        Nothing available right now.
-                                    </p>
-                            )}
-                        </AccordionItem>
-                );
-            })}
-        </Accordion>
+                                {isEmpty && (
+                                        <p class="empty-message" style="font-style: italic; opacity: 0.7;">
+                                            Nothing available right now.
+                                        </p>
+                                )}
+                            </AccordionItem>
+                    );
+                })}
+            </Accordion>
+        </div>
+
 
     </main>
 
@@ -124,10 +129,11 @@ const subRef = Number(searchParams.get("sub")) || 0;
     padding: 2rem;
   }
 
-  .litter-header {
+  .puppy-pack-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     border-bottom: 2px solid var(--colour-dark);
     padding-bottom: 1rem;
     margin-bottom: 2rem;
@@ -138,6 +144,54 @@ const subRef = Number(searchParams.get("sub")) || 0;
       margin: 0;
       font-size: 2.2rem;
     }
+
+    p {
+      font-family: var(--font-secondary);
+      color: var(--colour-dark);
+      margin: 0;
+      padding-top: 0.4rem;
+      font-size: 1rem;
+    }
   }
 
+  .accordion-content {
+    height: auto;
+    min-height: 4rem;
+  }
+
+  /* Accordion Overrides */
+  :global(.ac-accordion) {
+    --ac-accordion-border-color: var(--colour-dark-rgb) !important;
+  }
+
+  :global(.ac-accordion-item-title) {
+    color: var(--colour-light) !important;
+    font-family: var(--font-secondary);
+    opacity: 0.8;
+
+    &:hover {
+      color: var(--colour-dark) !important;
+    }
+
+    & > svg {
+      color: var(--colour-dark);
+    }
+  }
+
+  :global(.ac-accordion-item-content) {
+    color: var(--colour-white);
+    font-family: var(--font-secondary);
+  }
+
+  :global(.ac-accordion-item) {
+    &[open]
+    {
+
+      :global(.ac-accordion-item-title) {
+        color: var(--colour-dark) !important;
+        font-weight: 700;
+        opacity: 1.0;
+      }
+    }
+  }
 </style>
