@@ -1,0 +1,113 @@
+---
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import {ADMIN_SITE_NAME} from "../../../config/siteSettings";
+
+const downloadFiles = [
+    { name: "Puppy Birth Certificate (.pdf)", href: "/files/puppy-birth-certificate.pdf" },
+    { name: "Puppy Pack (.pdf)", href: "/files/puppy-pack.pdf" },
+    { name: "Puppy Contract (.docx)", href: "/files/puppy-contract.docx" },
+];
+---
+
+<AdminLayout title=`${ADMIN_SITE_NAME} | Downloads`>
+
+    <main class="main-container">
+        <header class="page-header">
+            <h1>Download Puppy Documents</h1>
+            <p>Download the Puppy documents from here</p>
+        </header>
+
+        <div class="downloads-grid">
+            {downloadFiles.map((file) => (
+                    <div class="download-card">
+                        <div class="file-info">
+                            <h3>{file.name}</h3>
+                        </div>
+                        <a href={file.href} class="download-btn" download>
+                            Download
+                        </a>
+                    </div>
+            ))}
+        </div>
+    </main>
+
+</AdminLayout>
+
+<style lang="scss">
+  .main-container {
+    max-width: 110rem;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .page-header {
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--colour-dark);
+      font-family: var(--font-primary);
+    }
+
+    p {
+      color: var(--colour-light);
+      font-family: var(--font-secondary);
+      font-size: 1.5rem;
+    }
+  }
+
+  .downloads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(1fr));
+    gap: 1.5rem;
+  }
+
+  .download-card {
+    background: var(--colour-dark);
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .file-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      h3 {
+        font-family: var(--font-secondary);
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--colour-white);
+        margin: 0;
+      }
+
+    }
+
+    .download-btn {
+      background-color: var(--colour-primary);
+      color: var(--colour-dark);
+      padding: 0.6rem 2rem;
+      border-radius: 0.5rem;
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: var(--colour-light);
+        color: var(--colour-dark);
+      }
+    }
+  }
+</style>

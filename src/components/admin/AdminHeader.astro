@@ -16,6 +16,7 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
         </a>
 
         <div class="buttons">
+            <button id="download-button" class="button download" aria-label="Downloads Button">Downloads</button>
             <button id="help-button" class="button help" aria-label="Home Button">Home</button>
             <button id="help-button-mobile" class="button-mobile help" aria-label="Home Button"><Icon name="home" class="icon"/></button>
             <button id="logout-button" class="button logout" aria-label="Log out Button">Log Out</button>
@@ -99,7 +100,18 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     .logout {
       background-color: var(--colour-dark);
+    }
 
+    .download {
+      background-color: transparent;
+      border: none;
+      color: var(--colour-dark);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover {
+        color: var(--colour-white);
+      }
     }
 
     /* Mobile Styling */
@@ -159,6 +171,13 @@ const baseURL = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+        const handleDownload = () => {
+            window.location.href = "/admin/downloads";
+        }
+
+        document.getElementById("download-button")?.addEventListener("click", handleDownload);
+
         /* Home */
         const handleHomeRedirect = () => {
             const currentHost = window.location.hostname;
