@@ -123,7 +123,7 @@ export const puppies = sqliteTable('puppies', {
 });
 
 export const adminUsers = sqliteTable('admin_users',{
-    id: text('id').primaryKey().default(sql`(uuid4())`),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     email: text('email').unique().notNull(),
     name: text('name').notNull(),
     username: text('username').unique().notNull(),

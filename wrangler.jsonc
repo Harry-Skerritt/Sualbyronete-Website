@@ -22,7 +22,8 @@
 		{
 			"binding": "DB",
 			"database_name": "puppies_db",
-			"database_id": "5f32dc4a-ad65-4f0e-ab24-551fd04b94b3"
+			"database_id": "5f32dc4a-ad65-4f0e-ab24-551fd04b94b3",
+			"migrations_dir": "./drizzle"
 		}
 	],
 	"r2_buckets": [
